@@ -58,16 +58,12 @@ class Login extends Component{
       // sign up
       firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
       .then(result =>{
-        var db = firebase.firestore();
-        db.collection("users").doc(this.state.email).set({
-            email: this.state.email,
-            password: this.state.password
+        firebase.auth().currentUser.sendEmailVerification({
+          url: 'https://covid2-a6d70.firebaseapp.com',
+          handleCodeInApp: false
         })
-        .then(function(docRef) {
-            alert("Sign in successful!");
-        })
-        .catch(function(error) {
-            alert("Error adding new user to database.");
+        .catch(function(error){
+          alert(error);
         });
       })
       .then(result=>{

@@ -19,6 +19,31 @@ class Dashboard extends Component{
     }
   }
 
+  componentDidMount(){
+    // Add new user to database if they are verified
+    if (this.props.user != null && this.props.user.emailVerified){
+      var db = firebase.firestore();
+      const userRef = db.collection('users').doc(this.props.user.email);
+
+      userRef.get()
+      .then((docSnapshot) => {
+        // add new user if they don't already exist
+        if (!docSnapshot.exists) {
+          userRef.set({
+              email: this.props.user.email,
+          })
+          .then(function(docRef) {
+              alert("Sign up successful!");
+          })
+          .catch(function(error) {
+              alert("Error adding new user to database.");
+          });
+        }
+        // else just log in and do nothing
+      });
+    }
+  }
+
   logout(){
     firebase.auth().signOut();
   }
