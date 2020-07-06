@@ -43,6 +43,27 @@ class Login extends Component{
     }
   }
 
+  changeLogInSignUp(){
+    if (this.state.isLogin){
+      this.setState({
+        isLogin: false,
+        text: "Sign Up"
+      })
+    }
+    else{
+      this.setState({
+        isLogin: true,
+        text: "Log In"
+      })
+    }
+  }
+
+  emailChange(e){
+    this.setState({
+      email: e.target.value
+    });
+  }
+
   handleLogin(e){
     e.preventDefault();
     if (this.state.isLogin){
@@ -80,31 +101,10 @@ class Login extends Component{
     }
   }
 
-  emailChange(e){
-    this.setState({
-      email: e.target.value
-    });
-  }
-
   passwordChange(e){
     this.setState({
       password: e.target.value
     })
-  }
-
-  changeLogInSignUp(){
-    if (this.state.isLogin){
-      this.setState({
-        isLogin: false,
-        text: "Sign Up"
-      })
-    }
-    else{
-      this.setState({
-        isLogin: true,
-        text: "Log In"
-      })
-    }
   }
 
   render(){

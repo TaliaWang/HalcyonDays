@@ -4,6 +4,7 @@ import {BrowserRouter as Router, Switch, Route, Redirect} from 'react-router-dom
 import Dashboard from "./components/Dashboard.js";
 import EmailVerification from "./components/EmailVerification.js"
 import Login from "./components/Login.js";
+import "./App.css"
 
 
 class App extends Component{
