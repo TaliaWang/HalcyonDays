@@ -7,3 +7,8 @@
   font-family:"nirmala";
   src: url("./fonts/Nirmala.ttf") format("truetype");
 }
+
+@font-face {
+  font-family:"openSansRegular";
+  src: url("./fonts/OpenSans-Regular.ttf") format("truetype");
+}

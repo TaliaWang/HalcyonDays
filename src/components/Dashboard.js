@@ -2,13 +2,31 @@
 import React, { Component } from 'react';
 import firebase from '../firebase';
 import styled from 'styled-components'
+import NewTask from "./NewTask.js"
+import TasksMenu from "./TasksMenu.js"
+import tasksMenuImg from "../images/tasksMenu.png"
 
-const H3 = styled.h3`
+const CircleBtn = styled.button`
+  background-color: ${(props) => props.state ? "black" : "white"};
+  border-radius:50%;
+  border: 1px solid;
+  border-color: ${(props) => props.state ? "white" : "black"};
+  color: ${(props) => props.state ? "white" : "black"};
+  font-size: 23px;
+  padding: 0 7px 0 7px;
+  margin: 5% 0 0 0;
+
+  &:hover{
+    background-color: black;
+    color: white;
+  }
+
+  &:focus{
+    outline: none;
+  }
 `
 
-const Form = styled.form`
-  margin: 0 15% 0 15%;
-  text-align: center;
+const H3 = styled.h3`
 `
 
 const LogoutBtn = styled.button`
@@ -23,33 +41,27 @@ const P = styled.p`
 
 const TaskBar = styled.div`
   border: 1px solid rgba(112,112,112,1);
-  margin: 0 15% 10% 15%;
+  margin: 20% 25% 0 25%;
 `
 
-const TaskInput = styled.input`
-  border: 1px solid rgba(112,112,112,1);
-  text-align: center;
-  font-size: 130%;
-  width: 100%;
-  font-family: ISOCT2;
-  font-weight: bold;
-  padding: 1% 0 0 0;
-`
+const TasksMenuBtn = styled.button`
+  background-color: white;
+  border: none;
+  margin: -19% 1% 0 0;
+  float: right;
 
-const TimeInput = styled.input`
-  border: 1px solid rgba(112,112,112,1);
-  text-align: center;
-  font-size: 130%;
-  width: 100%;
-  font-family: ISOCT2;
-  font-weight: bold;
-  padding: 1% 0 0 0;
+  &:focus{
+    outline: none;
+  }
 `
 
 class Dashboard extends Component{
   constructor(props){
     super(props);
     this.state = {
+      showNewTask: false,
+      showTasksMenu: false,
+      tasks:[],
       task: "",
       hours: "",
       mins: "",
@@ -85,93 +97,73 @@ class Dashboard extends Component{
         }
         // else just log in and do nothing
       });
+
+      // load in tasks from firestore
+      var db = firebase.firestore();
+      db.collection("users")
+      .doc(this.props.user.email)
+      .collection("tasks")
+      .get()
+      .then(querySnapshot=> {
+          querySnapshot.forEach(doc=>{
+            this.setState({
+              tasks: this.state.tasks.concat(doc.data())
+            })
+          });
+      });
     }
   }
 
-  handleChange(e){
-    if (e.target.id == 'task'){
-      this.setState({
-        task: e.target.value
-      });
-    }
-    else if (e.target.id == 'hours'){
-      this.setState({
-        hours: e.target.value
-      });
-    }
-    else if (e.target.id == 'mins'){
-      this.setState({
-        mins: e.target.value
-      });
-    }
+  handleMouseOver(){
+    this.setState({
+      showTasksMenu: true
+    })
   }
 
   logout(){
     firebase.auth().signOut();
   }
 
-  submitTask(e){
-    e.preventDefault();
-    if (this.state.task == ""){
-       alert("Please enter a task.");
-    }
-    else if (!Number.isInteger(parseFloat(this.state.hours)) || !Number.isInteger(parseFloat(this.state.mins))
-      || parseFloat(this.state.hours) < 0 || parseFloat(this.state.mins) < 0){
-       alert("Please enter positive integers (or zero) for the hours and minutes needed to complete this task.");
-    }
-    else{
-      // convert minutes to hours if needed
-      var tempHours = this.state.hours;
-      var tempMins = this.state.mins;
-      while (tempMins >= 60){
-        tempHours++;
-        tempMins = tempMins - 60;
-      }
-      this.setState({
-        hours: tempHours,
-        mins: tempMins
-      }, () =>{
-        // add task to database
-        alert(this.state.task + this.state.hours + this.state.mins);
-        this.setState({
-          task: "",
-          hours: "",
-          mins: ""
-        });
-      });
-    }
+  toggleShowNewTask(e){
+    this.setState(prevState => ({
+      showNewTask: !prevState.showNewTask
+    }));
   }
 
   render(){
     return(
-      <div style={{textAlign: 'center'}}>
-        <H3>Dashboard</H3>
-        {this.props.user ? <P>{this.props.user.email}</P> : null}
-        <LogoutBtn onClick={this.logout.bind(this)}>Log Out</LogoutBtn>
-        <TaskBar>
-          <br/> <br/>
-        </TaskBar>
-        <Form>
-            <div style={{display: 'block', float: 'left', width: '48%'}}>
-              <TaskInput id='task' value={this.state.task} onChange={this.handleChange.bind(this)} placeholder="ENTER TASK"/>
-              <div style={{textAlign: 'left'}}>
-                <P>Total tasks: {this.state.totalTasks}</P>
-                <P>Finished tasks: {this.state.finishedTasks}</P>
-                <P>Unfinished tasks: {this.state.unfinishedTasks}</P>
-              </div>
+      <div>
+        {/* tasks menu side bar*/}
+        {this.state.showTasksMenu ? null :
+          <TasksMenuBtn onMouseOver={this.handleMouseOver.bind(this)}>
+            <img width='80%' height= '80%' src={tasksMenuImg}/>
+          </TasksMenuBtn>}
+        <div style={{float: 'right', zIndex: '10', position: 'fixed', opacity: this.state.showTasksMenu?1:0, transition: 'opacity 0.3s'}}>
+          {this.state.showTasksMenu? <TasksMenu user={this.props.user} tasks={this.state.tasks}></TasksMenu> : null}
+        </div>
+
+        {/* main center components */}
+        <div style={{textAlign: 'center'}}>
+          {/*}<H3>Dashboard</H3>
+          {this.props.user ? <P>{this.props.user.email}</P> : null}
+          <LogoutBtn onClick={this.logout.bind(this)}>Log Out</LogoutBtn>*/}
+          <TaskBar>
+            <br/> <br/>
+          </TaskBar>
+          {/*<div style={{display: 'block'}}>
+            <div style={{float: 'left', textAlign: 'left', marginLeft: '15%'}}>
+              <P>Total tasks: {this.state.totalTasks}</P>
+              <P>Finished tasks: {this.state.finishedTasks}</P>
+              <P>Unfinished tasks: {this.state.unfinishedTasks}</P>
             </div>
-            <div style={{display: 'block', float: 'right', width: '48%'}}>
-              <div style={{display: 'flex'}}>
-                <TimeInput id='hours' value={this.state.hours} onChange={this.handleChange.bind(this)} placeholder="HOURS"/>
-                <TimeInput id='mins' value={this.state.mins} onChange={this.handleChange.bind(this)} placeholder="MINUTES"/>
-              </div>
-              <div style={{textAlign: 'left'}}>
-                <P>Time needed for tasks: {this.state.hoursNeededForTasks}h {this.state.minsNeededForTasks}m</P>
-                <P>Time left: {this.state.hoursLeft}h {this.state.minsLeft}m</P>
-              </div>
+            <div style={{float: 'right', textAlign: 'right', marginRight: '15%'}}>
+              <P>Time needed for tasks: {this.state.hoursNeededForTasks}h {this.state.minsNeededForTasks}m</P>
+              <P>Time left: {this.state.hoursLeft}h {this.state.minsLeft}m</P>
             </div>
-            <button onClick={this.submitTask.bind(this)} style={{display:'none'}}/>
-        </Form>
+          </div>*/}
+          <CircleBtn state={this.state.showNewTask} onClick={this.toggleShowNewTask.bind(this)}>+</CircleBtn>
+          {this.state.showNewTask? <NewTask user={this.props.user}/> : null}
+        </div>
       </div>
     );
   }
