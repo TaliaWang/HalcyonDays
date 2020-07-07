@@ -66,12 +66,12 @@ class NewTask extends Component{
         <Container>
           <Form>
               <div style={{display: 'block', backgroundColor: 'black', padding: '1%', margin: '0 0 5% 0'}}>
-                <TaskInput id='task' value={this.state.task} onChange={this.props.handleNewTaskChange} placeholder="ENTER TASK"/>
+                <TaskInput id='task' value={this.props.task} onChange={this.props.handleNewTaskChange} placeholder="ENTER TASK"/>
               </div>
               <div style={{display: 'block', padding: '1%'}}>
                 <div style={{display: 'flex'}}>
-                  <TimeInput id='hours' value={this.state.hours} onChange={this.props.handleNewTaskChange} placeholder="HOURS"/>
-                  <TimeInput id='mins' value={this.state.mins} onChange={this.props.handleNewTaskChange} placeholder="MINUTES"/>
+                  <TimeInput id='hours' value={this.props.hours} onChange={this.props.handleNewTaskChange} placeholder="HOURS"/>
+                  <TimeInput id='mins' value={this.props.mins} onChange={this.props.handleNewTaskChange} placeholder="MINUTES"/>
                 </div>
               </div>
               <button onClick={this.props.submitTask} style={{display:'none'}}/>

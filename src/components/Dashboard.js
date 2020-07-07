@@ -177,7 +177,7 @@ class Dashboard extends Component{
           mins: parseInt(this.state.mins),
           finished: false
         }).then(result =>{
-          alert("Task added!");
+          //alert("Task added!");
           this.setState({
             task: "",
             hours: "",
@@ -194,6 +194,28 @@ class Dashboard extends Component{
     }));
   }
 
+  toggleTaskChecked(e){
+    var db = firebase.firestore();
+    const userRef = db.collection('users').doc(this.props.user.email);
+
+    var curTask = e.target.parentElement.textContent;
+    //get current task finished state of this task in firestore
+    var newFinished;
+    userRef.collection('tasks').doc(curTask.substring(0, curTask.indexOf(' (')))
+    .get().then(doc=>{
+      if (doc.exists){
+        newFinished = !doc.data().finished;
+      }
+    })
+    .then(result=>{
+      // toggle whether task is finished in database
+      userRef.collection('tasks').doc(curTask.substring(0, curTask.indexOf(' (')))
+      .update({
+        finished: newFinished
+      });
+    });
+  }
+
   render(){
     return(
       <div>
@@ -203,7 +225,7 @@ class Dashboard extends Component{
             <img width='80%' height= '80%' src={tasksMenuImg}/>
           </TasksMenuBtn>}
         <div style={{float: 'right', zIndex: '10', position: 'fixed', opacity: this.state.showTasksMenu?1:0, transition: 'opacity 0.3s'}}>
-          {this.state.showTasksMenu? <TasksMenu user={this.props.user} tasks={this.state.tasks}></TasksMenu> : null}
+          {this.state.showTasksMenu? <TasksMenu user={this.props.user} tasks={this.state.tasks} toggleTaskChecked={this.toggleTaskChecked.bind(this)}></TasksMenu> : null}
         </div>
 
         {/* main center components */}
