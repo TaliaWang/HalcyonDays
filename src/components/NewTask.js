@@ -56,72 +56,6 @@ class NewTask extends Component{
   constructor(props){
     super(props);
     this.state = {
-      task: "",
-      hours: "",
-      mins: "",
-
-    }
-  }
-
-
-  handleChange(e){
-    if (e.target.id == 'task'){
-      this.setState({
-        task: e.target.value
-      });
-    }
-    else if (e.target.id == 'hours'){
-      this.setState({
-        hours: e.target.value
-      });
-    }
-    else if (e.target.id == 'mins'){
-      this.setState({
-        mins: e.target.value
-      });
-    }
-  }
-
-  submitTask(e){
-    e.preventDefault();
-    if (this.state.task == ""){
-       alert("Please enter a task.");
-    }
-    else if (!Number.isInteger(parseFloat(this.state.hours)) || !Number.isInteger(parseFloat(this.state.mins))
-      || parseFloat(this.state.hours) < 0 || parseFloat(this.state.mins) < 0){
-       alert("Please enter positive integers (or zero) for the hours and minutes needed to complete this task.");
-    }
-    else{
-      // convert minutes to hours if needed
-      var tempHours = this.state.hours;
-      var tempMins = this.state.mins;
-      while (tempMins >= 60){
-        tempHours++;
-        tempMins = tempMins - 60;
-      }
-      this.setState({
-        hours: tempHours,
-        mins: tempMins
-      }, () =>{
-        // add task to database
-        //alert(this.state.task + this.state.hours + this.state.mins);
-        var db = firebase.firestore();
-        db.collection("users").doc(this.props.user.email)
-        .collection("tasks").doc(this.state.task)
-        .set({
-          name: this.state.task,
-          hours: parseInt(this.state.hours),
-          mins: parseInt(this.state.mins),
-          finished: false
-        }).then(result =>{
-          alert("Task added!");
-          this.setState({
-            task: "",
-            hours: "",
-            mins: ""
-          });
-        })
-      });
     }
   }
 
@@ -132,15 +66,15 @@ class NewTask extends Component{
         <Container>
           <Form>
               <div style={{display: 'block', backgroundColor: 'black', padding: '1%', margin: '0 0 5% 0'}}>
-                <TaskInput id='task' value={this.state.task} onChange={this.handleChange.bind(this)} placeholder="ENTER TASK"/>
+                <TaskInput id='task' value={this.state.task} onChange={this.props.handleNewTaskChange} placeholder="ENTER TASK"/>
               </div>
               <div style={{display: 'block', padding: '1%'}}>
                 <div style={{display: 'flex'}}>
-                  <TimeInput id='hours' value={this.state.hours} onChange={this.handleChange.bind(this)} placeholder="HOURS"/>
-                  <TimeInput id='mins' value={this.state.mins} onChange={this.handleChange.bind(this)} placeholder="MINUTES"/>
+                  <TimeInput id='hours' value={this.state.hours} onChange={this.props.handleNewTaskChange} placeholder="HOURS"/>
+                  <TimeInput id='mins' value={this.state.mins} onChange={this.props.handleNewTaskChange} placeholder="MINUTES"/>
                 </div>
               </div>
-              <button onClick={this.submitTask.bind(this)} style={{display:'none'}}/>
+              <button onClick={this.props.submitTask} style={{display:'none'}}/>
           </Form>
         </Container>
       </div>

@@ -98,19 +98,22 @@ class Dashboard extends Component{
         // else just log in and do nothing
       });
 
-      // load in tasks from firestore
-      var db = firebase.firestore();
-      db.collection("users")
-      .doc(this.props.user.email)
-      .collection("tasks")
-      .get()
-      .then(querySnapshot=> {
-          querySnapshot.forEach(doc=>{
-            this.setState({
-              tasks: this.state.tasks.concat(doc.data())
-            })
+      // listen for changes in this user (ie. if they add subcollection tasks)
+      userRef.onSnapshot(userDoc=> {
+          // listen for changes in this user's tasks
+          userRef
+          .collection('tasks')
+          .onSnapshot(querySnapshot=>{
+            var tempTasks = [];
+              querySnapshot.forEach(doc=> {
+                tempTasks.push(doc.data())
+                this.setState({
+                  tasks: tempTasks
+                })
+              });
           });
       });
+
     }
   }
 
@@ -120,8 +123,69 @@ class Dashboard extends Component{
     })
   }
 
+  handleNewTaskChange(e){
+    if (e.target.id == 'task'){
+      this.setState({
+        task: e.target.value
+      });
+    }
+    else if (e.target.id == 'hours'){
+      this.setState({
+        hours: e.target.value
+      });
+    }
+    else if (e.target.id == 'mins'){
+      this.setState({
+        mins: e.target.value
+      });
+    }
+  }
+
   logout(){
     firebase.auth().signOut();
+  }
+
+  submitTask(e){
+    e.preventDefault();
+    if (this.state.task == ""){
+       alert("Please enter a task.");
+    }
+    else if (!Number.isInteger(parseFloat(this.state.hours)) || !Number.isInteger(parseFloat(this.state.mins))
+      || parseFloat(this.state.hours) < 0 || parseFloat(this.state.mins) < 0){
+       alert("Please enter positive integers (or zero) for the hours and minutes needed to complete this task.");
+    }
+    else{
+      // convert minutes to hours if needed
+      var tempHours = this.state.hours;
+      var tempMins = this.state.mins;
+      while (tempMins >= 60){
+        tempHours++;
+        tempMins = tempMins - 60;
+      }
+      this.setState({
+        hours: tempHours,
+        mins: tempMins
+      }, () =>{
+        // add task to database
+        //alert(this.state.task + this.state.hours + this.state.mins);
+        var db = firebase.firestore();
+        db.collection("users").doc(this.props.user.email)
+        .collection("tasks").doc(this.state.task)
+        .set({
+          name: this.state.task,
+          hours: parseInt(this.state.hours),
+          mins: parseInt(this.state.mins),
+          finished: false
+        }).then(result =>{
+          alert("Task added!");
+          this.setState({
+            task: "",
+            hours: "",
+            mins: ""
+          });
+        })
+      });
+    }
   }
 
   toggleShowNewTask(e){
@@ -162,7 +226,15 @@ class Dashboard extends Component{
             </div>
           </div>*/}
           <CircleBtn state={this.state.showNewTask} onClick={this.toggleShowNewTask.bind(this)}>+</CircleBtn>
-          {this.state.showNewTask? <NewTask user={this.props.user}/> : null}
+          {this.state.showNewTask?
+            <NewTask
+              user={this.props.user}
+              submitTask={this.submitTask.bind(this)}
+              handleNewTaskChange={this.handleNewTaskChange.bind(this)}
+              task={this.state.task}
+              hours={this.state.hours}
+              mins={this.state.mins}
+            ></NewTask> : null}
         </div>
       </div>
     );

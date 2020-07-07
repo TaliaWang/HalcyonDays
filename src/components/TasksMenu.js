@@ -40,6 +40,14 @@ class TasksMenu extends Component{
     }
   }
 
+  componentDidUpdate(prevProps){
+    if (this.props.tasks != prevProps.tasks){
+      this.setState({
+        tasks: this.props.tasks
+      })
+    }
+  }
+
   toggleChecked(e){
     e.target.checked=!e.target.checked;
   }
