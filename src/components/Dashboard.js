@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import firebase from '../firebase';
 import styled from 'styled-components'
 import NewTask from "./NewTask.js"
+import TaskBar from "./TaskBar.js"
 import TasksMenu from "./TasksMenu.js"
 import tasksMenuImg from "../images/tasksMenu.png"
 
@@ -39,11 +40,6 @@ const P = styled.p`
   font-size: 15px;
 `
 
-const TaskBar = styled.div`
-  border: 1px solid rgba(112,112,112,1);
-  margin: 20% 25% 0 25%;
-`
-
 const TasksMenuBtn = styled.button`
   background-color: white;
   border: none;
@@ -53,6 +49,9 @@ const TasksMenuBtn = styled.button`
   &:focus{
     outline: none;
   }
+`
+
+const TasksMenuImg = styled.img`
 `
 
 class Dashboard extends Component{
@@ -65,7 +64,7 @@ class Dashboard extends Component{
       task: "",
       hours: "",
       mins: "",
-      numFinishedTasks: 0,
+      unfinishedTasks: [],
       hoursLeft: 0,
       minsLeft: 0,
       hoursNeededForTasks: 0,
@@ -103,15 +102,13 @@ class Dashboard extends Component{
           .collection('tasks')
           .onSnapshot(querySnapshot=>{
             var tempTasks = [];
-            var tempNumFinished = 0;
+            var tempUnfinishedTasks = [];
             var tempMinsNeeded = 0;
             var tempHoursNeeded = 0;
             querySnapshot.forEach(doc=> {
               tempTasks.push(doc.data());
-              if (doc.data().finished){
-                tempNumFinished++;
-              }
-              else{
+              if (!doc.data().finished){
+                tempUnfinishedTasks.push(doc.data());
                 tempMinsNeeded = tempMinsNeeded + doc.data().hours*60 + doc.data().mins;
               }
             });
@@ -122,7 +119,7 @@ class Dashboard extends Component{
             }
             this.setState({
               tasks: tempTasks,
-              numFinishedTasks: tempNumFinished,
+              unfinishedTasks: tempUnfinishedTasks,
               hoursNeededForTasks: tempHoursNeeded,
               minsNeededForTasks: tempMinsNeeded
             })
@@ -237,7 +234,7 @@ class Dashboard extends Component{
         {/* tasks menu side bar*/}
         {this.state.showTasksMenu ? null :
           <TasksMenuBtn onMouseOver={this.handleMouseOver.bind(this)}>
-            <img width='80%' height= '80%' src={tasksMenuImg}/>
+            <TasksMenuImg width='80%' height= '80%' src={tasksMenuImg}/>
           </TasksMenuBtn>}
         <div style={{float: 'right', zIndex: '10', position: 'fixed', opacity: this.state.showTasksMenu?1:0, transition: 'opacity 0.3s'}}>
           {this.state.showTasksMenu? <TasksMenu user={this.props.user} tasks={this.state.tasks} toggleTaskChecked={this.toggleTaskChecked.bind(this)}></TasksMenu> : null}
@@ -247,20 +244,21 @@ class Dashboard extends Component{
         <div style={{textAlign: 'center'}}>
           {/*<H3>Dashboard</H3>
           {this.props.user ? <P>{this.props.user.email}</P> : null}*/}
-          <TaskBar>
-            <br/> <br/>
-          </TaskBar>
-          <div style={{display: 'block', margin: '0 10% 0 10%'}}>
+          {/*<div style={{display: 'block', margin: '0 10% 0 10%'}}>
             <div style={{float: 'left', textAlign: 'left', marginLeft: '15%'}}>
               <P>Total tasks: {this.state.tasks.length}</P>
-              <P>Finished tasks: {this.state.numFinishedTasks}</P>
-              <P>Unfinished tasks: {this.state.tasks.length - this.state.numFinishedTasks}</P>
+              <P>Finished tasks: {this.state.tasks.length - this.state.unfinishedTasks.length}</P>
+              <P>Unfinished tasks: {this.state.unfinishedTasks.length}</P>
             </div>
             <div style={{float: 'right', textAlign: 'right', marginRight: '15%'}}>
               <P>Time needed for tasks: {this.state.hoursNeededForTasks}h {this.state.minsNeededForTasks}m</P>
               <P>Time left: {this.state.hoursLeft}h {this.state.minsLeft}m</P>
             </div>
-          </div>
+          </div>*/}
+          <TaskBar
+            unfinishedTasks={this.state.unfinishedTasks}
+            type='mainBar'
+          ></TaskBar>
           <CircleBtn state={this.state.showNewTask} onClick={this.toggleShowNewTask.bind(this)}>+</CircleBtn>
           {this.state.showNewTask?
             <NewTask

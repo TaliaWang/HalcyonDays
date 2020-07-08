@@ -54,7 +54,7 @@ class TasksMenu extends Component{
         <Container>
           {this.state.tasks.map((task, index) =>
             <div>
-              <Checkbox id={index} type='checkbox' checked={task.finished} onClick={this.props.toggleTaskChecked}/>
+              <Checkbox id={`${task}${index}`} type='checkbox' checked={task.finished} onClick={this.props.toggleTaskChecked}/>
               <Label for={index}>{task.name} ({task.hours}h {task.mins}m)</Label>
             </div>
           )}
