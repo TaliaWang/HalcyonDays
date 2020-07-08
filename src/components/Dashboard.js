@@ -65,9 +65,7 @@ class Dashboard extends Component{
       task: "",
       hours: "",
       mins: "",
-      totalTasks: 0,
-      finishedTasks: 0,
-      unfinishedTasks: 0,
+      numFinishedTasks: 0,
       hoursLeft: 0,
       minsLeft: 0,
       hoursNeededForTasks: 0,
@@ -105,12 +103,29 @@ class Dashboard extends Component{
           .collection('tasks')
           .onSnapshot(querySnapshot=>{
             var tempTasks = [];
-              querySnapshot.forEach(doc=> {
-                tempTasks.push(doc.data())
-                this.setState({
-                  tasks: tempTasks
-                })
-              });
+            var tempNumFinished = 0;
+            var tempMinsNeeded = 0;
+            var tempHoursNeeded = 0;
+            querySnapshot.forEach(doc=> {
+              tempTasks.push(doc.data());
+              if (doc.data().finished){
+                tempNumFinished++;
+              }
+              else{
+                tempMinsNeeded = tempMinsNeeded + doc.data().hours*60 + doc.data().mins;
+              }
+            });
+            // calculate hours and mins needed to finish remaining tasks
+            while (tempMinsNeeded >= 60){
+              tempHoursNeeded++;
+              tempMinsNeeded = tempMinsNeeded - 60;
+            }
+            this.setState({
+              tasks: tempTasks,
+              numFinishedTasks: tempNumFinished,
+              hoursNeededForTasks: tempHoursNeeded,
+              minsNeededForTasks: tempMinsNeeded
+            })
           });
       });
 
@@ -230,23 +245,22 @@ class Dashboard extends Component{
 
         {/* main center components */}
         <div style={{textAlign: 'center'}}>
-          {/*}<H3>Dashboard</H3>
-          {this.props.user ? <P>{this.props.user.email}</P> : null}
-          <LogoutBtn onClick={this.logout.bind(this)}>Log Out</LogoutBtn>*/}
+          {/*<H3>Dashboard</H3>
+          {this.props.user ? <P>{this.props.user.email}</P> : null}*/}
           <TaskBar>
             <br/> <br/>
           </TaskBar>
-          {/*<div style={{display: 'block'}}>
+          <div style={{display: 'block', margin: '0 10% 0 10%'}}>
             <div style={{float: 'left', textAlign: 'left', marginLeft: '15%'}}>
-              <P>Total tasks: {this.state.totalTasks}</P>
-              <P>Finished tasks: {this.state.finishedTasks}</P>
-              <P>Unfinished tasks: {this.state.unfinishedTasks}</P>
+              <P>Total tasks: {this.state.tasks.length}</P>
+              <P>Finished tasks: {this.state.numFinishedTasks}</P>
+              <P>Unfinished tasks: {this.state.tasks.length - this.state.numFinishedTasks}</P>
             </div>
             <div style={{float: 'right', textAlign: 'right', marginRight: '15%'}}>
               <P>Time needed for tasks: {this.state.hoursNeededForTasks}h {this.state.minsNeededForTasks}m</P>
               <P>Time left: {this.state.hoursLeft}h {this.state.minsLeft}m</P>
             </div>
-          </div>*/}
+          </div>
           <CircleBtn state={this.state.showNewTask} onClick={this.toggleShowNewTask.bind(this)}>+</CircleBtn>
           {this.state.showNewTask?
             <NewTask
@@ -258,6 +272,7 @@ class Dashboard extends Component{
               mins={this.state.mins}
             ></NewTask> : null}
         </div>
+        <LogoutBtn onClick={this.logout.bind(this)}>Log Out</LogoutBtn>
       </div>
     );
   }
