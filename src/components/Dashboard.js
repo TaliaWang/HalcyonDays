@@ -57,10 +57,12 @@ const TasksMenuImg = styled.img`
 class Dashboard extends Component{
   constructor(props){
     super(props);
+    this.minsInDay = 60*24;
     this.state = {
       showNewTask: false,
       showTasksMenu: false,
       tasks:[],
+      timePassedInMins: 0,
       task: "",
       hours: "",
       mins: "",
@@ -113,10 +115,8 @@ class Dashboard extends Component{
               }
             });
             // calculate hours and mins needed to finish remaining tasks
-            while (tempMinsNeeded >= 60){
-              tempHoursNeeded++;
-              tempMinsNeeded = tempMinsNeeded - 60;
-            }
+            tempHoursNeeded = parseInt(tempMinsNeeded / 60);
+            tempMinsNeeded = tempMinsNeeded % 60;
             this.setState({
               tasks: tempTasks,
               unfinishedTasks: tempUnfinishedTasks,
@@ -126,6 +126,35 @@ class Dashboard extends Component{
           });
       });
 
+      // update current time passed and left
+      var d = new Date();
+      var timePassed = d.getHours()*60 + d.getMinutes();
+      var timePassedWidth = ((timePassed) / this.minsInDay) * 100;
+      var timeLeft = this.minsInDay - timePassed;
+      var hoursLeft = parseInt(timeLeft / 60);
+      var minsLeft = timeLeft % 60;
+      this.setState({
+        timePassedWidth: timePassedWidth,
+        hoursLeft: hoursLeft,
+        minsLeft: minsLeft
+      });
+
+      // update time left every minute
+      setInterval(result=>{
+        // calculate time passed in day in minutes
+        var d = new Date();
+        var timePassed = d.getHours()*60 + d.getMinutes();
+        var timePassedWidth = ((timePassed) / this.minsInDay) * 100;
+        var timeLeft = this.minsInDay - timePassed;
+        var hoursLeft = parseInt(timeLeft / 60);
+        var minsLeft = timeLeft % 60;
+
+        this.setState({
+          timePassedWidth: timePassedWidth,
+          hoursLeft: hoursLeft,
+          minsLeft: minsLeft
+        })
+      }, 60000)
     }
   }
 
@@ -159,12 +188,19 @@ class Dashboard extends Component{
 
   submitTask(e){
     e.preventDefault();
+    // prevent empty task
     if (this.state.task == ""){
        alert("Please enter a task.");
     }
+    // ensure hours/mins are integers
     else if (!Number.isInteger(parseFloat(this.state.hours)) || !Number.isInteger(parseFloat(this.state.mins))
       || parseFloat(this.state.hours) < 0 || parseFloat(this.state.mins) < 0){
        alert("Please enter positive integers (or zero) for the hours and minutes needed to complete this task.");
+    }
+    // ensure task time doesn't exceed free time left
+    else if (parseInt(this.state.hours)*60 + parseInt(this.state.mins)
+      > this.state.hoursLeft*60 + this.state.minsLeft - this.state.hoursNeededForTasks*60 - this.state.minsNeededForTasks){
+        alert("There's not enough time left for this task!")
     }
     else{
       // convert minutes to hours if needed
@@ -244,20 +280,10 @@ class Dashboard extends Component{
         <div style={{textAlign: 'center'}}>
           {/*<H3>Dashboard</H3>
           {this.props.user ? <P>{this.props.user.email}</P> : null}*/}
-          {/*<div style={{display: 'block', margin: '0 10% 0 10%'}}>
-            <div style={{float: 'left', textAlign: 'left', marginLeft: '15%'}}>
-              <P>Total tasks: {this.state.tasks.length}</P>
-              <P>Finished tasks: {this.state.tasks.length - this.state.unfinishedTasks.length}</P>
-              <P>Unfinished tasks: {this.state.unfinishedTasks.length}</P>
-            </div>
-            <div style={{float: 'right', textAlign: 'right', marginRight: '15%'}}>
-              <P>Time needed for tasks: {this.state.hoursNeededForTasks}h {this.state.minsNeededForTasks}m</P>
-              <P>Time left: {this.state.hoursLeft}h {this.state.minsLeft}m</P>
-            </div>
-          </div>*/}
           <TaskBar
             unfinishedTasks={this.state.unfinishedTasks}
             type='mainBar'
+            timePassedWidth={this.state.timePassedWidth}
           ></TaskBar>
           <CircleBtn state={this.state.showNewTask} onClick={this.toggleShowNewTask.bind(this)}>+</CircleBtn>
           {this.state.showNewTask?
@@ -271,6 +297,21 @@ class Dashboard extends Component{
             ></NewTask> : null}
         </div>
         <LogoutBtn onClick={this.logout.bind(this)}>Log Out</LogoutBtn>
+        <div style={{display: 'block', margin: '0 10% 0 10%'}}>
+          <div style={{float: 'left', textAlign: 'left', marginLeft: '15%'}}>
+            <P>Total tasks: {this.state.tasks.length}</P>
+            <P>Finished tasks: {this.state.tasks.length - this.state.unfinishedTasks.length}</P>
+            <P>Unfinished tasks: {this.state.unfinishedTasks.length}</P>
+          </div>
+          <div style={{float: 'right', textAlign: 'right', marginRight: '15%'}}>
+            <P>Time left in the day: {this.state.hoursLeft}h {this.state.minsLeft}m</P>
+            <P>Time needed for tasks: {this.state.hoursNeededForTasks}h {this.state.minsNeededForTasks}m</P>
+            <P>Free time left:&nbsp;
+              {parseInt(((this.state.hoursLeft*60 + this.state.minsLeft)-(this.state.hoursNeededForTasks*60 + this.state.minsNeededForTasks))/60)}h&nbsp;
+              {((this.state.hoursLeft*60 + this.state.minsLeft)-(this.state.hoursNeededForTasks*60 + this.state.minsNeededForTasks)) % 60}m
+            </P>
+          </div>
+        </div>
       </div>
     );
   }

@@ -20,7 +20,7 @@ const TimePassed = styled.div`
 
 const UnfinishedTask = styled.div`
   height: ${props => props.height};
-  width: 20px;
+  width: ${props => props.width}%;
   border-left: 1px solid white;
   background-color: black;
 `
@@ -32,30 +32,8 @@ class TaskBar extends Component{
     this.barHeight = '25px';
     this.minsInDay = 60*24;
     this.state = {
-      timePassedWidth: 0,
+      timePassedWidth: this.props.timePassedWidth,
       unfinishedTasks: this.props.unfinishedTasks
-    }
-  }
-
-  updateMainBarTimePassed(){
-    // calculate time passed in day in minutes
-    var d = new Date();
-    var timePassedMins = d.getHours()*60 + d.getMinutes();
-
-    // calculate percentage width that the time passed section should be
-    var widthPercent = (timePassedMins/this.minsInDay)*100;
-    this.setState({
-      timePassedWidth: widthPercent
-    })
-  }
-
-  componentDidMount(){
-    // determine whether this is main page bar or sub-task bar
-    if (this.props.type == 'mainBar'){
-
-      this.updateMainBarTimePassed();
-      // update the time passed in bar every minute
-      setInterval(this.updateMainBarTimePassed(), 60000);
     }
   }
 
@@ -65,6 +43,20 @@ class TaskBar extends Component{
         unfinishedTasks: this.props.unfinishedTasks
       })
     }
+    if (this.props.type == 'mainBar'){
+      if (this.props.timePassedWidth != prevProps.timePassedWidth){
+        this.setState({
+          timePassedWidth: this.props.timePassedWidth
+        })
+      }
+    }
+  }
+
+  getTaskWidth(task){
+    var totalMins = task.hours*60 + task.mins;
+    var widthPercent = totalMins/this.minsInDay*100;
+    //alert(widthPercent);
+    return widthPercent;
   }
 
   render(){
@@ -73,7 +65,7 @@ class TaskBar extends Component{
         <div style={{display: 'flex', width: '100%'}}>
           <TimePassed height={this.barHeight} width={this.state.timePassedWidth}></TimePassed>
           {this.props.unfinishedTasks.map((task, index) =>
-            <UnfinishedTask id={`unfinished_${task}${index}`} task={task}/>
+            <UnfinishedTask id={`unfinished_${task}${index}`} task={task} width={this.getTaskWidth(task)}/>
           )}
         </div>
       </Container>

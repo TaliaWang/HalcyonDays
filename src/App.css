@@ -12,3 +12,7 @@
   font-family:"openSansRegular";
   src: url("./fonts/OpenSans-Regular.ttf") format("truetype");
 }
+
+button:focus{
+  outline: none;
+}
