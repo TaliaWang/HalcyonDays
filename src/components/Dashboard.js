@@ -4,8 +4,10 @@ import firebase from '../firebase';
 import styled from 'styled-components'
 import Footer from "./Footer.js"
 import NewTask from "./NewTask.js"
+import Statistics from "./Statistics.js"
 import TaskBar from "./TaskBar.js"
 import TasksMenu from "./TasksMenu.js"
+import statisticsImg from "../images/statistics.png"
 import tasksMenuImg from "../images/tasksMenu.png"
 
 const CircleBtn = styled.button`
@@ -16,7 +18,7 @@ const CircleBtn = styled.button`
   color: ${(props) => props.state ? "white" : "black"};
   font-size: 23px;
   padding: 0 7px 0 7px;
-  margin: 5% 0 0 0;
+  margin: 3% 0 0 0;
 
   &:hover{
     background-color: black;
@@ -31,8 +33,8 @@ const CircleBtn = styled.button`
 const H3 = styled.h3`
 `
 
-const LogoutBtn = styled.button`
-  margin: 1% 0 1% 0;
+const Img = styled.img`
+  margin-left: 54%;
 `
 
 const P = styled.p`
@@ -61,6 +63,7 @@ class Dashboard extends Component{
     this.minsInDay = 60*24;
     this.state = {
       showNewTask: false,
+      showStatistics: false,
       showTasksMenu: false,
       tasks:[],
       timePassedInMins: 0,
@@ -71,7 +74,11 @@ class Dashboard extends Component{
       hoursLeft: 0,
       minsLeft: 0,
       hoursNeededForTasks: 0,
-      minsNeededForTasks: 0
+      minsNeededForTasks: 0,
+      relaxationHours: 0,
+      relaxationMins: 0,
+      sleepHours: 0,
+      sleepMins: 0
     }
   }
 
@@ -183,6 +190,18 @@ class Dashboard extends Component{
     }
   }
 
+  hideStatistics(){
+    this.setState({
+      showStatistics: false
+    });
+  }
+
+  showStatistics(){
+    this.setState({
+      showStatistics: true
+    });
+  }
+
   submitTask(e){
     e.preventDefault();
     // prevent empty task
@@ -193,11 +212,6 @@ class Dashboard extends Component{
     else if (!Number.isInteger(parseFloat(this.state.hours)) || !Number.isInteger(parseFloat(this.state.mins))
       || parseFloat(this.state.hours) < 0 || parseFloat(this.state.mins) < 0){
        alert("Please enter positive integers (or zero) for the hours and minutes needed to complete this task.");
-    }
-    // ensure task time doesn't exceed free time left
-    else if (parseInt(this.state.hours)*60 + parseInt(this.state.mins)
-      > this.state.hoursLeft*60 + this.state.minsLeft - this.state.hoursNeededForTasks*60 - this.state.minsNeededForTasks){
-        alert("There's not enough time left for this task!")
     }
     else{
       // convert minutes to hours if needed
@@ -277,11 +291,30 @@ class Dashboard extends Component{
         <div style={{textAlign: 'center'}}>
           {/*<H3>Dashboard</H3>
           {this.props.user ? <P>{this.props.user.email}</P> : null}*/}
-          <TaskBar
-            unfinishedTasks={this.state.unfinishedTasks}
-            type='mainBar'
-            timePassedWidth={this.state.timePassedWidth}
-          ></TaskBar>
+          <div>
+            <TaskBar
+              unfinishedTasks={this.state.unfinishedTasks}
+              type='mainBar'
+              timePassedWidth={this.state.timePassedWidth}
+            ></TaskBar>
+            <div style={{marginTop: '-35px'}}>
+              <Img onMouseOver={this.showStatistics.bind(this)} onMouseLeave={this.hideStatistics.bind(this)} src={statisticsImg}/>
+              {this.state.showStatistics
+                ?
+                <Statistics
+                  numTasks={this.state.tasks.length}
+                  numFinishedTasks={this.state.tasks.length - this.state.unfinishedTasks.length}
+                  relaxationHours={this.state.relaxationHours}
+                  relaxationMins={this.state.relaxationMins}
+                  sleepHours={this.state.sleepHours}
+                  sleepMins={this.state.sleepMins}
+                  hoursNeededForTasks={this.state.hoursNeededForTasks}
+                  minsNeededForTasks={this.state.minsNeededForTasks}
+                ></Statistics>
+                : null
+              }
+            </div>
+          </div>
           <CircleBtn state={this.state.showNewTask} onClick={this.toggleShowNewTask.bind(this)}>+</CircleBtn>
           {this.state.showNewTask?
             <NewTask
@@ -293,7 +326,7 @@ class Dashboard extends Component{
               mins={this.state.mins}
             ></NewTask> : null}
         </div>
-        <div style={{display: 'block', margin: '0 10% 0 10%'}}>
+        {/*<div style={{display: 'block', margin: '0 10% 0 10%'}}>
           <div style={{float: 'left', textAlign: 'left', marginLeft: '15%'}}>
             <P>Total tasks: {this.state.tasks.length}</P>
             <P>Finished tasks: {this.state.tasks.length - this.state.unfinishedTasks.length}</P>
@@ -307,7 +340,7 @@ class Dashboard extends Component{
               {((this.state.hoursLeft*60 + this.state.minsLeft)-(this.state.hoursNeededForTasks*60 + this.state.minsNeededForTasks)) % 60}m
             </P>
           </div>
-        </div>
+        </div>*/}
         <br/>
         {/* footer with options */}
         <Footer/>

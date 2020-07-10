@@ -24,7 +24,7 @@ const P = styled.p`
 `
 
 const TaskInput = styled.input`
-  border-radius: 5px;
+  border-radius: 2px;
   border: none;
   text-align: left;
   width: 100%;
@@ -36,7 +36,7 @@ const TaskInput = styled.input`
 `
 
 const TimeInput = styled.input`
-  border-radius: 5px;
+  border-radius: 2px;
   border: none;
   text-align: left;
   width: 100%;
@@ -45,7 +45,7 @@ const TimeInput = styled.input`
 
 const Triangle = styled.div`
   margin-left: 50%;
-  margin-top: 1%;
+  margin-top: 0.5%;
   transform: translate(-50%, 0);
   width: 0;
   height: 0;
@@ -72,10 +72,10 @@ class NewTask extends Component{
               </div>
               <div style={{paddingBottom: '15%'}}>
                 <div style={{float: 'left', width: '45%'}}>
-                  <TimeInput id='hours' value={this.props.hours} onChange={this.props.handleNewTaskChange} placeholder="Hour(s)"/>
+                  <TimeInput id='hours' pattern="\d+" min="0" step="1" type='number' value={this.props.hours} onChange={this.props.handleNewTaskChange} placeholder="Hour(s)"/>
                 </div>
                 <div style={{float: 'right', width: '45%', marginRight: '-1%'}}>
-                  <TimeInput id='mins' value={this.props.mins} onChange={this.props.handleNewTaskChange} placeholder="Minute(s)"/>
+                  <TimeInput id='mins' pattern="\d+" min="0" step="1" type='number' value={this.props.mins} onChange={this.props.handleNewTaskChange} placeholder="Minute(s)"/>
                 </div>
               </div>
               <button onClick={this.props.submitTask} style={{display:'none'}}/>

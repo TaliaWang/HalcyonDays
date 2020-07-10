@@ -29,7 +29,7 @@ const UnfinishedTask = styled.div`
 class TaskBar extends Component{
   constructor(props){
     super(props);
-    this.barHeight = '25px';
+    this.barHeight = '40px';
     this.minsInDay = 60*24;
     this.state = {
       timePassedWidth: this.props.timePassedWidth,

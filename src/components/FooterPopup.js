@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 const TimeForm = styled.form`
   text-align: center;
+  margin-bottom: 2vh;
 `
 
 const Container = styled.div`
@@ -16,10 +17,16 @@ const Container = styled.div`
   margin-right: 35%;
   height: 15vh;
   border-radius: 10px;
+  padding: 1%;
 `
 
 const Input = styled.input`
+  position: relative;
+  border: none;
+  outline: none;
+  border-radius: 3px;
   padding: 1%;
+  width: 40%;
   float: ${props=> props.float};
 `
 
@@ -39,6 +46,7 @@ const P = styled.p`
 
 const P_Form = styled.p`
   color: white;
+  line-height: 1px;
 `
 
 class FooterPopup extends Component{
@@ -68,14 +76,19 @@ class FooterPopup extends Component{
         {
           {
             'clock':
-              <div>
+              <div style={{marginTop: '-4vh', display: 'block'}}>
                 <TimeForm>
                     <P_Form>Set Sleep Time</P_Form>
-                    <Input float='left' placeholder='Hour(s)'/>
-                    <Input float='right' placeholder='Minute(s)'/>
+                    <Input type='number' pattern="\d+" min="0" step="1" float='left' placeholder='Hour(s)'/>
+                    <Input type='number' pattern="\d+" min="0" step="1" float='right' placeholder='Minute(s)'/>
+                    <button type='submit' style={{display: 'none'}}/>
                 </TimeForm>
+                <br/><br/>
                 <TimeForm>
-                  <P_Form>Set Rest Time</P_Form>
+                  <P_Form>Set Relaxation Time</P_Form>
+                  <Input type='number' pattern="\d+" min="0" step="1" float='left' placeholder='Hour(s)'/>
+                  <Input type='number' pattern="\d+" min="0" step="1" float='right' placeholder='Minute(s)'/>
+                  <button type='submit' style={{display: 'none'}}/>
                 </TimeForm>
               </div>,
             'moreOptions':
