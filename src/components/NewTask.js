@@ -6,7 +6,7 @@ import styled from 'styled-components'
 const Button = styled.button`
 `
 const Container = styled.div`
-  margin: 0% 25% 1% 25%;
+  margin: 0% 35% 10% 35%;
   background-color: black;
   border-radius: 10px;
 `
@@ -14,7 +14,7 @@ const Container = styled.div`
 const Form = styled.form`
   margin: 0 15% 0 15%;
   text-align: center;
-  padding: 5% 0% 5% 0%;
+  padding-top: 5%;
 `
 
 const H3 = styled.h3`
@@ -24,27 +24,29 @@ const P = styled.p`
 `
 
 const TaskInput = styled.input`
-  border: 1px solid rgba(112,112,112,1);
-  text-align: center;
-  font-size: 130%;
+  border-radius: 5px;
+  border: none;
+  text-align: left;
   width: 100%;
-  font-family: ISOCT2;
-  font-weight: bold;
-  padding: 1% 0 0 0;
+  padding: 1%;
+
+  ::placeholder{
+    color: black;
+  }
 `
 
 const TimeInput = styled.input`
-  border: 1px solid rgba(112,112,112,1);
-  text-align: center;
-  font-size: 130%;
+  border-radius: 5px;
+  border: none;
+  text-align: left;
   width: 100%;
-  font-family: ISOCT2;
-  font-weight: bold;
-  padding: 1% 0 0 0;
+  padding: 1%;
 `
 
 const Triangle = styled.div`
-  margin: 1% 48% 0 49%;
+  margin-left: 50%;
+  margin-top: 1%;
+  transform: translate(-50%, 0);
   width: 0;
   height: 0;
   border-left: 15px solid transparent;
@@ -65,13 +67,15 @@ class NewTask extends Component{
         <Triangle/>
         <Container>
           <Form>
-              <div style={{display: 'block', backgroundColor: 'black', padding: '1%', margin: '0 0 5% 0'}}>
-                <TaskInput id='task' value={this.props.task} onChange={this.props.handleNewTaskChange} placeholder="ENTER TASK"/>
+              <div style={{display: 'block', backgroundColor: 'black', margin: '0 0 5% 0'}}>
+                <TaskInput id='task' value={this.props.task} onChange={this.props.handleNewTaskChange} placeholder="New Task"/>
               </div>
-              <div style={{display: 'block', padding: '1%'}}>
-                <div style={{display: 'flex'}}>
-                  <TimeInput id='hours' value={this.props.hours} onChange={this.props.handleNewTaskChange} placeholder="HOURS"/>
-                  <TimeInput id='mins' value={this.props.mins} onChange={this.props.handleNewTaskChange} placeholder="MINUTES"/>
+              <div style={{paddingBottom: '15%'}}>
+                <div style={{float: 'left', width: '45%'}}>
+                  <TimeInput id='hours' value={this.props.hours} onChange={this.props.handleNewTaskChange} placeholder="Hour(s)"/>
+                </div>
+                <div style={{float: 'right', width: '45%', marginRight: '-1%'}}>
+                  <TimeInput id='mins' value={this.props.mins} onChange={this.props.handleNewTaskChange} placeholder="Minute(s)"/>
                 </div>
               </div>
               <button onClick={this.props.submitTask} style={{display:'none'}}/>

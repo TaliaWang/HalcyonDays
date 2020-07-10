@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import firebase from '../firebase';
 import styled from 'styled-components'
+import Footer from "./Footer.js"
 import NewTask from "./NewTask.js"
 import TaskBar from "./TaskBar.js"
 import TasksMenu from "./TasksMenu.js"
@@ -182,10 +183,6 @@ class Dashboard extends Component{
     }
   }
 
-  logout(){
-    firebase.auth().signOut();
-  }
-
   submitTask(e){
     e.preventDefault();
     // prevent empty task
@@ -296,7 +293,6 @@ class Dashboard extends Component{
               mins={this.state.mins}
             ></NewTask> : null}
         </div>
-        <LogoutBtn onClick={this.logout.bind(this)}>Log Out</LogoutBtn>
         <div style={{display: 'block', margin: '0 10% 0 10%'}}>
           <div style={{float: 'left', textAlign: 'left', marginLeft: '15%'}}>
             <P>Total tasks: {this.state.tasks.length}</P>
@@ -312,6 +308,9 @@ class Dashboard extends Component{
             </P>
           </div>
         </div>
+        <br/>
+        {/* footer with options */}
+        <Footer/>
       </div>
     );
   }
