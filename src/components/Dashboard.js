@@ -7,8 +7,10 @@ import NewTask from "./NewTask.js"
 import Statistics from "./Statistics.js"
 import TaskBar from "./TaskBar.js"
 import TasksMenu from "./TasksMenu.js"
+import locked from "../images/locked.png"
 import statisticsImg from "../images/statistics.png"
 import tasksMenuImg from "../images/tasksMenu.png"
+import unlocked from "../images/unlocked.png"
 
 const CircleBtn = styled.button`
   background-color: ${(props) => props.state ? "black" : "white"};
@@ -44,10 +46,12 @@ const P = styled.p`
 `
 
 const TasksMenuBtn = styled.button`
-  background-color: white;
+  background-color: transparent;
   border: none;
   margin: -19% 1% 0 0;
   float: right;
+  z-index: 15;
+  position: relative;
 
   &:focus{
     outline: none;
@@ -65,6 +69,7 @@ class Dashboard extends Component{
       showNewTask: false,
       showStatistics: false,
       showTasksMenu: false,
+      tasksMenuLocked: false,
       tasks:[],
       timePassedInMins: 0,
       task: "",
@@ -253,6 +258,14 @@ class Dashboard extends Component{
     }));
   }
 
+  toggleShowTasksMenu(){
+    if (!this.state.tasksMenuLocked && this.state.showTasksMenu){
+      this.setState({
+        showTasksMenu: false
+      })
+    }
+  }
+
   toggleTaskChecked(e){
     var db = firebase.firestore();
     const userRef = db.collection('users').doc(this.props.user.email);
@@ -275,16 +288,38 @@ class Dashboard extends Component{
     });
   }
 
+  toggleTasksMenuLocked(){
+    var newLocked = !this.state.tasksMenuLocked;
+    this.setState({
+      tasksMenuLocked: newLocked
+    })
+  }
+
   render(){
     return(
       <div>
         {/* tasks menu side bar*/}
-        {this.state.showTasksMenu ? null :
-          <TasksMenuBtn onMouseOver={this.handleMouseOver.bind(this)}>
-            <TasksMenuImg width='80%' height= '80%' src={tasksMenuImg}/>
-          </TasksMenuBtn>}
+        {
+          this.state.showTasksMenu
+          ?
+            (
+              this.state.tasksMenuLocked
+              ?
+                <TasksMenuBtn onClick={this.toggleTasksMenuLocked.bind(this)}>
+                  <TasksMenuImg width='80%' height= '80%' src={locked}/>
+                </TasksMenuBtn>
+              :
+                <TasksMenuBtn onClick={this.toggleTasksMenuLocked.bind(this)}>
+                  <TasksMenuImg width='80%' height= '80%' src={unlocked}/>
+                </TasksMenuBtn>
+            )
+          :
+            <TasksMenuBtn onMouseOver={this.handleMouseOver.bind(this)}>
+              <TasksMenuImg width='80%' height= '80%' src={tasksMenuImg}/>
+            </TasksMenuBtn>
+        }
         <div style={{float: 'right', zIndex: '10', position: 'fixed', opacity: this.state.showTasksMenu?1:0, transition: 'opacity 0.3s'}}>
-          {this.state.showTasksMenu? <TasksMenu user={this.props.user} tasks={this.state.tasks} toggleTaskChecked={this.toggleTaskChecked.bind(this)}></TasksMenu> : null}
+          {this.state.showTasksMenu? <TasksMenu user={this.props.user} tasks={this.state.tasks} toggleShowTasksMenu={this.toggleShowTasksMenu.bind(this)} toggleTaskChecked={this.toggleTaskChecked.bind(this)}></TasksMenu> : null}
         </div>
 
         {/* main center components */}

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import firebase from '../firebase';
 import styled from 'styled-components'
 
-const Button = styled.button`
+const LockButton = styled.button`
 `
 const Checkbox = styled.input`
 `
@@ -14,6 +14,7 @@ const Container = styled.div`
   margin: -20% 0 0 80%;
   height: 100vh;
   position: fixed;
+  display: $
 `
 
 const Form = styled.form`
@@ -36,22 +37,23 @@ class TasksMenu extends Component{
   constructor(props){
     super(props);
     this.state = {
-      tasks: this.props.tasks
+      tasks: this.props.tasks,
     }
   }
 
   componentDidUpdate(prevProps){
     if (this.props.tasks != prevProps.tasks){
       this.setState({
-        tasks: this.props.tasks
+        tasks: this.props.tasks,
       })
     }
   }
 
   render(){
     return(
-      <div style={{textAlign: 'left'}}>
+      <div onMouseLeave={this.props.toggleShowTasksMenu} style={{textAlign: 'left'}}>
         <Container>
+          <br/><br/>
           {this.state.tasks.map((task, index) =>
             <div>
               <Checkbox id={`${task}${index}`} type='checkbox' checked={task.finished} onClick={this.props.toggleTaskChecked}/>
