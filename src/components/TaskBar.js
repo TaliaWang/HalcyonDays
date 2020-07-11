@@ -69,7 +69,6 @@ class TaskBar extends Component{
     this.barHeight = 50;
     this.barHeightUnit = 'px';
     this.minsInDay = 60*24;
-    this.allowRelaxationTimeChanges = true;
     this.state = {
       timePassedWidth: this.props.timePassedWidth,
       unfinishedTasks: this.props.unfinishedTasks,
@@ -120,46 +119,19 @@ class TaskBar extends Component{
     // total reference wakeup minutes w.r.t 12 AM
     var totalWakeupMinsRef = wakeupHourRef*60 + parseInt(this.state.wakeupMin);
 
-    // ensure relaxation time is before sleep time
-    var isValidRelaxationTime = true;
-    // no wrap around 12 AM
-    if (totalWakeupMinsRef >= totalSleepMinsRef){
-      // check that the relaxation time isn't between the two times
-      if (totalRelaxationMinsRef > totalSleepMinsRef && totalRelaxationMinsRef < totalWakeupMinsRef){
-        isValidRelaxationTime = false;
-        this.blockRelaxationTimeChangesAndResetRelaxationTime();
-      }
-    }
-    // wrap around 12 AM
-    else if ((totalRelaxationMinsRef > totalSleepMinsRef && totalRelaxationMinsRef <= this.minsInDay)
-              || (totalRelaxationMinsRef >= this.minsInDay && totalRelaxationMinsRef <= totalWakeupMinsRef)){
-        isValidRelaxationTime = false;
-        this.blockRelaxationTimeChangesAndResetRelaxationTime();
-    }
-
-
-    if (isValidRelaxationTime){
-        this.allowRelaxationTimeChanges = true;
-        var minsDifference;
-        if (totalSleepMinsRef >= totalRelaxationMinsRef){
-          minsDifference = totalSleepMinsRef - totalRelaxationMinsRef;
-        }
-        else{
-          // calculate absolute difference from both times to 12 AM, then add them
-          minsDifference = totalSleepMinsRef + (this.minsInDay - totalRelaxationMinsRef);
-        }
-        var tempRelaxationWidth = (minsDifference/this.minsInDay) * 100;
-
-        // pass total minutes of relaxation time up to dashboard statistics
-        this.props.setRelaxationTime(minsDifference);
-
-        this.setState({
-          relaxationWidth: tempRelaxationWidth
-        });
+    var minsDifference;
+    if (totalSleepMinsRef >= totalRelaxationMinsRef){
+      minsDifference = totalSleepMinsRef - totalRelaxationMinsRef;
     }
     else{
-      alert(`Please set the relaxation time before ${this.state.sleepHour}:${this.state.sleepMin} ${this.state.sleepClockMode} (the time you sleep)!`);
+      // calculate absolute difference from both times to 12 AM, then add them
+      minsDifference = totalSleepMinsRef + (this.minsInDay - totalRelaxationMinsRef);
     }
+    var tempRelaxationWidth = (minsDifference/this.minsInDay) * 100;
+
+    this.setState({
+      relaxationWidth: tempRelaxationWidth
+    });
   }
 
   // width of sleep section
@@ -226,17 +198,14 @@ class TaskBar extends Component{
     if (this.props.relaxationHour != prevProps.relaxationHour
         || this.props.relaxationMin != prevProps.relaxationMin
         || this.props.relaxationClockMode != prevProps.relaxationClockMode){
-      // only change current relaxation time if it's valid
-      if (this.allowRelaxationTimeChanges){
-        this.setState({
-          relaxationHour: this.props.relaxationHour,
-          relaxationMin: this.props.relaxationMin,
-          relaxationClockMode: this.props.relaxationClockMode
-        }, ()=>{
-            this.calculateRelaxationWidth();
-            this.calculateSleepWidth();
-        })
-      }
+      this.setState({
+        relaxationHour: this.props.relaxationHour,
+        relaxationMin: this.props.relaxationMin,
+        relaxationClockMode: this.props.relaxationClockMode
+      }, ()=>{
+          this.calculateRelaxationWidth();
+          this.calculateSleepWidth();
+      });
     }
     // change sleep state and recalculate sleep width if sleep props change
     if (this.props.sleepHour != prevProps.sleepHour
@@ -270,17 +239,6 @@ class TaskBar extends Component{
     var widthPercent = totalMins/this.minsInDay*100;
     //alert(widthPercent);
     return widthPercent;
-  }
-
-  blockRelaxationTimeChangesAndResetRelaxationTime(){
-    this.allowRelaxationTimeChanges = false;
-      var db = firebase.firestore();
-      db.collection('users').doc(this.props.user.email).update({
-        relaxationHour: this.state.relaxationHour,
-        relaxationMin: this.state.relaxationMin,
-        relaxationClockMode: this.state.relaxationClockMode
-      });
-
   }
 
   render(){

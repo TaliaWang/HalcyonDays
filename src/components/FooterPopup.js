@@ -166,23 +166,93 @@ class FooterPopup extends Component{
   submitRelaxationTime(e){
     e.preventDefault();
     if (this.state.relaxationHour != "" && this.state.relaxationMin != ""){
-      var db = firebase.firestore();
 
-      var newHour = parseInt(this.state.relaxationHour);
-      var newMin = parseInt(this.state.relaxationMin);
-      newMin = newMin < 10? '0' + newMin : '' + newMin;
+      var sleepHourRef = this.props.sleepHour;
+      if (this.props.sleepClockMode == 'PM' && this.props.sleepHour != 12){
+        sleepHourRef = sleepHourRef + 12;
+      }
+      else if (this.props.sleepClockMode == 'AM' && this.props.sleepHour == 12){
+        sleepHourRef = 0;
+      }
+      // total reference sleep minutes w.r.t 12 AM
+      var totalSleepMinsRef = sleepHourRef*60 + parseInt(this.props.sleepMin);
+
+      var relaxationHourRef = this.state.relaxationHour;
+      if (this.state.relaxationClockMode == 'PM' && this.state.relaxationHour != 12){
+        relaxationHourRef = relaxationHourRef + 12;
+      }
+      else if (this.state.relaxationClockMode == 'AM' && this.state.relaxationHour == 12){
+        relaxationHourRef = 0;
+      }
+      // total reference relaxation minutes w.r.t 12 AM
+      var totalRelaxationMinsRef = relaxationHourRef*60 + parseInt(this.state.relaxationMin);
+
+      var wakeupHourRef = this.props.wakeupHour;
+      if (this.props.wakeupClockMode == 'PM' && this.props.wakeupHour != 12){
+        wakeupHourRef = wakeupHourRef + 12;
+      }
+      else if (this.props.wakeupClockMode == 'AM' && this.props.wakeupHour == 12){
+        wakeupHourRef = 0;
+      }
+      // total reference wakeup minutes w.r.t 12 AM
+      var totalWakeupMinsRef = wakeupHourRef*60 + parseInt(this.props.wakeupMin);
+
+
+      // ensure relaxation time is before sleep time
+      var isValidRelaxationTime = true;
+      // no wrap around 12 AM
+      if (totalWakeupMinsRef >= totalSleepMinsRef){
+        // check that the relaxation time isn't between the two times
+        if (totalRelaxationMinsRef > totalSleepMinsRef && totalRelaxationMinsRef < totalWakeupMinsRef){
+          isValidRelaxationTime = false;
+        }
+      }
+      // wrap around 12 AM
+      else if ((totalRelaxationMinsRef > totalSleepMinsRef && totalRelaxationMinsRef <= this.minsInDay)
+                || (totalRelaxationMinsRef >= this.minsInDay && totalRelaxationMinsRef <= totalWakeupMinsRef)){
+          isValidRelaxationTime = false;
+      }
+
+
+      if (isValidRelaxationTime){
+          var minsDifference;
+          if (totalSleepMinsRef >= totalRelaxationMinsRef){
+            minsDifference = totalSleepMinsRef - totalRelaxationMinsRef;
+          }
+          else{
+            // calculate absolute difference from both times to 12 AM, then add them
+            minsDifference = totalSleepMinsRef + (this.minsInDay - totalRelaxationMinsRef);
+          }
+          var tempRelaxationWidth = (minsDifference/this.minsInDay) * 100;
+
+          // pass total minutes of relaxation time up to dashboard statistics
+          this.props.setRelaxationTime(minsDifference);
+
+          // change relaxation hour and min in database
+          var db = firebase.firestore();
+          var newHour = parseInt(this.state.relaxationHour);
+          var newMin = parseInt(this.state.relaxationMin);
+          newMin = newMin < 10? '0' + newMin : '' + newMin;
+
+          db.collection("users").doc(this.props.user.email)
+          .update({
+            relaxationHour: newHour,
+            relaxationMin: newMin,
+          }).then(result=>{
+            this.setState({
+              relaxationHour: "",
+              relaxationMin: "",
+            })
+          });
+      }
+      else{
+        alert(`Please set the relaxation time before ${this.props.sleepHour}:${this.props.sleepMin} ${this.props.sleepClockMode} (the time you sleep)!`);
+        this.setState({
+          relaxationHour: "",
+          relaxationMin: "",
+        });
+      }
     }
-
-    db.collection("users").doc(this.props.user.email)
-    .update({
-      relaxationHour: newHour,
-      relaxationMin: newMin,
-    }).then(result=>{
-      this.setState({
-        relaxationHour: "",
-        relaxationMin: "",
-      })
-    });
   }
 
   submitWakeupTime(e){

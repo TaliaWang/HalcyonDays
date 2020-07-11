@@ -417,7 +417,6 @@ class Dashboard extends Component{
           <div>
             <TaskBar
               setSleepTime={this.setSleepTime.bind(this)}
-              setRelaxationTime={this.setRelaxationTime.bind(this)}
               user={this.props.user}
               unfinishedTasks={this.state.unfinishedTasks}
               type='mainBar'
@@ -485,9 +484,16 @@ class Dashboard extends Component{
         <br/>
         {/* footer with options */}
         <Footer
+          setRelaxationTime={this.setRelaxationTime.bind(this)}
           user={this.props.user}
-          relaxationClockMode={this.state.relaxationClockMode}
+          sleepHour={this.state.sleepHour}
+          sleepMin={this.state.sleepMin}
           sleepClockMode={this.state.sleepClockMode}
+          relaxationHour={this.state.relaxationHour}
+          relaxationMin={this.state.relaxationMin}
+          relaxationClockMode={this.state.relaxationClockMode}
+          wakeupHour={this.state.wakeupHour}
+          wakeupMin={this.state.wakeupMin}
           wakeupClockMode={this.state.wakeupClockMode}
           calculateTimePassedWidth={this.calculateTimePassedWidth.bind(this)}
         ></Footer>
