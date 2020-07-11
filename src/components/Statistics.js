@@ -34,10 +34,10 @@ class Statistics extends Component{
     this.state = {
       numTasks: this.props.numTasks,
       numFinishedTasks: this.props.numFinishedTasks,
-      relaxationHours: this.props.relaxationHours,
-      relaxationMins: this.props.relaxationMins,
-      sleepHours: this.props.sleepHours,
-      sleepMins: this.props.sleepMins,
+      relaxationTimeHours: this.props.relaxationTimeHours,
+      relaxationTimeMins: this.props.relaxationTimeMins,
+      sleepTimeHours: this.props.sleepTimeHours,
+      sleepTimeMins: this.props.sleepTimeMins,
       hoursNeededForTasks: this.props.hoursNeededForTasks,
       minsNeededForTasks: this.props.minsNeededForTasks
     }
@@ -49,8 +49,8 @@ class Statistics extends Component{
         <P><H4>{this.state.numFinishedTasks}/{this.state.numTasks}</H4> tasks completed</P>
         <P><H4>{this.state.numTasks-this.state.numFinishedTasks}</H4> task(s) incomplete</P>
         <P><H4>{this.state.hoursNeededForTasks}</H4>h <H4>{this.state.minsNeededForTasks}</H4>m needed for incomplete tasks</P>
-        <P>Relaxation time = <H4>{this.state.relaxationHours}</H4>h <H4>{this.state.relaxationMins}</H4>m</P>
-        <P>Sleep time = <H4>{this.state.sleepHours}</H4>h <H4>{this.state.sleepMins}</H4>m</P>
+        <P>Relaxation time = <H4>{this.state.relaxationTimeHours}</H4>h <H4>{this.state.relaxationTimeMins}</H4>m</P>
+        <P>Sleep time = <H4>{this.state.sleepTimeHours}</H4>h <H4>{this.state.sleepTimeMins}</H4>m</P>
       </Container>
     );
   }

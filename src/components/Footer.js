@@ -32,7 +32,7 @@ const IconsContainer = styled.div`
   bottom: 2vh;
   position: fixed;
   left: 50%;
-  transform: translate(-50%, 0);
+  transform: translate(-52%, 0);
 `
 
 class Footer extends Component{

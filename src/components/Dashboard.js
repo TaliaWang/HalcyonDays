@@ -21,6 +21,7 @@ const CircleBtn = styled.button`
   font-size: 23px;
   padding: 0 7px 0 7px;
   margin: 3% 0 0 0;
+  transform: translate(50%, 0);
 
   &:hover{
     background-color: black;
@@ -89,11 +90,13 @@ class Dashboard extends Component{
       sleepHour: 11,
       sleepMin: '00',
       sleepClockMode: 'PM',
-      relaxationHour: 0,
+      relaxationHour: 6,
       relaxationMin: '00',
       relaxationClockMode: 'PM',
-      sleepHours: 0,
-      sleepMins: 0
+      relaxationTimeHours: 0,
+      relaxationTimeMins: 0,
+      sleepTimeHours: 0,
+      sleepTimeMins: 0
     }
   }
 
@@ -266,6 +269,24 @@ class Dashboard extends Component{
     });
   }
 
+  setSleepTime(timeInMins){
+    var sleepHours = parseInt(timeInMins / 60);
+    var sleepMins = timeInMins % 60;
+    this.setState({
+      sleepTimeHours: sleepHours,
+      sleepTimeMins: sleepMins
+    })
+  }
+
+  setRelaxationTime(timeInMins){
+    var sleepHours = parseInt(timeInMins / 60);
+    var sleepMins = timeInMins % 60;
+    this.setState({
+      relaxationTimeHours: sleepHours,
+      relaxationTimeMins: sleepMins
+    })
+  }
+
   showStatistics(){
     this.setState({
       showStatistics: true
@@ -395,6 +416,9 @@ class Dashboard extends Component{
           {this.props.user ? <P>{this.props.user.email}</P> : null}*/}
           <div>
             <TaskBar
+              setSleepTime={this.setSleepTime.bind(this)}
+              setRelaxationTime={this.setRelaxationTime.bind(this)}
+              user={this.props.user}
               unfinishedTasks={this.state.unfinishedTasks}
               type='mainBar'
               timePassedWidth={this.state.timePassedWidth}
@@ -409,21 +433,21 @@ class Dashboard extends Component{
               wakeupClockMode={this.state.wakeupClockMode}
             ></TaskBar>
             {/* start and end times of the day */}
-            <div style={{margin: '0 25% 0 25%'}}>
+            <div style={{margin: '2% 25% 0 25%'}}>
                <P float='left'>{this.state.wakeupHour}:{this.state.wakeupMin} {this.state.wakeupClockMode} today</P>
                <P float='right'>{this.state.wakeupHour}:{this.state.wakeupMin} {this.state.wakeupClockMode} tomorrow</P>
             </div>
-            <div style={{marginTop: '-38px'}}>
+            <div style={{marginTop: '-65px'}}>
               <Img onMouseOver={this.showStatistics.bind(this)} onMouseLeave={this.hideStatistics.bind(this)} src={statisticsImg}/>
               {this.state.showStatistics
                 ?
                 <Statistics
                   numTasks={this.state.tasks.length}
                   numFinishedTasks={this.state.tasks.length - this.state.unfinishedTasks.length}
-                  relaxationHours={this.state.relaxationHours}
-                  relaxationMins={this.state.relaxationMins}
-                  sleepHours={this.state.sleepHours}
-                  sleepMins={this.state.sleepMins}
+                  relaxationTimeHours={this.state.relaxationTimeHours}
+                  relaxationTimeMins={this.state.relaxationTimeMins}
+                  sleepTimeHours={this.state.sleepTimeHours}
+                  sleepTimeMins={this.state.sleepTimeMins}
                   hoursNeededForTasks={this.state.hoursNeededForTasks}
                   minsNeededForTasks={this.state.minsNeededForTasks}
                 ></Statistics>

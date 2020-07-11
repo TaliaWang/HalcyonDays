@@ -28,6 +28,14 @@ const TasksContainer = styled.div`
   width: 50%;
 `
 
+const RelaxationTime = styled.div`
+  height: 40px;
+  text-Align: left;
+  width: ${props=>props.width}%;
+  float: right;
+  background-color: #FFFACD;
+`
+
 const SleepTime = styled.div`
   height: 40px;
   text-Align: left;
@@ -61,20 +69,101 @@ class TaskBar extends Component{
     this.barHeight = 50;
     this.barHeightUnit = 'px';
     this.minsInDay = 60*24;
+    this.allowRelaxationTimeChanges = true;
     this.state = {
       timePassedWidth: this.props.timePassedWidth,
       unfinishedTasks: this.props.unfinishedTasks,
       sleepHour: this.props.sleepHour,
       sleepMin: this.props.sleepMin,
       sleepClockMode: this.props.sleepClockMode,
+      relaxationHour: this.props.relaxationHour,
+      relaxationMin: this.props.relaxationMin,
+      relaxationClockMode: this.props.relaxationClockMode,
       wakeupHour: this.props.wakeupHour,
       wakeupMin: this.props.wakeupMin,
       wakeupClockMode: this.props.wakeupClockMode,
+      relaxationWidth: 0,
       sleepWidth: 0,
     }
   }
 
+  // width of relaxation section
+  // depends on sleep time
+  calculateRelaxationWidth(){
+    var sleepHourRef = this.state.sleepHour;
+    if (this.state.sleepClockMode == 'PM' && this.state.sleepHour != 12){
+      sleepHourRef = sleepHourRef + 12;
+    }
+    else if (this.state.sleepClockMode == 'AM' && this.state.sleepHour == 12){
+      sleepHourRef = 0;
+    }
+    // total reference sleep minutes w.r.t 12 AM
+    var totalSleepMinsRef = sleepHourRef*60 + parseInt(this.state.sleepMin);
+
+    var relaxationHourRef = this.state.relaxationHour;
+    if (this.state.relaxationClockMode == 'PM' && this.state.relaxationHour != 12){
+      relaxationHourRef = relaxationHourRef + 12;
+    }
+    else if (this.state.relaxationClockMode == 'AM' && this.state.relaxationHour == 12){
+      relaxationHourRef = 0;
+    }
+    // total reference relaxation minutes w.r.t 12 AM
+    var totalRelaxationMinsRef = relaxationHourRef*60 + parseInt(this.state.relaxationMin);
+
+    var wakeupHourRef = this.state.wakeupHour;
+    if (this.state.wakeupClockMode == 'PM' && this.state.wakeupHour != 12){
+      wakeupHourRef = wakeupHourRef + 12;
+    }
+    else if (this.state.wakeupClockMode == 'AM' && this.state.wakeupHour == 12){
+      wakeupHourRef = 0;
+    }
+    // total reference wakeup minutes w.r.t 12 AM
+    var totalWakeupMinsRef = wakeupHourRef*60 + parseInt(this.state.wakeupMin);
+
+    // ensure relaxation time is before sleep time
+    var isValidRelaxationTime = true;
+    // no wrap around 12 AM
+    if (totalWakeupMinsRef >= totalSleepMinsRef){
+      // check that the relaxation time isn't between the two times
+      if (totalRelaxationMinsRef > totalSleepMinsRef && totalRelaxationMinsRef < totalWakeupMinsRef){
+        isValidRelaxationTime = false;
+        this.blockRelaxationTimeChangesAndResetRelaxationTime();
+      }
+    }
+    // wrap around 12 AM
+    else if ((totalRelaxationMinsRef > totalSleepMinsRef && totalRelaxationMinsRef <= this.minsInDay)
+              || (totalRelaxationMinsRef >= this.minsInDay && totalRelaxationMinsRef <= totalWakeupMinsRef)){
+        isValidRelaxationTime = false;
+        this.blockRelaxationTimeChangesAndResetRelaxationTime();
+    }
+
+
+    if (isValidRelaxationTime){
+        this.allowRelaxationTimeChanges = true;
+        var minsDifference;
+        if (totalSleepMinsRef >= totalRelaxationMinsRef){
+          minsDifference = totalSleepMinsRef - totalRelaxationMinsRef;
+        }
+        else{
+          // calculate absolute difference from both times to 12 AM, then add them
+          minsDifference = totalSleepMinsRef + (this.minsInDay - totalRelaxationMinsRef);
+        }
+        var tempRelaxationWidth = (minsDifference/this.minsInDay) * 100;
+
+        // pass total minutes of relaxation time up to dashboard statistics
+        this.props.setRelaxationTime(minsDifference);
+
+        this.setState({
+          relaxationWidth: tempRelaxationWidth
+        });
+    }
+    else{
+      alert(`Please set the relaxation time before ${this.state.sleepHour}:${this.state.sleepMin} ${this.state.sleepClockMode} (the time you sleep)!`);
+    }
+  }
+
   // width of sleep section
+  // depends on wake up time
   calculateSleepWidth(){
     var wakeupHourRef = this.state.wakeupHour;
     if (this.state.wakeupClockMode == 'PM' && this.state.wakeupHour != 12){
@@ -83,7 +172,7 @@ class TaskBar extends Component{
     else if (this.state.wakeupClockMode == 'AM' && this.state.wakeupHour == 12){
       wakeupHourRef = 0;
     }
-    // total reference minutes w.r.t 12 AM
+    // total reference wakeup minutes w.r.t 12 AM
     var totalWakeupMinsRef = wakeupHourRef*60 + parseInt(this.state.wakeupMin);
 
     var sleepHourRef = this.state.sleepHour;
@@ -106,14 +195,17 @@ class TaskBar extends Component{
     }
     var tempSleepWidth = (minsDifference/this.minsInDay) * 100;
 
+    // pass total minutes of sleep up to dashboard statistics
+    this.props.setSleepTime(minsDifference);
+
     this.setState({
       sleepWidth: tempSleepWidth
-    })
-
+    });
 
   }
 
   componentDidMount(){
+    this.calculateRelaxationWidth();
     this.calculateSleepWidth();
   }
 
@@ -130,6 +222,35 @@ class TaskBar extends Component{
         })
       }
     }
+    // change relaxation state and recalculate relaxation and sleep width if sleep props change
+    if (this.props.relaxationHour != prevProps.relaxationHour
+        || this.props.relaxationMin != prevProps.relaxationMin
+        || this.props.relaxationClockMode != prevProps.relaxationClockMode){
+      // only change current relaxation time if it's valid
+      if (this.allowRelaxationTimeChanges){
+        this.setState({
+          relaxationHour: this.props.relaxationHour,
+          relaxationMin: this.props.relaxationMin,
+          relaxationClockMode: this.props.relaxationClockMode
+        }, ()=>{
+            this.calculateRelaxationWidth();
+            this.calculateSleepWidth();
+        })
+      }
+    }
+    // change sleep state and recalculate sleep width if sleep props change
+    if (this.props.sleepHour != prevProps.sleepHour
+        || this.props.sleepMin != prevProps.sleepMin
+        || this.props.sleepClockMode != prevProps.sleepClockMode){
+      this.setState({
+        sleepHour: this.props.sleepHour,
+        sleepMin: this.props.sleepMin,
+        sleepClockMode: this.props.sleepClockMode
+      }, ()=>{
+          this.calculateRelaxationWidth();
+          this.calculateSleepWidth();
+      })
+    }
     // change wakeup state and recalculate sleep width if wakeup props change
     if (this.props.wakeupHour != prevProps.wakeupHour
         || this.props.wakeupMin != prevProps.wakeupMin
@@ -142,18 +263,6 @@ class TaskBar extends Component{
           this.calculateSleepWidth();
       })
     }
-    // change sleep state and recalculate sleep width if sleep props change
-    if (this.props.sleepHour != prevProps.sleepHour
-        || this.props.sleepMin != prevProps.sleepMin
-        || this.props.sleepClockMode != prevProps.sleepClockMode){
-      this.setState({
-        sleepHour: this.props.sleepHour,
-        sleepMin: this.props.sleepMin,
-        sleepClockMode: this.props.sleepClockMode
-      }, ()=>{
-          this.calculateSleepWidth();
-      })
-    }
   }
 
   getTaskWidth(task){
@@ -161,6 +270,17 @@ class TaskBar extends Component{
     var widthPercent = totalMins/this.minsInDay*100;
     //alert(widthPercent);
     return widthPercent;
+  }
+
+  blockRelaxationTimeChangesAndResetRelaxationTime(){
+    this.allowRelaxationTimeChanges = false;
+      var db = firebase.firestore();
+      db.collection('users').doc(this.props.user.email).update({
+        relaxationHour: this.state.relaxationHour,
+        relaxationMin: this.state.relaxationMin,
+        relaxationClockMode: this.state.relaxationClockMode
+      });
+
   }
 
   render(){
@@ -176,10 +296,15 @@ class TaskBar extends Component{
       <TasksContainer height={this.barheight}>
         <div style={{width: '100%'}}>
           <SleepTime width={this.state.sleepWidth}>
-            <div style={{marginTop: '-25px'}}>
+            <div style={{marginTop: '-30px', minWidth: '75px'}}>
               <Button>{this.state.sleepHour}:{this.state.sleepMin} {this.state.sleepClockMode}</Button>
             </div>
           </SleepTime>
+          <RelaxationTime width={this.state.relaxationWidth}>
+            <div style={{marginTop: '45px', minWidth: '75px'}}>
+              <Button>{this.state.relaxationHour}:{this.state.relaxationMin} {this.state.relaxationClockMode}</Button>
+            </div>
+          </RelaxationTime>
         </div>
       </TasksContainer>
       </div>
