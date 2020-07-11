@@ -72,6 +72,7 @@ class Footer extends Component{
               user={this.props.user}
               popupOption={this.state.popupOption}
               wakeupClockMode={this.props.wakeupClockMode}
+              sleepClockMode={this.props.sleepClockMode}
             ></FooterPopup>
           : null
         }

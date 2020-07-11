@@ -85,8 +85,12 @@ class Dashboard extends Component{
       wakeupHour: 8,
       wakeupMin: '00',
       wakeupClockMode: 'AM',
-      relaxationHours: 0,
-      relaxationMins: 0,
+      sleepHour: 11,
+      sleepMin: '00',
+      sleepClockMode: 'PM',
+      relaxationHour: 0,
+      relaxationMin: '00',
+      relaxationClockMode: 'PM',
       sleepHours: 0,
       sleepMins: 0
     }
@@ -106,7 +110,13 @@ class Dashboard extends Component{
               email: this.props.user.email,
               wakeupHour: this.state.wakeupHour,
               wakeupMin: this.state.wakeupMin,
-              wakeupClockMode: this.state.wakeupClockMode
+              wakeupClockMode: this.state.wakeupClockMode,
+              relaxationHour: this.state.relaxationHour,
+              relaxationMin: this.state.relaxationMin,
+              relaxationClockMode: this.state.relaxationClockMode,
+              sleepHour: this.state.sleepHour,
+              sleepMin: this.state.sleepMin,
+              sleepClockMode: this.state.sleepClockMode,
           })
           .then(function(docRef) {
               alert("Sign up successful!");
@@ -124,7 +134,10 @@ class Dashboard extends Component{
           this.setState({
             wakeupHour: userDoc.data().wakeupHour,
             wakeupMin: userDoc.data().wakeupMin,
-            wakeupClockMode: userDoc.data().wakeupClockMode
+            wakeupClockMode: userDoc.data().wakeupClockMode,
+            sleepHour: userDoc.data().sleepHour,
+            sleepMin: userDoc.data().sleepMin,
+            sleepClockMode: userDoc.data().sleepClockMode,
           })
 
           // listen for changes in this user's tasks
@@ -345,6 +358,9 @@ class Dashboard extends Component{
               unfinishedTasks={this.state.unfinishedTasks}
               type='mainBar'
               timePassedWidth={this.state.timePassedWidth}
+              sleepHour={this.state.sleepHour}
+              sleepMin={this.state.sleepMin}
+              sleepClockMode={this.state.sleepClockMode}
             ></TaskBar>
             {/* start and end times of the day */}
             <div style={{margin: '0 25% 0 25%'}}>
@@ -401,6 +417,7 @@ class Dashboard extends Component{
         <Footer
           user={this.props.user}
           wakeupClockMode={this.state.wakeupClockMode}
+          sleepClockMode={this.state.sleepClockMode}
         ></Footer>
       </div>
     );

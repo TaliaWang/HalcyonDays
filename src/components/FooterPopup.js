@@ -130,7 +130,22 @@ class FooterPopup extends Component{
         wakeupClockMode: "AM"
       });
     }
+  }
 
+  toggleSleepClockMode(){
+    var db = firebase.firestore();
+    if (this.props.sleepClockMode == "AM"){
+      db.collection("users").doc(this.props.user.email)
+      .update({
+        sleepClockMode: "PM"
+      });
+    }
+    else if (this.props.sleepClockMode == "PM"){
+      db.collection("users").doc(this.props.user.email)
+      .update({
+        sleepClockMode: "AM"
+      });
+    }
   }
 
   render(){
@@ -145,8 +160,8 @@ class FooterPopup extends Component{
                 <div style={{marginTop: '4vh'}}>
                   <TimeForm onSubmit={this.submitWakeupTime.bind(this)}>
                       <P_Form>Set Wake-up Time</P_Form>
-                      <Input id='wakeupHour' value={this.state.wakeupHour} onChange={this.handleWakeupTimeChange.bind(this)} type='number' pattern="\d+" min="0" max='12' step="1" float='left' placeholder='Hour'/>
-                      <Input id='wakeupMin' value={this.state.wakeupMin} onChange={this.handleWakeupTimeChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute'/>
+                      <Input id='wakeupHour' value={this.state.wakeupHour} onChange={this.handleWakeupTimeChange.bind(this)} type='number' pattern="\d+" min="0" max='12' step="1" float='left' placeholder='Hour' required/>
+                      <Input id='wakeupMin' value={this.state.wakeupMin} onChange={this.handleWakeupTimeChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
                       <button type='submit' style={{display: 'none'}}/>
                   </TimeForm>
                   <div style={{float: 'right', padding: '0.5%'}}>
@@ -171,12 +186,12 @@ class FooterPopup extends Component{
                 <div style={{marginTop: '2vh'}}>
                   <TimeForm>
                       <P_Form>Set Sleep Time</P_Form>
-                      <Input type='number' pattern="\d+" min="0" step="1" float='left' placeholder='Hour'/>
-                      <Input type='number' pattern="\d+" min="0" step="1" float='right' placeholder='Minute'/>
+                      <Input type='number' type='number' pattern="\d+" min="0" max='12' step="1" float='left' placeholder='Hour' required/>
+                      <Input type='number' type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
                       <button type='submit' style={{display: 'none'}}/>
                   </TimeForm>
                   <div style={{float: 'right', padding: '0.5%'}}>
-                    <ClockModeBtn >PM</ClockModeBtn>
+                    <ClockModeBtn onClick={this.toggleSleepClockMode.bind(this)}>{this.props.sleepClockMode}</ClockModeBtn>
                   </div>
                 </div>
 
