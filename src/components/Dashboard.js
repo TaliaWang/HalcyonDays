@@ -74,6 +74,7 @@ class Dashboard extends Component{
       tasksMenuLocked: false,
       tasks:[],
       timePassedInMins: 0,
+      timePassedWidth: 0,
       task: "",
       hours: "", // for new task
       mins: "", // for new task
@@ -125,7 +126,24 @@ class Dashboard extends Component{
               alert("Error adding new user to database.");
           });
         }
-        // else just log in and do nothing
+        // get initial user data once
+        userRef.get().then(userDoc=>{
+          this.setState({
+            wakeupHour: userDoc.data().wakeupHour,
+            wakeupMin: userDoc.data().wakeupMin,
+            wakeupClockMode: userDoc.data().wakeupClockMode,
+            sleepHour: userDoc.data().sleepHour,
+            sleepMin: userDoc.data().sleepMin,
+            sleepClockMode: userDoc.data().sleepClockMode,
+          });
+        }).then(result=>{
+            this.calculateTimePassedWidth();
+
+            // update time left every minute
+            setInterval(result=>{
+              this.calculateTimePassedWidth();
+            }, 60000)
+        });
       });
 
       // listen for changes in this user (ie. if they add subcollection tasks)
@@ -138,7 +156,7 @@ class Dashboard extends Component{
             sleepHour: userDoc.data().sleepHour,
             sleepMin: userDoc.data().sleepMin,
             sleepClockMode: userDoc.data().sleepClockMode,
-          })
+          });
 
           // listen for changes in this user's tasks
           userRef
@@ -166,37 +184,50 @@ class Dashboard extends Component{
             })
           });
       });
-
-      // update current time passed and left
-      var d = new Date();
-      var timePassed = d.getHours()*60 + d.getMinutes();
-      var timePassedWidth = ((timePassed) / this.minsInDay) * 100;
-      var timeLeft = this.minsInDay - timePassed;
-      var hoursLeft = parseInt(timeLeft / 60);
-      var minsLeft = timeLeft % 60;
-      this.setState({
-        timePassedWidth: timePassedWidth,
-        hoursLeft: hoursLeft,
-        minsLeft: minsLeft
-      });
-
-      // update time left every minute
-      setInterval(result=>{
-        // calculate time passed in day in minutes
-        var d = new Date();
-        var timePassed = d.getHours()*60 + d.getMinutes();
-        var timePassedWidth = ((timePassed) / this.minsInDay) * 100;
-        var timeLeft = this.minsInDay - timePassed;
-        var hoursLeft = parseInt(timeLeft / 60);
-        var minsLeft = timeLeft % 60;
-
-        this.setState({
-          timePassedWidth: timePassedWidth,
-          hoursLeft: hoursLeft,
-          minsLeft: minsLeft
-        })
-      }, 60000)
     }
+  }
+
+  calculateTimePassedWidth(){
+    // update current time passed and left
+    var d = new Date();
+    var timePassed = d.getHours()*60 + d.getMinutes();
+    var timePassedWidth = ((timePassed) / this.minsInDay) * 100;
+    var timeLeft = this.minsInDay - timePassed;
+    var hoursLeft = parseInt(timeLeft / 60);
+    var minsLeft = timeLeft % 60;
+
+    // adjust timePassedWidth depending on when user starts the day
+    var adjustmentHour = this.state.wakeupHour;
+
+    // adjust for 12 am which is really 0 o'Clock
+    if (this.state.wakeupHour == 12 && this.state.wakeupClockMode == 'AM'){
+      adjustmentHour = 0;
+    }
+
+    var adjustmentMin = parseInt(this.state.wakeupMin);
+
+    // adjust for PM unless the time is 12 pm
+    if (this.state.wakeupClockMode == 'PM' && this.state.wakeupHour != 12){
+      adjustmentHour = adjustmentHour + 12;
+    }
+
+    var totalAdjustmentMins = adjustmentHour*60 + adjustmentMin;
+
+    var adjustmentWidth = (totalAdjustmentMins / this.minsInDay) * 100;
+
+    // shift marker
+    var adjustedTimePassedWidth = timePassedWidth - adjustmentWidth;
+
+    // wrap around task bar if needed
+    if (adjustedTimePassedWidth < 0){
+      adjustedTimePassedWidth = 100 + adjustedTimePassedWidth;
+    }
+
+    this.setState({
+      timePassedWidth: adjustedTimePassedWidth,
+      hoursLeft: hoursLeft,
+      minsLeft: minsLeft
+    });
   }
 
   handleMouseOver(){
@@ -297,7 +328,10 @@ class Dashboard extends Component{
     var db = firebase.firestore();
     const userRef = db.collection('users').doc(this.props.user.email);
 
-    var curTask = e.target.parentElement.textContent;
+    // get the task name
+    // the task name location is different depending on whether the button is checked or unchecked because of the image
+    var curTask = (e.target.nodeName == 'BUTTON' ? e.target.parentElement.textContent : e.target.parentElement.parentElement.textContent)
+
     //get current task finished state of this task in firestore
     var newFinished;
     userRef.collection('tasks').doc(curTask.substring(0, curTask.indexOf(' (')))
@@ -418,6 +452,7 @@ class Dashboard extends Component{
           user={this.props.user}
           wakeupClockMode={this.state.wakeupClockMode}
           sleepClockMode={this.state.sleepClockMode}
+          calculateTimePassedWidth={this.calculateTimePassedWidth.bind(this)}
         ></Footer>
       </div>
     );

@@ -14,7 +14,7 @@ const Container = styled.div`
   margin-bottom: 0px;
   bottom: 0;
   width: 100%;
-  height: 40vh;
+  height: 10vh;
 `
 
 const Img = styled.img`
@@ -73,6 +73,7 @@ class Footer extends Component{
               popupOption={this.state.popupOption}
               wakeupClockMode={this.props.wakeupClockMode}
               sleepClockMode={this.props.sleepClockMode}
+              calculateTimePassedWidth={this.props.calculateTimePassedWidth.bind(this)}
             ></FooterPopup>
           : null
         }

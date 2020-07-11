@@ -33,7 +33,7 @@ const TimePassed = styled.div`
   margin-left: ${props => props.width}%;
   margin-top: -5px;
   margin-bottom: -5px;
-  width: 5px;
+  min-width: 5px;
   border: 1px solid black;
   background-color: transparent;
   z-index: 10;
@@ -55,8 +55,19 @@ class TaskBar extends Component{
     this.minsInDay = 60*24;
     this.state = {
       timePassedWidth: this.props.timePassedWidth,
-      unfinishedTasks: this.props.unfinishedTasks
+      unfinishedTasks: this.props.unfinishedTasks,
+      sleepHour: this.props.sleepHour,
+      sleepMin: this.props.sleepMin,
+      width: 0,
     }
+  }
+
+  calculateSleepWidth(){
+    // width of sleep section
+  }
+
+  componentDidMount(){
+    this.calculateSleepWidth();
   }
 
   componentDidUpdate(prevProps){
@@ -72,6 +83,7 @@ class TaskBar extends Component{
         })
       }
     }
+    this.calculateSleepWidth();
   }
 
   getTaskWidth(task){

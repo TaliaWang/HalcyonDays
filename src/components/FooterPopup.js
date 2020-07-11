@@ -20,6 +20,7 @@ const Container = styled.div`
   height: 28vh;
   border-radius: 10px;
   padding: 1%;
+  margin-top: -30vh;
 `
 
 const Input = styled.input`
@@ -112,6 +113,8 @@ class FooterPopup extends Component{
           wakeupHour: "",
           wakeupMin: "",
         })
+      }).then(result=>{
+        this.props.calculateTimePassedWidth();
       });
     }
   }
@@ -122,12 +125,16 @@ class FooterPopup extends Component{
       db.collection("users").doc(this.props.user.email)
       .update({
         wakeupClockMode: "PM"
+      }).then(result=>{
+          this.props.calculateTimePassedWidth();
       });
     }
     else if (this.props.wakeupClockMode == "PM"){
       db.collection("users").doc(this.props.user.email)
       .update({
         wakeupClockMode: "AM"
+      }).then(result=>{
+          this.props.calculateTimePassedWidth();
       });
     }
   }

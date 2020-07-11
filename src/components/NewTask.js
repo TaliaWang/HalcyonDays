@@ -9,6 +9,7 @@ const Container = styled.div`
   margin: 0% 35% 10% 35%;
   background-color: black;
   border-radius: 10px;
+  z-index: 20;
 `
 
 const Form = styled.form`
@@ -29,10 +30,7 @@ const TaskInput = styled.input`
   text-align: left;
   width: 100%;
   padding: 1%;
-
-  ::placeholder{
-    color: black;
-  }
+  z-index: 20;
 `
 
 const TimeInput = styled.input`
@@ -41,6 +39,7 @@ const TimeInput = styled.input`
   text-align: left;
   width: 100%;
   padding: 1%;
+  z-index: 20;
 `
 
 const Triangle = styled.div`

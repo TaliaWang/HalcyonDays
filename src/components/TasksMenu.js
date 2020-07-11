@@ -2,19 +2,34 @@
 import React, { Component } from 'react';
 import firebase from '../firebase';
 import styled from 'styled-components'
+import checkmark from "../images/checkmark.jpg";
 
 const LockButton = styled.button`
 `
-const Checkbox = styled.input`
+const Checkbox = styled.button`
+  margin-right: 2%;
+  border: 1px solid white;
+  border-radius: 3px;
+  background-color: transparent;
+  height: 22px;
+  width: 22px;
+  padding: 2px;
 `
 
 const Container = styled.div`
-  background-color: grey;
+  background-color: #606060;
   width: 20%;
   margin: -20% 0 0 80%;
   height: 100vh;
   position: fixed;
-  display: $
+  overflow-y: scroll;
+  -webkit-transition: 0.3s ease-out;
+  -webkit-transition: 0.3s ease-in;
+
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+  }
 `
 
 const Form = styled.form`
@@ -26,7 +41,15 @@ const Form = styled.form`
 const H3 = styled.h3`
 `
 
+const Img = styled.img`
+  position: relative;
+  height: 100%;
+  width: 100%;
+`
+
 const Label = styled.label`
+  color: white;
+  font-size: 120%;
 `
 
 const P = styled.p`
@@ -55,9 +78,11 @@ class TasksMenu extends Component{
         <Container>
           <br/><br/>
           {this.state.tasks.map((task, index) =>
-            <div>
-              <Checkbox id={`${task}${index}`} type='checkbox' checked={task.finished} onClick={this.props.toggleTaskChecked}/>
-              <Label for={index}>{task.name} ({task.hours}h {task.mins}m)</Label>
+            <div style={{marginLeft: '5%', marginTop: '2%', marginRight: '5%'}}>
+              <Checkbox id={`${task}${index}`} onClick={this.props.toggleTaskChecked.bind(this)}>
+                {task.finished ? <Img src={checkmark}/> : null}
+              </Checkbox>
+              <Label id={`${task}${index}_label`}>{task.name} ({task.hours}h {task.mins}m)</Label>
             </div>
           )}
         </Container>
