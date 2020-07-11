@@ -132,6 +132,9 @@ class Dashboard extends Component{
             wakeupHour: userDoc.data().wakeupHour,
             wakeupMin: userDoc.data().wakeupMin,
             wakeupClockMode: userDoc.data().wakeupClockMode,
+            relaxationHour: userDoc.data().relaxationHour,
+            relaxationMin: userDoc.data().relaxationMin,
+            relaxationClockMode: userDoc.data().relaxationClockMode,
             sleepHour: userDoc.data().sleepHour,
             sleepMin: userDoc.data().sleepMin,
             sleepClockMode: userDoc.data().sleepClockMode,
@@ -153,6 +156,9 @@ class Dashboard extends Component{
             wakeupHour: userDoc.data().wakeupHour,
             wakeupMin: userDoc.data().wakeupMin,
             wakeupClockMode: userDoc.data().wakeupClockMode,
+            relaxationHour: userDoc.data().relaxationHour,
+            relaxationMin: userDoc.data().relaxationMin,
+            relaxationClockMode: userDoc.data().relaxationClockMode,
             sleepHour: userDoc.data().sleepHour,
             sleepMin: userDoc.data().sleepMin,
             sleepClockMode: userDoc.data().sleepClockMode,
@@ -395,6 +401,12 @@ class Dashboard extends Component{
               sleepHour={this.state.sleepHour}
               sleepMin={this.state.sleepMin}
               sleepClockMode={this.state.sleepClockMode}
+              relaxationHour={this.state.relaxationHour}
+              relaxationMin={this.state.relaxationMin}
+              relaxationClockMode={this.state.relaxationClockMode}
+              wakeupHour={this.state.wakeupHour}
+              wakeupMin={this.state.wakeupMin}
+              wakeupClockMode={this.state.wakeupClockMode}
             ></TaskBar>
             {/* start and end times of the day */}
             <div style={{margin: '0 25% 0 25%'}}>
@@ -450,8 +462,9 @@ class Dashboard extends Component{
         {/* footer with options */}
         <Footer
           user={this.props.user}
-          wakeupClockMode={this.state.wakeupClockMode}
+          relaxationClockMode={this.state.relaxationClockMode}
           sleepClockMode={this.state.sleepClockMode}
+          wakeupClockMode={this.state.wakeupClockMode}
           calculateTimePassedWidth={this.calculateTimePassedWidth.bind(this)}
         ></Footer>
       </div>

@@ -71,7 +71,7 @@ class NewTask extends Component{
               </div>
               <div style={{paddingBottom: '15%'}}>
                 <div style={{float: 'left', width: '45%'}}>
-                  <TimeInput id='hours' pattern="\d+" min="0" step="1" type='number' value={this.props.hours} onChange={this.props.handleNewTaskChange} placeholder="Hour(s)"/>
+                  <TimeInput id='hours' pattern="\d+" min="1" step="1" type='number' value={this.props.hours} onChange={this.props.handleNewTaskChange} placeholder="Hour(s)"/>
                 </div>
                 <div style={{float: 'right', width: '45%', marginRight: '-1%'}}>
                   <TimeInput id='mins' pattern="\d+" min="0" step="1" type='number' value={this.props.mins} onChange={this.props.handleNewTaskChange} placeholder="Minute(s)"/>

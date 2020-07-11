@@ -71,8 +71,9 @@ class Footer extends Component{
             <FooterPopup
               user={this.props.user}
               popupOption={this.state.popupOption}
-              wakeupClockMode={this.props.wakeupClockMode}
+              relaxationClockMode={this.props.relaxationClockMode}
               sleepClockMode={this.props.sleepClockMode}
+              wakeupClockMode={this.props.wakeupClockMode}
               calculateTimePassedWidth={this.props.calculateTimePassedWidth.bind(this)}
             ></FooterPopup>
           : null

@@ -62,7 +62,16 @@ class FooterPopup extends Component{
   constructor(props){
     super(props);
     this.state = {
-      popupOption: this.props.popupOption
+      popupOption: this.props.popupOption,
+      relaxationHour: "",
+      relaxationMin: "",
+      relaxationClockMode: this.props.relaxationClockMode,
+      sleepHour: "",
+      sleepMin: "",
+      sleepClockMode: this.props.sleepClockMode,
+      wakeupHour: "",
+      wakeupMin: "",
+      wakeupClockMode: this.props.wakeupClockMode,
     }
   }
 
@@ -70,9 +79,22 @@ class FooterPopup extends Component{
     if (this.state.popupOption != this.props.popupOption){
       this.setState({
         popupOption: this.props.popupOption,
-        wakeupHour: "",
-        wakeupMin: "",
       })
+    }
+    if (this.state.relaxationClockMode != this.props.relaxationClockMode){
+      this.setState({
+        relaxationClockMode: this.props.relaxationClockMode
+      });
+    }
+    if (this.state.sleepClockMode != this.props.sleepClockMode){
+      this.setState({
+        sleepClockMode: this.props.sleepClockMode
+      });
+    }
+    if (this.state.wakeupClockMode != this.props.wakeupClockMode){
+      this.setState({
+        wakeupClockMode: this.props.wakeupClockMode
+      });
     }
   }
 
@@ -80,7 +102,33 @@ class FooterPopup extends Component{
     firebase.auth().signOut();
   }
 
-  handleWakeupTimeChange(e){
+  handleSleepChange(e){
+    if (e.target.id == 'sleepHour'){
+      this.setState({
+        sleepHour: e.target.value
+      })
+    }
+    else if (e.target.id == 'sleepMin'){
+      this.setState({
+        sleepMin: e.target.value
+      })
+    }
+  }
+
+  handleRelaxationChange(e){
+    if (e.target.id == 'relaxationHour'){
+      this.setState({
+        relaxationHour: e.target.value
+      })
+    }
+    else if (e.target.id == 'relaxationMin'){
+      this.setState({
+        relaxationMin: e.target.value
+      })
+    }
+  }
+
+  handleWakeupChange(e){
     if (e.target.id=='wakeupHour'){
       this.setState({
         wakeupHour: e.target.value
@@ -93,9 +141,53 @@ class FooterPopup extends Component{
     }
   }
 
+  submitSleepTime(e){
+    e.preventDefault();
+    if (this.state.sleepHour != "" && this.state.sleepMin != ""){
+      var db = firebase.firestore();
+
+      var newHour = parseInt(this.state.sleepHour);
+      var newMin = parseInt(this.state.sleepMin);
+      newMin = newMin < 10? '0' + newMin : '' + newMin;
+    }
+
+    db.collection("users").doc(this.props.user.email)
+    .update({
+      sleepHour: newHour,
+      sleepMin: newMin,
+    }).then(result=>{
+      this.setState({
+        sleepHour: "",
+        sleepMin: "",
+      })
+    });
+  }
+
+  submitRelaxationTime(e){
+    e.preventDefault();
+    if (this.state.relaxationHour != "" && this.state.relaxationMin != ""){
+      var db = firebase.firestore();
+
+      var newHour = parseInt(this.state.relaxationHour);
+      var newMin = parseInt(this.state.relaxationMin);
+      newMin = newMin < 10? '0' + newMin : '' + newMin;
+    }
+
+    db.collection("users").doc(this.props.user.email)
+    .update({
+      relaxationHour: newHour,
+      relaxationMin: newMin,
+    }).then(result=>{
+      this.setState({
+        relaxationHour: "",
+        relaxationMin: "",
+      })
+    });
+  }
+
   submitWakeupTime(e){
     e.preventDefault();
-    if (this.state.wakeupHour != "" && this.state.wakeupClockMode != ""){
+    if (this.state.wakeupHour != "" && this.state.wakeupMin != ""){
       var db = firebase.firestore();
 
       // adjust mins
@@ -139,6 +231,22 @@ class FooterPopup extends Component{
     }
   }
 
+  toggleRelaxationClockMode(){
+    var db = firebase.firestore();
+    if (this.props.relaxationClockMode == "AM"){
+      db.collection("users").doc(this.props.user.email)
+      .update({
+        relaxationClockMode: "PM"
+      });
+    }
+    else if (this.props.relaxationClockMode == "PM"){
+      db.collection("users").doc(this.props.user.email)
+      .update({
+        relaxationClockMode: "AM"
+      });
+    }
+  }
+
   toggleSleepClockMode(){
     var db = firebase.firestore();
     if (this.props.sleepClockMode == "AM"){
@@ -167,38 +275,38 @@ class FooterPopup extends Component{
                 <div style={{marginTop: '4vh'}}>
                   <TimeForm onSubmit={this.submitWakeupTime.bind(this)}>
                       <P_Form>Set Wake-up Time</P_Form>
-                      <Input id='wakeupHour' value={this.state.wakeupHour} onChange={this.handleWakeupTimeChange.bind(this)} type='number' pattern="\d+" min="0" max='12' step="1" float='left' placeholder='Hour' required/>
-                      <Input id='wakeupMin' value={this.state.wakeupMin} onChange={this.handleWakeupTimeChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
+                      <Input id='wakeupHour' value={this.state.wakeupHour} onChange={this.handleWakeupChange.bind(this)} type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour' required/>
+                      <Input id='wakeupMin' value={this.state.wakeupMin} onChange={this.handleWakeupChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
                       <button type='submit' style={{display: 'none'}}/>
                   </TimeForm>
                   <div style={{float: 'right', padding: '0.5%'}}>
-                  <ClockModeBtn onClick={this.toggleWakeupClockMode.bind(this)}>{this.props.wakeupClockMode}</ClockModeBtn>
+                    <ClockModeBtn onClick={this.toggleWakeupClockMode.bind(this)}>{this.state.wakeupClockMode}</ClockModeBtn>
                   </div>
                 </div>
                 <br/><br/><br/>
 
                 <div style={{marginTop: '2vh'}}>
-                  <TimeForm>
+                  <TimeForm onSubmit={this.submitRelaxationTime.bind(this)}>
                     <P_Form>Set Relaxation Time</P_Form>
-                    <Input type='number' pattern="\d+" min="0" step="1" float='left' placeholder='Hour'/>
-                    <Input type='number' pattern="\d+" min="0" step="1" float='right' placeholder='Minute'/>
+                    <Input id='relaxationHour' value={this.state.relaxationHour} onChange={this.handleRelaxationChange.bind(this)} type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour'/>
+                    <Input id='relaxationMin' value={this.state.relaxationMin} onChange={this.handleRelaxationChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute'/>
                     <button type='submit' style={{display: 'none'}}/>
                   </TimeForm>
                   <div style={{float: 'right', padding: '0.5%'}}>
-                    <ClockModeBtn >PM</ClockModeBtn>
+                    <ClockModeBtn onClick={this.toggleRelaxationClockMode.bind(this)}>{this.state.relaxationClockMode}</ClockModeBtn>
                   </div>
                 </div>
                 <br/><br/><br/>
 
                 <div style={{marginTop: '2vh'}}>
-                  <TimeForm>
+                  <TimeForm onSubmit={this.submitSleepTime.bind(this)}>
                       <P_Form>Set Sleep Time</P_Form>
-                      <Input type='number' type='number' pattern="\d+" min="0" max='12' step="1" float='left' placeholder='Hour' required/>
-                      <Input type='number' type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
+                      <Input id='sleepHour' value={this.state.sleepHour} onChange={this.handleSleepChange.bind(this)} type='number' type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour' required/>
+                      <Input id='sleepMin' value={this.state.sleepMin} onChange={this.handleSleepChange.bind(this)} type='number' type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
                       <button type='submit' style={{display: 'none'}}/>
                   </TimeForm>
                   <div style={{float: 'right', padding: '0.5%'}}>
-                    <ClockModeBtn onClick={this.toggleSleepClockMode.bind(this)}>{this.props.sleepClockMode}</ClockModeBtn>
+                    <ClockModeBtn onClick={this.toggleSleepClockMode.bind(this)}>{this.state.sleepClockMode}</ClockModeBtn>
                   </div>
                 </div>
 
