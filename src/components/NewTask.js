@@ -66,7 +66,7 @@ class NewTask extends Component{
       <div style={{textAlign: 'center'}}>
         <Triangle/>
         <Container>
-          <Form>
+          <Form onSubmit={this.props.submitTask}>
               <div style={{display: 'block', backgroundColor: 'black', margin: '0 0 5% 0'}}>
                 <TaskInput id='task' value={this.props.task} onChange={this.props.handleNewTaskChange} placeholder="New Task"/>
               </div>
@@ -78,7 +78,7 @@ class NewTask extends Component{
                   <TimeInput id='mins' pattern="\d+" min="0" step="1" type='number' value={this.props.mins} onChange={this.props.handleNewTaskChange} placeholder="Minute(s)"/>
                 </div>
               </div>
-              <button onClick={this.props.submitTask} style={{display:'none'}}/>
+              <button type='submit' onClick={this.props.submitTask} style={{display:'none'}}/>
           </Form>
         </Container>
       </div>

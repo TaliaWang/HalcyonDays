@@ -8,7 +8,7 @@ const Container = styled.div`
   text-align: left;
   background-color: black;
   position: fixed;
-  margin-left: 79%;
+  margin-left: 80%;
   margin-top: -130px;
   width: 17%;
   height: 30%;

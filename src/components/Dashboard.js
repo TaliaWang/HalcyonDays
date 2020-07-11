@@ -37,12 +37,14 @@ const H3 = styled.h3`
 
 const Img = styled.img`
   margin-left: 54%;
+  position: relative;
 `
 
 const P = styled.p`
-  font-family: nirmala;
   line-height: 30%;
   font-size: 15px;
+  float: ${props=>props.float};
+  transform: ${props=>props.float=='left'? 'translate(-50%, 0)' : 'translate(50%, 0)'};
 `
 
 const TasksMenuBtn = styled.button`
@@ -73,13 +75,16 @@ class Dashboard extends Component{
       tasks:[],
       timePassedInMins: 0,
       task: "",
-      hours: "",
-      mins: "",
+      hours: "", // for new task
+      mins: "", // for new task
       unfinishedTasks: [],
       hoursLeft: 0,
       minsLeft: 0,
       hoursNeededForTasks: 0,
       minsNeededForTasks: 0,
+      wakeupHour: 8,
+      wakeupMin: '00',
+      wakeupClockMode: 'AM',
       relaxationHours: 0,
       relaxationMins: 0,
       sleepHours: 0,
@@ -99,6 +104,9 @@ class Dashboard extends Component{
         if (!docSnapshot.exists) {
           userRef.set({
               email: this.props.user.email,
+              wakeupHour: this.state.wakeupHour,
+              wakeupMin: this.state.wakeupMin,
+              wakeupClockMode: this.state.wakeupClockMode
           })
           .then(function(docRef) {
               alert("Sign up successful!");
@@ -112,6 +120,13 @@ class Dashboard extends Component{
 
       // listen for changes in this user (ie. if they add subcollection tasks)
       userRef.onSnapshot(userDoc=> {
+          // change wakeup time
+          this.setState({
+            wakeupHour: userDoc.data().wakeupHour,
+            wakeupMin: userDoc.data().wakeupMin,
+            wakeupClockMode: userDoc.data().wakeupClockMode
+          })
+
           // listen for changes in this user's tasks
           userRef
           .collection('tasks')
@@ -214,8 +229,7 @@ class Dashboard extends Component{
        alert("Please enter a task.");
     }
     // ensure hours/mins are integers
-    else if (!Number.isInteger(parseFloat(this.state.hours)) || !Number.isInteger(parseFloat(this.state.mins))
-      || parseFloat(this.state.hours) < 0 || parseFloat(this.state.mins) < 0){
+    else if (!Number.isInteger(parseFloat(this.state.hours)) || !Number.isInteger(parseFloat(this.state.mins))){
        alert("Please enter positive integers (or zero) for the hours and minutes needed to complete this task.");
     }
     else{
@@ -332,7 +346,12 @@ class Dashboard extends Component{
               type='mainBar'
               timePassedWidth={this.state.timePassedWidth}
             ></TaskBar>
-            <div style={{marginTop: '-35px'}}>
+            {/* start and end times of the day */}
+            <div style={{margin: '0 25% 0 25%'}}>
+               <P float='left'>{this.state.wakeupHour}:{this.state.wakeupMin} {this.state.wakeupClockMode} today</P>
+               <P float='right'>{this.state.wakeupHour}:{this.state.wakeupMin} {this.state.wakeupClockMode} tomorrow</P>
+            </div>
+            <div style={{marginTop: '-38px'}}>
               <Img onMouseOver={this.showStatistics.bind(this)} onMouseLeave={this.hideStatistics.bind(this)} src={statisticsImg}/>
               {this.state.showStatistics
                 ?
@@ -350,6 +369,7 @@ class Dashboard extends Component{
               }
             </div>
           </div>
+          <br/><br/>
           <CircleBtn state={this.state.showNewTask} onClick={this.toggleShowNewTask.bind(this)}>+</CircleBtn>
           {this.state.showNewTask?
             <NewTask
@@ -378,7 +398,10 @@ class Dashboard extends Component{
         </div>*/}
         <br/>
         {/* footer with options */}
-        <Footer/>
+        <Footer
+          user={this.props.user}
+          wakeupClockMode={this.state.wakeupClockMode}
+        ></Footer>
       </div>
     );
   }

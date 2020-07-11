@@ -14,7 +14,7 @@ const Container = styled.div`
   margin-bottom: 0px;
   bottom: 0;
   width: 100%;
-  height: 30vh;
+  height: 40vh;
 `
 
 const Img = styled.img`
@@ -66,7 +66,15 @@ class Footer extends Component{
   render(){
     return(
       <Container>
-        {this.state.showPopup? <FooterPopup popupOption={this.state.popupOption}/> : null}
+        {this.state.showPopup
+          ?
+            <FooterPopup
+              user={this.props.user}
+              popupOption={this.state.popupOption}
+              wakeupClockMode={this.props.wakeupClockMode}
+            ></FooterPopup>
+          : null
+        }
         <IconsContainer>
           <IconButton onClick={this.toggleShowPopup.bind(this)}><Img id='clock' src={clock}/></IconButton>
           <IconButton onClick={this.toggleShowPopup.bind(this)}><Img id='moreOptions' src={moreOptions}/></IconButton>
