@@ -6,11 +6,37 @@ import styled from 'styled-components';
 import arrow from '../images/arrow.png'
 import loginImg from "../images/login.png";
 
+const ArrowImg = styled.img`
+  height: 35px;
+  width: 35px;
+  background-color: ${props=>props.backgroundColor};
+  transform: translate(-100%, -100%);
+  position: fixed;
+
+  &:hover{
+    height: 38px;
+    width: 38px;
+  }
+`
+
 const ChangeLoginSignUpBtn = styled.button`
   border: none;
   background-color: white;
   font-family: openSansRegular;
   padding: 2%;
+  font-size: 120%;
+
+  &:hover{
+    color: grey;
+  }
+`
+
+const CreateAccountButton = styled.button`
+  background-color: transparent;
+  border: none;
+  font-family: openSansRegular;
+  font-size: 120%;
+  margin-top: 10%;
 
   &:hover{
     color: grey;
@@ -35,13 +61,15 @@ const FormContainer = styled.div`
 `
 
 const Img = styled.img`
-  height: 95%;
-  width: 95%;
+  height: 150px;
+  width: 175px;
   background-color: ${props=>props.backgroundColor};
+  position: fixed;
+  transform: translate(-50%, 0);
 
   &:hover{
-    height: 100%;
-    width: 100%;
+    height: 155px;
+    width: 180px;
   }
 `
 
@@ -60,19 +88,11 @@ const Input = styled.input`
 const IntroButton = styled.button`
   background-color: transparent;
   border: none;
-  font-family: openSansRegular;
-
-  &:hover{
-    color: grey;
-  }
-
-  &:focus{
-    outline: none;
-  }
 `
 
 const P = styled.p`
   margin: '2% 0 0 0';
+  font-size: 120%;
   font-family: openSansRegular;
   color : ${props =>props.color};
 `
@@ -185,7 +205,7 @@ class Login extends Component{
               <Img src={loginImg} backgroundColor='none'/>
             </IntroButton>
             <br/><br/><br/><br/>
-            <IntroButton id='createAccount' onClick={this.toggleShowIntroPage.bind(this)}>Create an account</IntroButton>
+            <CreateAccountButton id='createAccount' onClick={this.toggleShowIntroPage.bind(this)}>Create an account</CreateAccountButton>
           </div>
           : null
         }
@@ -200,7 +220,7 @@ class Login extends Component{
                 <Input value={this.state.email} onChange={this.emailChange.bind(this)} placeholder="email"/>
                 <Input value = {this.state.password} onChange={this.passwordChange.bind(this)} placeholder="password"/>
                 <div style={{textAlign: 'right', padding: '1%'}}>
-                  <Button type="submit"><Img src={arrow} backgroundColor='black'/></Button>
+                  <Button type="submit"><ArrowImg src={arrow} backgroundColor='black'/></Button>
                 </div>
               </form>
             </FormContainer>

@@ -38,6 +38,7 @@ const LogoutButton = styled.button`
   border: none;
   border-radius: 2px;
   padding: 2%;
+  font-size: 120%;
 `
 
 
@@ -45,11 +46,14 @@ const P = styled.p`
   color: white;
   margin-top: 3vh;
   position: relative;
+  font-size: 120%;
+  margin-top: 10vh;
 `
 
 const P_Form = styled.p`
   color: white;
   line-height: 1px;
+  font-size: 120%;
 `
 
 const TimeForm = styled.form`

@@ -9,7 +9,7 @@ const Container = styled.div`
   background-color: black;
   position: fixed;
   margin-left: 80%;
-  margin-top: -130px;
+  margin-top: -140px;
   width: 17%;
   height: 30%;
   border-radius: 10px;
