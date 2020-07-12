@@ -26,7 +26,7 @@ const Container = styled.div`
 
 const Img = styled.img`
   margin-top: -1.5vh;
-  width: 16vw;
+  width: 15vw;
   height: 25vh;
   border-radius: 5px;
 `
