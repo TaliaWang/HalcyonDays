@@ -65,11 +65,33 @@ class TasksMenu extends Component{
   }
 
   componentDidUpdate(prevProps){
-    if (this.props.tasks != prevProps.tasks){
+    if (this.props.tasks != this.state.tasks){
       this.setState({
-        tasks: this.props.tasks,
+        tasks: [],
+      }, ()=>{
+        this.setState({
+          tasks: this.props.tasks
+        })
       })
     }
+  }
+
+  deleteTask(e){
+    // parse the task name
+    var text = e.target.textContent;
+    var task = text.substring(0, text.indexOf(' ('));
+
+    var db = firebase.firestore();
+    db.collection("users").doc(this.props.user.email)
+    .collection("tasks").doc(task).delete();
+  }
+
+  displayX(e){
+    e.target.innerHTML = e.target.innerHTML + ' ✖';
+  }
+
+  hideX(e){
+    e.target.innerHTML = e.target.innerHTML.substring(0, e.target.innerHTML.indexOf(' ✖'));
   }
 
   render(){
@@ -82,7 +104,7 @@ class TasksMenu extends Component{
               <Checkbox id={`${task}${index}`} onClick={this.props.toggleTaskChecked.bind(this)}>
                 {task.finished ? <Img src={checkmark}/> : null}
               </Checkbox>
-              <Label id={`${task}${index}_label`}>{task.name} ({task.hours}h {task.mins}m)</Label>
+              <Label onClick = {this.deleteTask.bind(this)} onMouseOver={this.displayX.bind(this)} onMouseLeave={this.hideX.bind(this)} id={`${task}${index}_label`}>{task.name} ({task.hours}h {task.mins}m)</Label>
             </div>
           )}
         </Container>
