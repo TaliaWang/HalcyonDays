@@ -150,7 +150,7 @@ class Login extends Component{
       firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
       .then(result =>{
         firebase.auth().currentUser.sendEmailVerification({
-          url: 'https://covid2-a6d70.firebaseapp.com',
+          url: 'https://halcyondays-app.herokuapp.com',
           handleCodeInApp: false
         })
         .catch(function(error){
