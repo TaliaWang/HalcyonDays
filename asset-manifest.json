@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/HalcyonDays/static/css/main.c8f0c697.chunk.css",
+    "main.js": "/HalcyonDays/static/js/main.959667f9.chunk.js",
+    "main.js.map": "/HalcyonDays/static/js/main.959667f9.chunk.js.map",
+    "runtime-main.js": "/HalcyonDays/static/js/runtime-main.eb91dbc0.js",
+    "runtime-main.js.map": "/HalcyonDays/static/js/runtime-main.eb91dbc0.js.map",
+    "static/js/2.725c8aee.chunk.js": "/HalcyonDays/static/js/2.725c8aee.chunk.js",
+    "static/js/2.725c8aee.chunk.js.map": "/HalcyonDays/static/js/2.725c8aee.chunk.js.map",
+    "index.html": "/HalcyonDays/index.html",
+    "precache-manifest.3c63960fdc02f401e252cd2ea532ae61.js": "/HalcyonDays/precache-manifest.3c63960fdc02f401e252cd2ea532ae61.js",
+    "service-worker.js": "/HalcyonDays/service-worker.js",
+    "static/css/main.c8f0c697.chunk.css.map": "/HalcyonDays/static/css/main.c8f0c697.chunk.css.map",
+    "static/js/2.725c8aee.chunk.js.LICENSE.txt": "/HalcyonDays/static/js/2.725c8aee.chunk.js.LICENSE.txt",
+    "static/media/App.css": "/HalcyonDays/static/media/OpenSans-Regular.629a55a7.ttf",
+    "static/media/checkmark.jpg": "/HalcyonDays/static/media/checkmark.55399b73.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.eb91dbc0.js",
+    "static/js/2.725c8aee.chunk.js",
+    "static/css/main.c8f0c697.chunk.css",
+    "static/js/main.959667f9.chunk.js"
+  ]
+}
