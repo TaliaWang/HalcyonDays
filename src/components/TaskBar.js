@@ -33,7 +33,7 @@ const RelaxationTime = styled.div`
   text-Align: left;
   width: ${props=>props.width}%;
   float: right;
-  background-color: #FFFACD;
+  background-color: #FFD4FA;
 `
 
 const SleepTime = styled.div`
@@ -41,7 +41,7 @@ const SleepTime = styled.div`
   text-Align: left;
   width: ${props=>props.width}%;
   float: right;
-  background-color: #AFEEEE;
+  background-color: #FF7DD6;
 `
 
 const TimePassed = styled.div`

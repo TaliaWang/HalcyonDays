@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import firebase from '../firebase';
 import 'firebase/firestore'
 import styled from 'styled-components';
+import graphicSquare from "../images/graphicSquare.jpg"
 
 const ClockModeBtn = styled.button`
   background-color: black;
@@ -23,6 +24,13 @@ const Container = styled.div`
   margin-top: -30vh;
 `
 
+const Img = styled.img`
+  margin-top: -1.5vh;
+  width: 16vw;
+  height: 25vh;
+  border-radius: 5px;
+`
+
 const Input = styled.input`
   position: relative;
   border: none;
@@ -39,15 +47,15 @@ const LogoutButton = styled.button`
   border-radius: 2px;
   padding: 2%;
   font-size: 120%;
+  margin-top: 8vh;
 `
 
 
 const P = styled.p`
   color: white;
-  margin-top: 3vh;
+  margin-top: -0.5vh;
   position: relative;
   font-size: 120%;
-  margin-top: 10vh;
 `
 
 const P_Form = styled.p`
@@ -388,10 +396,10 @@ class FooterPopup extends Component{
             'moreOptions':
               <div>
                 <P>Coming soon!</P>
-                <P>Designed and developed by Sophie Tong and Talia Wang.</P>
+                <Img src={graphicSquare}/>
                 </div>,
             'settings':
-              <P><LogoutButton onClick={this.logout.bind(this)}>Log out</LogoutButton></P>,
+              <LogoutButton onClick={this.logout.bind(this)}>Log out</LogoutButton>,
           }[this.state.popupOption]
         }
       </Container>
