@@ -79,7 +79,7 @@ class FooterPopup extends Component{
     }
   }
 
-  componentDidUpdate(){
+  componentDidUpdate(prevProps){
     if (this.state.popupOption != this.props.popupOption){
       this.setState({
         popupOption: this.props.popupOption,
@@ -90,15 +90,27 @@ class FooterPopup extends Component{
         relaxationClockMode: this.props.relaxationClockMode
       });
     }
+    if (this.props.sleepHour != prevProps.sleepHour
+      || this.props.sleepMin != prevProps.sleepMin){
+      this.forceUpdate();
+    }
     if (this.state.sleepClockMode != this.props.sleepClockMode){
       this.setState({
         sleepClockMode: this.props.sleepClockMode
       });
     }
+    if (this.props.relaxationHour != prevProps.relaxationHour
+      || this.props.relaxationMin != prevProps.relaxationMin){
+      this.forceUpdate();
+    }
     if (this.state.wakeupClockMode != this.props.wakeupClockMode){
       this.setState({
         wakeupClockMode: this.props.wakeupClockMode
       });
+    }
+    if (this.props.wakeupHour != prevProps.wakeupHour
+      || this.props.wakeupMin != prevProps.wakeupMin){
+      this.forceUpdate();
     }
   }
 
