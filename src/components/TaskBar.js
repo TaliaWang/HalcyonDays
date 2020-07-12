@@ -129,6 +129,9 @@ class TaskBar extends Component{
     }
     var tempRelaxationWidth = (minsDifference/this.minsInDay) * 100;
 
+    // pass total minutes of relaxation up to dashboard statistics
+    this.props.setRelaxationTime(minsDifference);
+
     this.setState({
       relaxationWidth: tempRelaxationWidth
     });

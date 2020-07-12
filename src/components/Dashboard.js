@@ -417,6 +417,7 @@ class Dashboard extends Component{
           <div>
             <TaskBar
               setSleepTime={this.setSleepTime.bind(this)}
+              setRelaxationTime={this.setRelaxationTime.bind(this)}
               user={this.props.user}
               unfinishedTasks={this.state.unfinishedTasks}
               type='mainBar'
