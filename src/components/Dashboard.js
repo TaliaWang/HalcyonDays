@@ -101,7 +101,7 @@ class Dashboard extends Component{
   }
 
   componentDidMount(){
-    alert(process.env.FIREBASE_KEY);
+    //alert(process.env.FIREBASE_KEY);
 
     // Add new user to database if they are verified
     if (this.props.user != null && this.props.user.emailVerified){
