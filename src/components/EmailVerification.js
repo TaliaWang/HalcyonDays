@@ -29,10 +29,10 @@ class EmailVerification extends Component{
   backToLogin(){
     firebase.auth().signOut();
   }
-  
+
   resendEmail(){
     this.props.user.sendEmailVerification({
-      url: 'https://covid2-a6d70.firebaseapp.com',
+      url: 'https://halcyondays-app.herokuapp.com',
       handleCodeInApp: false
     })
     .then(function(){
