@@ -386,7 +386,10 @@ class FooterPopup extends Component{
 
               </div>,
             'moreOptions':
-              <P>Coming soon! </P>,
+              <div>
+                <P>Coming soon!</P>
+                <P>Designed and developed by Sophie Tong and Talia Wang.</P>
+                </div>,
             'settings':
               <P><LogoutButton onClick={this.logout.bind(this)}>Log out</LogoutButton></P>,
           }[this.state.popupOption]
