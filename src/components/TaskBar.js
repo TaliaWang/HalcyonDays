@@ -10,7 +10,7 @@ const Button = styled.button`
 `
 
 const P = styled.p`
-
+    margin-top: 10px;
 `
 
 const TimeContainer = styled.div`
@@ -56,12 +56,13 @@ const TimePassed = styled.div`
 `
 
 const Task = styled.div`
-  height: 40px;
-  width: ${props => props.width}%;
-  float: right;
-  text-align: left;
   border-left: 1px solid white;
   background-color: ${props=>props.finished? '#9ae5ff' : '#00BFFF'};
+  color: white;
+  float: right;
+  height: 40px;
+  text-align: center;
+  width: ${props => props.width}%;
 `
 
 
@@ -272,7 +273,7 @@ class TaskBar extends Component{
             task.finished? null : <Task id={`taskChunk_${task}${index}`} task={task} width={this.getTaskWidth(task)} finished={task.finished}/>
           )}
           {this.state.tasks.map((task, index) =>
-            task.finished? <Task id={`taskChunk_${task}${index}`} task={task} width={this.getTaskWidth(task)} finished={task.finished}/> : null
+            task.finished? <Task id={`taskChunk_${task}${index}`} task={task} width={this.getTaskWidth(task)} finished={task.finished}><P>✓</P></Task> : null
           )}
         </div>
       </TasksContainer>

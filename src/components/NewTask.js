@@ -45,7 +45,7 @@ const TimeInput = styled.input`
 const Triangle = styled.div`
   margin-left: 50%;
   margin-top: 0.5%;
-  transform: translate(-50%, 0);
+  transform: translate(50%, 0);
   width: 0;
   height: 0;
   border-left: 15px solid transparent;

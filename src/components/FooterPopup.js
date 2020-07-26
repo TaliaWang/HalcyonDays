@@ -21,7 +21,7 @@ const Container = styled.div`
   height: 28vh;
   border-radius: 10px;
   padding: 1%;
-  margin-top: -30vh;
+  margin-top: -31vh;
 `
 
 const Img = styled.img`
@@ -352,52 +352,54 @@ class FooterPopup extends Component{
         {
           {
             'clock':
-              <div style={{marginTop: '-4vh', display: 'block'}}>
+              <div>
+                <div>
 
-                <div style={{marginTop: '4vh'}}>
-                  <TimeForm onSubmit={this.submitWakeupTime.bind(this)}>
-                      <P_Form>Set Wake-up Time</P_Form>
-                      <Input id='wakeupHour' value={this.state.wakeupHour} onChange={this.handleWakeupChange.bind(this)} type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour' required/>
-                      <Input id='wakeupMin' value={this.state.wakeupMin} onChange={this.handleWakeupChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
+                  <div>
+                    <TimeForm onSubmit={this.submitWakeupTime.bind(this)}>
+                        <P_Form>Set Wake-up Time</P_Form>
+                        <Input id='wakeupHour' value={this.state.wakeupHour} onChange={this.handleWakeupChange.bind(this)} type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour' required/>
+                        <Input id='wakeupMin' value={this.state.wakeupMin} onChange={this.handleWakeupChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
+                        <button type='submit' style={{display: 'none'}}/>
+                    </TimeForm>
+                    <div style={{float: 'right', padding: '0.5%'}}>
+                      <ClockModeBtn onClick={this.toggleWakeupClockMode.bind(this)}>{this.state.wakeupClockMode}</ClockModeBtn>
+                    </div>
+                  </div>
+                  <br/><br/><br/>
+
+                  <div>
+                    <TimeForm onSubmit={this.submitRelaxationTime.bind(this)}>
+                      <P_Form>Set Relaxation Time</P_Form>
+                      <Input id='relaxationHour' value={this.state.relaxationHour} onChange={this.handleRelaxationChange.bind(this)} type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour'/>
+                      <Input id='relaxationMin' value={this.state.relaxationMin} onChange={this.handleRelaxationChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute'/>
                       <button type='submit' style={{display: 'none'}}/>
-                  </TimeForm>
-                  <div style={{float: 'right', padding: '0.5%'}}>
-                    <ClockModeBtn onClick={this.toggleWakeupClockMode.bind(this)}>{this.state.wakeupClockMode}</ClockModeBtn>
+                    </TimeForm>
+                    <div style={{float: 'right', padding: '0.5%'}}>
+                      <ClockModeBtn onClick={this.toggleRelaxationClockMode.bind(this)}>{this.state.relaxationClockMode}</ClockModeBtn>
+                    </div>
                   </div>
-                </div>
-                <br/><br/><br/>
+                  <br/><br/><br/>
 
-                <div style={{marginTop: '2vh'}}>
-                  <TimeForm onSubmit={this.submitRelaxationTime.bind(this)}>
-                    <P_Form>Set Relaxation Time</P_Form>
-                    <Input id='relaxationHour' value={this.state.relaxationHour} onChange={this.handleRelaxationChange.bind(this)} type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour'/>
-                    <Input id='relaxationMin' value={this.state.relaxationMin} onChange={this.handleRelaxationChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute'/>
-                    <button type='submit' style={{display: 'none'}}/>
-                  </TimeForm>
-                  <div style={{float: 'right', padding: '0.5%'}}>
-                    <ClockModeBtn onClick={this.toggleRelaxationClockMode.bind(this)}>{this.state.relaxationClockMode}</ClockModeBtn>
+                  <div>
+                    <TimeForm onSubmit={this.submitSleepTime.bind(this)}>
+                        <P_Form>Set Sleep Time</P_Form>
+                        <Input id='sleepHour' value={this.state.sleepHour} onChange={this.handleSleepChange.bind(this)} type='number' type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour' required/>
+                        <Input id='sleepMin' value={this.state.sleepMin} onChange={this.handleSleepChange.bind(this)} type='number' type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
+                        <button type='submit' style={{display: 'none'}}/>
+                    </TimeForm>
+                    <div style={{float: 'right', padding: '0.5%'}}>
+                      <ClockModeBtn onClick={this.toggleSleepClockMode.bind(this)}>{this.state.sleepClockMode}</ClockModeBtn>
+                    </div>
                   </div>
-                </div>
-                <br/><br/><br/>
 
-                <div style={{marginTop: '2vh'}}>
-                  <TimeForm onSubmit={this.submitSleepTime.bind(this)}>
-                      <P_Form>Set Sleep Time</P_Form>
-                      <Input id='sleepHour' value={this.state.sleepHour} onChange={this.handleSleepChange.bind(this)} type='number' type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour' required/>
-                      <Input id='sleepMin' value={this.state.sleepMin} onChange={this.handleSleepChange.bind(this)} type='number' type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
-                      <button type='submit' style={{display: 'none'}}/>
-                  </TimeForm>
-                  <div style={{float: 'right', padding: '0.5%'}}>
-                    <ClockModeBtn onClick={this.toggleSleepClockMode.bind(this)}>{this.state.sleepClockMode}</ClockModeBtn>
-                  </div>
                 </div>
-
               </div>,
             'moreOptions':
               <div>
                 <P>Coming soon!</P>
                 <Img src={graphicSquare}/>
-                </div>,
+              </div>,
             'settings':
               <LogoutButton onClick={this.logout.bind(this)}>Log out</LogoutButton>,
           }[this.state.popupOption]

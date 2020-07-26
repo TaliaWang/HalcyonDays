@@ -35,6 +35,16 @@ const IconsContainer = styled.div`
   transform: translate(-52%, 0);
 `
 
+const Triangle = styled.div`
+  margin-left: ${props=>props.marginLeft};
+  transform: translate(-63%, 0) rotate(180deg);
+  width: 0;
+  height: 0;
+  border-left: ${props=>props.left} solid transparent;
+  border-right: ${props=>props.right} solid transparent;
+  border-bottom: ${props=>props.bottom} solid black;
+`
+
 class Footer extends Component{
   constructor(props){
     super(props);
@@ -68,21 +78,24 @@ class Footer extends Component{
       <Container>
         {this.state.showPopup
           ?
-            <FooterPopup
-              setRelaxationTime={this.props.setRelaxationTime.bind(this)}
-              user={this.props.user}
-              popupOption={this.state.popupOption}
-              sleepHour={this.props.sleepHour}
-              sleepMin={this.props.sleepMin}
-              sleepClockMode={this.props.sleepClockMode}
-              relaxationHour={this.props.relaxationHour}
-              relaxationMin={this.props.relaxationMin}
-              relaxationClockMode={this.props.relaxationClockMode}
-              wakeupHour={this.props.wakeupHour}
-              wakeupMin={this.props.wakeupMin}
-              wakeupClockMode={this.props.wakeupClockMode}
-              calculateTimePassedWidth={this.props.calculateTimePassedWidth.bind(this)}
-            ></FooterPopup>
+            <div>
+              <FooterPopup
+                setRelaxationTime={this.props.setRelaxationTime.bind(this)}
+                user={this.props.user}
+                popupOption={this.state.popupOption}
+                sleepHour={this.props.sleepHour}
+                sleepMin={this.props.sleepMin}
+                sleepClockMode={this.props.sleepClockMode}
+                relaxationHour={this.props.relaxationHour}
+                relaxationMin={this.props.relaxationMin}
+                relaxationClockMode={this.props.relaxationClockMode}
+                wakeupHour={this.props.wakeupHour}
+                wakeupMin={this.props.wakeupMin}
+                wakeupClockMode={this.props.wakeupClockMode}
+                calculateTimePassedWidth={this.props.calculateTimePassedWidth.bind(this)}
+              ></FooterPopup>
+              <Triangle left='18px' right='18px' bottom='2.2vh' marginLeft='50%'/>
+            </div>
           : null
         }
         <IconsContainer>

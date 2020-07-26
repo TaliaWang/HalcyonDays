@@ -3,11 +3,13 @@ import React, { Component } from 'react';
 import firebase from '../firebase';
 import styled from 'styled-components'
 import Footer from "./Footer.js"
+import NewNote from "./NewNote.js"
 import NewTask from "./NewTask.js"
 import Statistics from "./Statistics.js"
 import TaskBar from "./TaskBar.js"
 import TasksMenu from "./TasksMenu.js"
 import locked from "../images/locked.png"
+import newNoteButton from "../images/newNoteButton.png"
 import statisticsImg from "../images/statistics.png"
 import tasksMenuImg from "../images/tasksMenu.png"
 import unlocked from "../images/unlocked.png"
@@ -27,10 +29,6 @@ const CircleBtn = styled.button`
     background-color: black;
     color: white;
   }
-
-  &:focus{
-    outline: none;
-  }
 `
 
 const H3 = styled.h3`
@@ -39,6 +37,13 @@ const H3 = styled.h3`
 const Img = styled.img`
   margin-left: 54%;
   position: relative;
+`
+
+const NewNoteButton = styled.button`
+  transform: translate(0, 15%);
+  background: none;
+  border: none;
+  padding: 0;
 `
 
 const P = styled.p`
@@ -55,10 +60,6 @@ const TasksMenuBtn = styled.button`
   float: right;
   z-index: 15;
   position: relative;
-
-  &:focus{
-    outline: none;
-  }
 `
 
 const TasksMenuImg = styled.img`
@@ -69,6 +70,7 @@ class Dashboard extends Component{
     super(props);
     this.minsInDay = 60*24;
     this.state = {
+      showNewNote: false,
       showNewTask: false,
       showStatistics: false,
       showTasksMenu: false,
@@ -336,10 +338,17 @@ class Dashboard extends Component{
       });
     }
   }
-
-  toggleShowNewTask(e){
+  toggleShowNewNote(){
     this.setState(prevState => ({
-      showNewTask: !prevState.showNewTask
+      showNewNote: !prevState.showNewNote,
+      showNewTask: false
+    }));
+  }
+
+  toggleShowNewTask(){
+    this.setState(prevState => ({
+      showNewTask: !prevState.showNewTask,
+      showNewNote: false
     }));
   }
 
@@ -456,16 +465,23 @@ class Dashboard extends Component{
             </div>
           </div>
           <br/><br/>
-          <CircleBtn state={this.state.showNewTask} onClick={this.toggleShowNewTask.bind(this)}>+</CircleBtn>
-          {this.state.showNewTask?
-            <NewTask
-              user={this.props.user}
-              submitTask={this.submitTask.bind(this)}
-              handleNewTaskChange={this.handleNewTaskChange.bind(this)}
-              task={this.state.task}
-              hours={this.state.hours}
-              mins={this.state.mins}
-            ></NewTask> : null}
+          <div>
+            <NewNoteButton onClick={this.toggleShowNewNote.bind(this)}><img src={newNoteButton} width='50%' height='50%'/></NewNoteButton>
+            <CircleBtn state={this.state.showNewTask} onClick={this.toggleShowNewTask.bind(this)}>+</CircleBtn>
+            {this.state.showNewNote?
+              <NewNote
+              ></NewNote>
+              : null}
+            {this.state.showNewTask?
+              <NewTask
+                user={this.props.user}
+                submitTask={this.submitTask.bind(this)}
+                handleNewTaskChange={this.handleNewTaskChange.bind(this)}
+                task={this.state.task}
+                hours={this.state.hours}
+                mins={this.state.mins}
+              ></NewTask> : null}
+          </div>
         </div>
         {/*<div style={{display: 'block', margin: '0 10% 0 10%'}}>
           <div style={{float: 'left', textAlign: 'left', marginLeft: '15%'}}>
