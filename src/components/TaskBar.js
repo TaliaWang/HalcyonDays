@@ -55,11 +55,13 @@ const TimePassed = styled.div`
   z-index: 10;
 `
 
-const UnfinishedTask = styled.div`
-  height: ${props => props.height};
+const Task = styled.div`
+  height: 40px;
   width: ${props => props.width}%;
+  float: right;
+  text-align: left;
   border-left: 1px solid white;
-  background-color: black;
+  background-color: ${props=>props.finished? '#9ae5ff' : '#00BFFF'};
 `
 
 
@@ -71,7 +73,7 @@ class TaskBar extends Component{
     this.minsInDay = 60*24;
     this.state = {
       timePassedWidth: this.props.timePassedWidth,
-      unfinishedTasks: this.props.unfinishedTasks,
+      tasks: this.props.tasks,
       sleepHour: this.props.sleepHour,
       sleepMin: this.props.sleepMin,
       sleepClockMode: this.props.sleepClockMode,
@@ -185,9 +187,9 @@ class TaskBar extends Component{
   }
 
   componentDidUpdate(prevProps, prevState){
-    if (this.props.unfinishedTasks != prevProps.unfinishedTasks){
+    if (this.props.tasks != prevProps.tasks){
       this.setState({
-        unfinishedTasks: this.props.unfinishedTasks
+        tasks: this.props.tasks
       })
     }
     if (this.props.type == 'mainBar'){
@@ -244,16 +246,15 @@ class TaskBar extends Component{
     return widthPercent;
   }
 
+
   render(){
     return(
       <div style={{display: 'block'}}>
-      {/* tasks container is on top of time container*/}
+      {/* tasks container is below time container*/}
       <TimeContainer height={this.barheight}>
           <TimePassed height={this.barHeight} width={this.state.timePassedWidth}></TimePassed>
-          {/*this.props.unfinishedTasks.map((task, index) =>
-            <UnfinishedTask id={`unfinished_${task}${index}`} task={task} width={this.getTaskWidth(task)}/>
-          )*/}
       </TimeContainer>
+      {/* NOTE: top to bottom appears in order right to left */}
       <TasksContainer height={this.barheight}>
         <div style={{width: '100%'}}>
           <SleepTime width={this.state.sleepWidth}>
@@ -266,6 +267,13 @@ class TaskBar extends Component{
               <Button>{this.state.relaxationHour}:{this.state.relaxationMin} {this.state.relaxationClockMode}</Button>
             </div>
           </RelaxationTime>
+          {/* unfinished tasks come before finished tasks */}
+          {this.state.tasks.map((task, index) =>
+            task.finished? null : <Task id={`taskChunk_${task}${index}`} task={task} width={this.getTaskWidth(task)} finished={task.finished}/>
+          )}
+          {this.state.tasks.map((task, index) =>
+            task.finished? <Task id={`taskChunk_${task}${index}`} task={task} width={this.getTaskWidth(task)} finished={task.finished}/> : null
+          )}
         </div>
       </TasksContainer>
       </div>

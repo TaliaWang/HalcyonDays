@@ -419,7 +419,7 @@ class Dashboard extends Component{
               setSleepTime={this.setSleepTime.bind(this)}
               setRelaxationTime={this.setRelaxationTime.bind(this)}
               user={this.props.user}
-              unfinishedTasks={this.state.unfinishedTasks}
+              tasks={this.state.tasks}
               type='mainBar'
               timePassedWidth={this.state.timePassedWidth}
               sleepHour={this.state.sleepHour}
