@@ -415,11 +415,12 @@ class Dashboard extends Component{
 
     // get the task name
     // the task name location is different depending on whether the button is checked or unchecked because of the image
-    var curTask = (e.target.nodeName == 'BUTTON' ? e.target.parentElement.textContent : e.target.parentElement.parentElement.textContent)
+    var task = e.target.parentElement.getElementsByClassName('taskText')[0];
+    task = (task == undefined? e.target.parentElement.parentElement.getElementsByClassName('taskText')[0].innerHTML : task.innerHTML)
 
     //get current task finished state of this task in firestore
     var newFinished;
-    userRef.collection('tasks').doc(curTask.substring(0, curTask.indexOf(' (')))
+    userRef.collection('tasks').doc(task)
     .get().then(doc=>{
       if (doc.exists){
         newFinished = !doc.data().finished;
@@ -427,7 +428,7 @@ class Dashboard extends Component{
     })
     .then(result=>{
       // toggle whether task is finished in database
-      userRef.collection('tasks').doc(curTask.substring(0, curTask.indexOf(' (')))
+      userRef.collection('tasks').doc(task)
       .update({
         finished: newFinished
       });

@@ -53,6 +53,17 @@ const Label = styled.label`
 `
 
 const P = styled.p`
+  font-size: 120%;
+  color: white;
+  margin-top: 0;
+`
+
+const XBtn = styled.button`
+  background: none;
+  border: none;
+  font-size: 120%;
+  color: white;
+  display: none;
 `
 
 
@@ -78,8 +89,7 @@ class TasksMenu extends Component{
 
   deleteTask(e){
     // parse the task name
-    var text = e.target.textContent;
-    var task = text.substring(0, text.indexOf(' ('));
+    var task = e.target.parentElement.getElementsByClassName('taskText')[0].innerHTML;
 
     var db = firebase.firestore();
     db.collection("users").doc(this.props.user.email)
@@ -87,11 +97,13 @@ class TasksMenu extends Component{
   }
 
   displayX(e){
-    e.target.innerHTML = e.target.innerHTML + ' ✖';
+    var button = e.target.parentElement.getElementsByClassName('XBtn')[0];
+    button.style.display='inline-block';
   }
 
   hideX(e){
-    e.target.innerHTML = e.target.innerHTML.substring(0, e.target.innerHTML.indexOf(' ✖'));
+    var button = e.target.parentElement.getElementsByClassName('XBtn')[0];
+    button.style.display='none';
   }
 
   render(){
@@ -104,7 +116,11 @@ class TasksMenu extends Component{
               <Checkbox id={`${task}${index}`} onClick={this.props.toggleTaskChecked.bind(this)}>
                 {task.finished ? <Img src={checkmark}/> : null}
               </Checkbox>
-              <Label onClick = {this.deleteTask.bind(this)} onMouseOver={this.displayX.bind(this)} onMouseLeave={this.hideX.bind(this)} id={`${task}${index}_label`}>{task.name} ({task.hours}h {task.mins}m)</Label>
+              <div style={{display: 'flex'}} onMouseOver={this.displayX.bind(this)} onMouseLeave={this.hideX.bind(this)}>
+                <Label className='taskText' id={`${task}${index}_label`}>{task.name}</Label>
+                <XBtn className="XBtn" onClick = {this.deleteTask.bind(this)}>✖</XBtn>
+              </div>
+              <P>({task.hours}h {task.mins}m)</P>
             </div>
           )}
         </Container>
