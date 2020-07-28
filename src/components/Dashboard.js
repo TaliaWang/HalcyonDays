@@ -5,11 +5,13 @@ import styled from 'styled-components'
 import Footer from "./Footer.js"
 import NewNote from "./NewNote.js"
 import NewTask from "./NewTask.js"
+import NotesMenu from "./NotesMenu.js"
 import Statistics from "./Statistics.js"
 import TaskBar from "./TaskBar.js"
 import TasksMenu from "./TasksMenu.js"
 import locked from "../images/locked.png"
 import newNoteButton from "../images/newNoteButton.png"
+import notesMenuImg from "../images/notesMenu.png"
 import statisticsImg from "../images/statistics.png"
 import tasksMenuImg from "../images/tasksMenu.png"
 import unlocked from "../images/unlocked.png"
@@ -56,7 +58,7 @@ const P = styled.p`
 const TasksMenuBtn = styled.button`
   background-color: transparent;
   border: none;
-  margin: -19% 1% 0 0;
+  margin: -19% 0.5% 0 0;
   float: right;
   z-index: 15;
   position: relative;
@@ -65,16 +67,28 @@ const TasksMenuBtn = styled.button`
 const TasksMenuImg = styled.img`
 `
 
+const NotesMenuBtn = styled.button`
+  background-color: transparent;
+  border: none;
+  margin: -19% 0 0 0.5%;
+  float: left;
+  z-index: 15;
+  position: relative;
+`
+
 class Dashboard extends Component{
   constructor(props){
     super(props);
     this.minsInDay = 60*24;
     this.state = {
       showNewNote: false,
+      showNotesMenu: false,
+      notesMenuLocked: false,
       showNewTask: false,
       showStatistics: false,
       showTasksMenu: false,
       tasksMenuLocked: false,
+      notes: [],
       tasks:[],
       timePassedInMins: 0,
       timePassedWidth: 0,
@@ -154,7 +168,7 @@ class Dashboard extends Component{
         });
       });
 
-      // listen for changes in this user (ie. if they add subcollection tasks)
+      // listen for changes in this user (ie. if they add subcollection notes or tasks)
       userRef.onSnapshot(userDoc=> {
           // change wakeup time
           this.setState({
@@ -167,6 +181,19 @@ class Dashboard extends Component{
             sleepHour: userDoc.data().sleepHour,
             sleepMin: userDoc.data().sleepMin,
             sleepClockMode: userDoc.data().sleepClockMode,
+          });
+
+          //listen for changes in this user's notes
+          userRef
+          .collection('notes')
+          .onSnapshot(querySnapshot=>{
+            var tempNotes = [];
+            querySnapshot.forEach(doc=>{
+              tempNotes.push(doc.data());
+            });
+            this.setState({
+              notes: tempNotes
+            })
           });
 
           // listen for changes in this user's tasks
@@ -192,7 +219,7 @@ class Dashboard extends Component{
               unfinishedTasks: tempUnfinishedTasks,
               hoursNeededForTasks: tempHoursNeeded,
               minsNeededForTasks: tempMinsNeeded
-            })
+            });
           });
       });
     }
@@ -241,10 +268,16 @@ class Dashboard extends Component{
     });
   }
 
-  handleMouseOver(){
+  handleNotesMouseOver(){
+    this.setState({
+      showNotesMenu: true
+    })
+  }
+
+  handleTasksMouseOver(){
     this.setState({
       showTasksMenu: true
-    })
+    });
   }
 
   handleNewTaskChange(e){
@@ -338,6 +371,14 @@ class Dashboard extends Component{
       });
     }
   }
+
+  toggleNotesMenuLocked(){
+    var newLocked = !this.state.notesMenuLocked;
+    this.setState({
+      notesMenuLocked: newLocked
+    });
+  }
+
   toggleShowNewNote(){
     this.setState(prevState => ({
       showNewNote: !prevState.showNewNote,
@@ -350,6 +391,14 @@ class Dashboard extends Component{
       showNewTask: !prevState.showNewTask,
       showNewNote: false
     }));
+  }
+
+  toggleShowNotesMenu(){
+    if (!this.state.notesMenuLocked && this.state.showNotesMenu){
+      this.setState({
+        showNotesMenu: false
+      })
+    }
   }
 
   toggleShowTasksMenu(){
@@ -389,12 +438,28 @@ class Dashboard extends Component{
     var newLocked = !this.state.tasksMenuLocked;
     this.setState({
       tasksMenuLocked: newLocked
-    })
+    });
   }
 
   render(){
     return(
       <div>
+        {/* notes menu side bar */}
+        {
+          this.state.showNotesMenu
+          ?
+            <NotesMenuBtn onClick={this.toggleNotesMenuLocked.bind(this)}>
+              <img width='80%' height= '80%' src={this.state.notesMenuLocked? locked : unlocked}/>
+            </NotesMenuBtn>
+          :
+            <NotesMenuBtn onMouseOver={this.handleNotesMouseOver.bind(this)}>
+              <img width='80%' height= '80%' src={notesMenuImg}/>
+            </NotesMenuBtn>
+        }
+        <div style={{float: 'left', zIndex: '10', position: 'fixed', opacity: this.state.showNotesMenu?1:0, transition: 'opacity 0.3s'}}>
+          {this.state.showNotesMenu? <NotesMenu user={this.props.user} notes={this.state.notes} toggleShowNotesMenu={this.toggleShowNotesMenu.bind(this)}></NotesMenu> : null}
+        </div>
+
         {/* tasks menu side bar*/}
         {
           this.state.showTasksMenu
@@ -403,15 +468,15 @@ class Dashboard extends Component{
               this.state.tasksMenuLocked
               ?
                 <TasksMenuBtn onClick={this.toggleTasksMenuLocked.bind(this)}>
-                  <TasksMenuImg width='80%' height= '80%' src={locked}/>
+                  <img width='80%' height= '80%' src={locked}/>
                 </TasksMenuBtn>
               :
                 <TasksMenuBtn onClick={this.toggleTasksMenuLocked.bind(this)}>
-                  <TasksMenuImg width='80%' height= '80%' src={unlocked}/>
+                  <img width='80%' height= '80%' src={unlocked}/>
                 </TasksMenuBtn>
             )
           :
-            <TasksMenuBtn onMouseOver={this.handleMouseOver.bind(this)}>
+            <TasksMenuBtn onMouseOver={this.handleTasksMouseOver.bind(this)}>
               <TasksMenuImg width='80%' height= '80%' src={tasksMenuImg}/>
             </TasksMenuBtn>
         }
@@ -470,6 +535,7 @@ class Dashboard extends Component{
             <CircleBtn state={this.state.showNewTask} onClick={this.toggleShowNewTask.bind(this)}>+</CircleBtn>
             {this.state.showNewNote?
               <NewNote
+                user={this.props.user}
               ></NewNote>
               : null}
             {this.state.showNewTask?

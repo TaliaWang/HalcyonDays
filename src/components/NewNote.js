@@ -49,7 +49,28 @@ class NewNote extends Component{
   constructor(props){
     super(props);
     this.state = {
+      newNote: ""
     }
+  }
+
+  handleNewNoteChange(e){
+    this.setState({
+      newNote: e.target.value
+    });
+  }
+
+  submitNote(e){
+    e.preventDefault();
+    var db = firebase.firestore();
+    db.collection("users").doc(this.props.user.email)
+    .collection("notes").doc(this.state.newNote)
+    .set({
+      text: this.state.newNote
+    }).then(result=>{
+      this.setState({
+        newNote: ""
+      });
+    })
   }
 
   render(){
@@ -57,9 +78,9 @@ class NewNote extends Component{
       <div style={{textAlign: 'center'}}>
         <Triangle/>
         <Container>
-          <Form onSubmit={this.props.submitTask}>
-              <NoteInput id='task' value={this.props.task} onChange={this.props.handleNewTaskChange} placeholder="New Note"/>
-              <button type='submit' onClick={this.props.submitTask} style={{display:'none'}}/>
+          <Form onSubmit={this.submitNote.bind(this)}>
+              <NoteInput id='note' value={this.state.newNote} onChange={this.handleNewNoteChange.bind(this)} placeholder="New Note"/>
+              <button type='submit' onClick={this.props.submitNote} style={{display:'none'}}/>
           </Form>
         </Container>
       </div>
