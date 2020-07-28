@@ -37,7 +37,7 @@ const IconsContainer = styled.div`
 
 const Triangle = styled.div`
   margin-left: ${props=>props.marginLeft};
-  transform: translate(-63%, 0) rotate(180deg);
+  transform: translate(${props=>props.xtranslation}, 0) rotate(180deg);
   width: 0;
   height: 0;
   border-left: ${props=>props.left} solid transparent;
@@ -50,7 +50,23 @@ class Footer extends Component{
     super(props);
     this.state = {
       popupOption: "",
-      showPopup: false
+      showPopup: false,
+      footerPopupsAllowed: this.props.footerPopupsAllowed
+    }
+  }
+
+  componentDidUpdate(){
+    if (this.props.footerPopupsAllowed != this.state.footerPopupsAllowed){
+      this.setState({
+        footerPopupsAllowed: this.props.footerPopupsAllowed
+      })
+    }
+    //just because footer popup is allowed doesn't mean current one should show
+    // don't show popup if new note or new task popups are opened then closed
+    if (!this.props.footerPopupsAllowed && this.state.showPopup){
+      this.setState({
+        showPopup: false
+      })
     }
   }
 
@@ -71,12 +87,17 @@ class Footer extends Component{
           popupOption: e.target.id
       });
     }
+
+    // hide new note and new task popups
+    this.props.hideNoteTaskPopups();
+    // allow footer popup to show
+    this.props.allowFooterPopup();
   }
 
   render(){
     return(
       <Container>
-        {this.state.showPopup
+        {this.state.showPopup && this.state.footerPopupsAllowed
           ?
             <div>
               <FooterPopup
@@ -94,7 +115,13 @@ class Footer extends Component{
                 wakeupClockMode={this.props.wakeupClockMode}
                 calculateTimePassedWidth={this.props.calculateTimePassedWidth.bind(this)}
               ></FooterPopup>
-              <Triangle left='18px' right='18px' bottom='2.2vh' marginLeft='50%'/>
+              {
+                {
+                  'clock': <Triangle left='18px' right='18px' bottom='2.2vh' marginLeft='50%' xtranslation='-180%'/>,
+                  'moreOptions':  <Triangle left='18px' right='18px' bottom='2.2vh' marginLeft='50%' xtranslation='-63%'/>,
+                  'settings': <Triangle left='18px' right='18px' bottom='2.2vh' marginLeft='50%' xtranslation='60%'/>
+                }[this.state.popupOption]
+              }
             </div>
           : null
         }

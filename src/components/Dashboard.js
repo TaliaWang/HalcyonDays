@@ -112,8 +112,15 @@ class Dashboard extends Component{
       relaxationTimeHours: 0,
       relaxationTimeMins: 0,
       sleepTimeHours: 0,
-      sleepTimeMins: 0
+      sleepTimeMins: 0,
+      footerPopupsAllowed: true
     }
+  }
+
+  allowFooterPopup(){
+    this.setState({
+      footerPopupsAllowed: true
+    })
   }
 
   componentDidMount(){
@@ -298,6 +305,13 @@ class Dashboard extends Component{
     }
   }
 
+  hideNoteTaskPopups(){
+    this.setState({
+      showNewNote: false,
+      showNewTask: false,
+    });
+  }
+
   hideStatistics(){
     this.setState({
       showStatistics: false
@@ -383,14 +397,38 @@ class Dashboard extends Component{
     this.setState(prevState => ({
       showNewNote: !prevState.showNewNote,
       showNewTask: false
-    }));
+    }), () =>{
+      // disable footer popups
+      if (this.state.showNewTask || this.state.showNewNote){
+        this.setState({
+          footerPopupsAllowed: false
+        })
+      }
+      else{
+        this.setState({
+          footerPopupsAllowed: true
+        })
+      }
+    });
   }
 
   toggleShowNewTask(){
     this.setState(prevState => ({
       showNewTask: !prevState.showNewTask,
       showNewNote: false
-    }));
+    }), () =>{
+      // disable footer popups
+      if (this.state.showNewTask || this.state.showNewNote){
+        this.setState({
+          footerPopupsAllowed: false
+        })
+      }
+      else{
+        this.setState({
+          footerPopupsAllowed: true
+        })
+      }
+    });
   }
 
   toggleShowNotesMenu(){
@@ -568,6 +606,7 @@ class Dashboard extends Component{
         <br/>
         {/* footer with options */}
         <Footer
+          allowFooterPopup={this.allowFooterPopup.bind(this)}
           setRelaxationTime={this.setRelaxationTime.bind(this)}
           user={this.props.user}
           sleepHour={this.state.sleepHour}
@@ -580,6 +619,8 @@ class Dashboard extends Component{
           wakeupMin={this.state.wakeupMin}
           wakeupClockMode={this.state.wakeupClockMode}
           calculateTimePassedWidth={this.calculateTimePassedWidth.bind(this)}
+          hideNoteTaskPopups={this.hideNoteTaskPopups.bind(this)}
+          footerPopupsAllowed={this.state.footerPopupsAllowed}
         ></Footer>
       </div>
     );
