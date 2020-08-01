@@ -42,8 +42,42 @@ const CircleBtn = styled.button`
   }
 `
 
-const H3 = styled.h3`
+const CurrentDateTime = styled.div`
 `
+
+const H1 = styled.h1`
+  margin-top: 5%;
+  font-family: ISOCT2;
+  font-size: 80px;
+
+  @media (max-width: 1200px) {
+    font-size: 70px;
+  }
+  @media (max-width: 800px) {
+    font-size: 40px;
+  }
+  @media (max-width: 600px) {
+    font-size: 30px;
+  }
+  @media (max-width: 400px) {
+    font-size: 20px;
+  }
+`
+const H3 = styled.h3`
+  font-family: ISOCT2;
+  font-size: 30px;
+
+  @media (max-width: 1200px) {
+    font-size: 25px;
+  }
+  @media (max-width: 800px) {
+    font-size: 20px;
+  }
+  @media (max-width: 600px) {
+    font-size: 15px;
+  }
+`
+
 
 const NewNoteAndTaskContainer = styled.div`
   margin-top: 1%;
@@ -84,16 +118,16 @@ const NewNoteButtonImg = styled.img`
 const NotesMenuBtn = styled.button`
   background-color: transparent;
   border: none;
-  margin: -19% 0 0 0;
+  margin: -4% 0 0 0;
   float: left;
   z-index: 15;
   position: relative;
 
   @media (max-width: 1200px) {
-    margin: -29% 0 0 0;
+    margin: -4% 0 0 0;
   }
   @media (max-width: 800px) {
-    margin: -39% 0 0 0;
+    margin: -4% 0 0 0;
   }
 `
 
@@ -141,16 +175,16 @@ const StatsImg = styled.img`
 const TasksMenuBtn = styled.button`
   background-color: transparent;
   border: none;
-  margin: -19% 0 0 0;
+  margin: -4% 0 0 0;
   float: right;
   z-index: 15;
   position: relative;
 
   @media (max-width: 1200px) {
-    margin: -29% 0 0 0;
+    margin: -4% 0 0 0;
   }
   @media (max-width: 800px) {
-    margin: -39% 0 0 0;
+    margin: -4% 0 0 0;
   }
 `
 
@@ -172,7 +206,18 @@ class Dashboard extends Component{
   constructor(props){
     super(props);
     this.minsInDay = 60*24;
+    this.months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    this.days = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
     this.state = {
+      currentDateTime: {
+        day: "",
+        date: 0,
+        month: "",
+        year: 0,
+        hour: 0,
+        min: 0,
+        am_pm: "AM"
+      },
       showNewNote: false,
       showNotesMenu: false,
       notesMenuLocked: false,
@@ -219,7 +264,7 @@ class Dashboard extends Component{
     // Add new user to database if they are verified
     if (this.props.user != null && this.props.user.emailVerified){
       var db = firebase.firestore();
-      const userRef = db.collection('users').doc(this.props.user.email);
+      const userRef = db.collection('users').doc(this.props.user.uid);
 
       userRef.get()
       .then((docSnapshot) => {
@@ -324,9 +369,31 @@ class Dashboard extends Component{
     }
   }
 
+  // sets state for current time and width the current time takes up in tasks bar
   calculateTimePassedWidth(){
-    // update current time passed and left
+
     var d = new Date();
+    // get current date and time
+    var currentDay = this.days[d.getDay()];
+    var currentDate = d.getDate();
+    var currentMonth = this.months[d.getMonth()];
+    var currentYear = d.getFullYear();
+    var currentHour = d.getHours();
+    var currentAm_pm = "AM";
+    if (currentHour > 12){
+      currentHour = currentHour % 12;
+      currentAm_pm = "PM";
+    }
+    else if (currentHour == 12){
+      currentAm_pm = "PM";
+    }
+    var currentMin = d.getMinutes();
+    if (currentMin <= 9){
+      currentMin = "0" + currentMin;
+    }
+
+
+    // update current time passed and left
     var timePassed = d.getHours()*60 + d.getMinutes();
     var timePassedWidth = ((timePassed) / this.minsInDay) * 100;
     var timeLeft = this.minsInDay - timePassed;
@@ -361,6 +428,15 @@ class Dashboard extends Component{
     }
 
     this.setState({
+      currentDateTime:{
+        day: currentDay,
+        date: currentDate,
+        month: currentMonth,
+        year: currentYear,
+        hour: currentHour,
+        min: currentMin,
+        am_pm: currentAm_pm
+      },
       timePassedWidth: adjustedTimePassedWidth,
       hoursLeft: hoursLeft,
       minsLeft: minsLeft
@@ -459,7 +535,7 @@ class Dashboard extends Component{
         // add task to database
         //alert(this.state.task + this.state.hours + this.state.mins);
         var db = firebase.firestore();
-        db.collection("users").doc(this.props.user.email)
+        db.collection("users").doc(this.props.user.uid)
         .collection("tasks").doc(this.state.task)
         .set({
           name: this.state.task,
@@ -541,7 +617,7 @@ class Dashboard extends Component{
 
   toggleTaskChecked(e){
     var db = firebase.firestore();
-    const userRef = db.collection('users').doc(this.props.user.email);
+    const userRef = db.collection('users').doc(this.props.user.uid);
 
     // get the task name
     // the task name location is different depending on whether the button is checked or unchecked because of the image
@@ -619,6 +695,10 @@ class Dashboard extends Component{
         <div style={{textAlign: 'center'}}>
           {/*<H3>Dashboard</H3>
           {this.props.user ? <P>{this.props.user.email}</P> : null}*/}
+          <div>
+              <H1>{this.state.currentDateTime.hour}:{this.state.currentDateTime.min} {this.state.currentDateTime.am_pm}</H1>
+              <H3>{this.state.currentDateTime.day}, {this.state.currentDateTime.month} {this.state.currentDateTime.date}, {this.state.currentDateTime.year}</H3>
+          </div>
           <div>
             <TaskBar
               setSleepTime={this.setSleepTime.bind(this)}

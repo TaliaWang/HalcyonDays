@@ -186,7 +186,7 @@ class FooterPopup extends Component{
       newMin = newMin < 10? '0' + newMin : '' + newMin;
     }
 
-    db.collection("users").doc(this.props.user.email)
+    db.collection("users").doc(this.props.user.uid)
     .update({
       sleepHour: newHour,
       sleepMin: newMin,
@@ -269,7 +269,7 @@ class FooterPopup extends Component{
           var newMin = parseInt(this.state.relaxationMin);
           newMin = newMin < 10? '0' + newMin : '' + newMin;
 
-          db.collection("users").doc(this.props.user.email)
+          db.collection("users").doc(this.props.user.uid)
           .update({
             relaxationHour: newHour,
             relaxationMin: newMin,
@@ -301,7 +301,7 @@ class FooterPopup extends Component{
       newMin = newMin < 10? '0' + newMin : '' + newMin;
 
 
-      db.collection("users").doc(this.props.user.email)
+      db.collection("users").doc(this.props.user.uid)
       .update({
         wakeupHour: newHour,
         wakeupMin: newMin,
@@ -319,7 +319,7 @@ class FooterPopup extends Component{
   toggleWakeupClockMode(){
     var db = firebase.firestore();
     if (this.props.wakeupClockMode == "AM"){
-      db.collection("users").doc(this.props.user.email)
+      db.collection("users").doc(this.props.user.uid)
       .update({
         wakeupClockMode: "PM"
       }).then(result=>{
@@ -327,7 +327,7 @@ class FooterPopup extends Component{
       });
     }
     else if (this.props.wakeupClockMode == "PM"){
-      db.collection("users").doc(this.props.user.email)
+      db.collection("users").doc(this.props.user.uid)
       .update({
         wakeupClockMode: "AM"
       }).then(result=>{
@@ -339,13 +339,13 @@ class FooterPopup extends Component{
   toggleRelaxationClockMode(){
     var db = firebase.firestore();
     if (this.props.relaxationClockMode == "AM"){
-      db.collection("users").doc(this.props.user.email)
+      db.collection("users").doc(this.props.user.uid)
       .update({
         relaxationClockMode: "PM"
       });
     }
     else if (this.props.relaxationClockMode == "PM"){
-      db.collection("users").doc(this.props.user.email)
+      db.collection("users").doc(this.props.user.uid)
       .update({
         relaxationClockMode: "AM"
       });
@@ -355,13 +355,13 @@ class FooterPopup extends Component{
   toggleSleepClockMode(){
     var db = firebase.firestore();
     if (this.props.sleepClockMode == "AM"){
-      db.collection("users").doc(this.props.user.email)
+      db.collection("users").doc(this.props.user.uid)
       .update({
         sleepClockMode: "PM"
       });
     }
     else if (this.props.sleepClockMode == "PM"){
-      db.collection("users").doc(this.props.user.email)
+      db.collection("users").doc(this.props.user.uid)
       .update({
         sleepClockMode: "AM"
       });

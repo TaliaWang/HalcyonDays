@@ -83,7 +83,7 @@ class NewNote extends Component{
   submitNote(e){
     e.preventDefault();
     var db = firebase.firestore();
-    db.collection("users").doc(this.props.user.email)
+    db.collection("users").doc(this.props.user.uid)
     .collection("notes").doc(this.state.newNote)
     .set({
       text: this.state.newNote

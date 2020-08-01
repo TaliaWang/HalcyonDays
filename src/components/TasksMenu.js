@@ -19,7 +19,7 @@ const Checkbox = styled.button`
 const Container = styled.div`
   background-color: #606060;
   width: 20%;
-  margin: -20% 0 0 80%;
+  margin: -5% 0 0 80%;
   height: 100vh;
   position: fixed;
   overflow-y: scroll;
@@ -30,20 +30,12 @@ const Container = styled.div`
     width: 0px;
     background: transparent; /* make scrollbar transparent */
   }
-  @media (max-width: 1200px) {
-    margin: -30% 0 0 80%;
-    width: 20%;
-  }
-  @media (max-width: 1000px) {
-    margin: -30% 0 0 80%;
-    width: 20%;
-  }
   @media (max-width: 800px) {
-    margin: -40% 0 0 70%;
+    margin: -5% 0 0 70%;
     width: 30%;
   }
   @media (max-width: 600px) {
-      margin: -40% 0 0 70%;
+      margin: -5% 0 0 70%;
       width: 30%;
       font-size: 80%;
   }
@@ -109,7 +101,7 @@ class TasksMenu extends Component{
     var task = e.target.parentElement.getElementsByClassName('taskText')[0].innerHTML;
 
     var db = firebase.firestore();
-    db.collection("users").doc(this.props.user.email)
+    db.collection("users").doc(this.props.user.uid)
     .collection("tasks").doc(task).delete();
   }
 

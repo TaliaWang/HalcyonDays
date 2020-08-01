@@ -21,15 +21,15 @@ const P = styled.p`
 `
 
 const TimeContainer = styled.div`
-  margin: 20% 25% 0 25%;
+  margin: 10% 25% 0 25%;
   height: ${props => props.height}px;
   display: flex;
 
   @media (max-width: 1200px) {
-    margin: 30% 20% 0 20%;
+    margin: 20% 20% 0 20%;
   }
   @media (max-width: 800px) {
-    margin: 40% 15% 0 15%;
+    margin: 30% 15% 0 15%;
   }
 `
 
@@ -273,6 +273,7 @@ class TaskBar extends Component{
         tempBufferWidth = tempBufferWidth - this.getTaskWidth(task);
       }
     });
+    tempBufferWidth = (tempBufferWidth > 0 ? tempBufferWidth : 0);
     return tempBufferWidth;
   }
 

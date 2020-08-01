@@ -10,7 +10,7 @@ const LockButton = styled.button`
 const Container = styled.div`
   background-color: #606060;
   width: 20%;
-  margin: -20% 0 0 0;
+  margin: -5% 0 0 0;
   height: 100vh;
   position: fixed;
   overflow-y: scroll;
@@ -23,15 +23,9 @@ const Container = styled.div`
   }
 
   @media (max-width: 1200px) {
-    margin: -30% 0 0 0;
-    width: 20%;
-  }
-  @media (max-width: 1000px) {
-    margin: -30% 0 0 0;
     width: 20%;
   }
   @media (max-width: 800px) {
-    margin: -40% 0 0 0;
     width: 30%;
   }
 `
@@ -106,7 +100,7 @@ class NotesMenu extends Component{
     var note = listItem.getElementsByClassName("noteText")[0].innerHTML;
 
     var db = firebase.firestore();
-    db.collection("users").doc(this.props.user.email)
+    db.collection("users").doc(this.props.user.uid)
     .collection("notes").doc(note).delete();
   }
 
