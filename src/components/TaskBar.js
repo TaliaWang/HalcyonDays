@@ -3,6 +3,13 @@ import React, { Component } from 'react';
 import firebase from '../firebase';
 import styled from 'styled-components'
 
+const BufferTime = styled.div`
+  background-color: #cefdce;
+  width: ${props=>props.width}%;
+  float: right;
+  height: 40px;
+`
+
 const Button = styled.button`
   transform: translate(-50%, 0);
   background-color: transparent;
@@ -102,6 +109,7 @@ class TaskBar extends Component{
       wakeupClockMode: this.props.wakeupClockMode,
       relaxationWidth: 0,
       sleepWidth: 0,
+      bufferwidth: 0
     }
   }
 
@@ -256,6 +264,18 @@ class TaskBar extends Component{
     }
   }
 
+  getBufferWidth(){
+    // subtract state timepassedwidth, relaxationwidth, sleepwidth, and width of all unfinished tasks from the total width
+    var tempBufferWidth = 0;
+    tempBufferWidth = 100 - this.state.timePassedWidth - this.state.relaxationWidth - this.state.sleepWidth;
+    this.state.tasks.forEach(task =>{
+      if (!task.finished){
+        tempBufferWidth = tempBufferWidth - this.getTaskWidth(task);
+      }
+    });
+    return tempBufferWidth;
+  }
+
   getTaskWidth(task){
     var totalMins = task.hours*60 + task.mins;
     var widthPercent = totalMins/this.minsInDay*100;
@@ -284,6 +304,8 @@ class TaskBar extends Component{
                 <Button>{this.state.relaxationHour}:{this.state.relaxationMin} {this.state.relaxationClockMode}</Button>
               </div>
             </RelaxationTime>
+            <BufferTime width={this.getBufferWidth()}>
+            </BufferTime>
             {/* unfinished tasks come before finished tasks */}
             {this.state.tasks.map((task, index) =>
               task.finished? null : <Task id={`taskChunk_${task}${index}`} task={task} width={this.getTaskWidth(task)} finished={task.finished}/>
