@@ -9,29 +9,46 @@ const ClockModeBtn = styled.button`
   background-color: black;
   color: white;
   border: none;
-  margin-top: 4vh;
+  margin-top: 5%;
 `
 
 const Container = styled.div`
   text-align: center;
   background-color: black;
-  position: relative;
-  margin-left: 35%;
-  margin-right: 35%;
-  height: 28vh;
+  position: fixed;
+  min-height: 280px;
+  min-height: 20%;
+  width: 35%;
   border-radius: 10px;
   padding: 1%;
-  margin-top: -31vh;
+  bottom: 11vh;
+  margin-left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 40;
+
+  @media (max-width: 1000px) {
+    width: 60%;
+  }
+  @media (max-width: 800px) {
+    width: 70%;
+  }
+  @media (max-width: 600px) {
+    width: 80%;
+  }
+  @media (max-width: 400px) {
+    width: 90%;
+  }
 `
 
 const Img = styled.img`
   margin-top: -1.5vh;
-  width: 15vw;
-  height: 25vh;
+  width: 200px;
+  height: 200px;
   border-radius: 5px;
 `
 
 const Input = styled.input`
+  height: 15px;
   position: relative;
   border: none;
   outline: none;
@@ -39,6 +56,13 @@ const Input = styled.input`
   padding: 3%;
   width: 40%;
   float: ${props=> props.float};
+
+  @media (max-width: 1000px) {
+    height: 8px;
+  }
+  @media (max-width: 800px) {
+    height: 8px;
+  }
 `
 
 const LogoutButton = styled.button`
@@ -47,13 +71,12 @@ const LogoutButton = styled.button`
   border-radius: 2px;
   padding: 2%;
   font-size: 120%;
-  margin-top: 8vh;
+  margin-top: 5vh;
 `
 
 
 const P = styled.p`
   color: white;
-  margin-top: -0.5vh;
   position: relative;
   font-size: 120%;
 `
@@ -67,7 +90,7 @@ const P_Form = styled.p`
 const TimeForm = styled.form`
   text-align: center;
   float: left;
-  width: 90%;
+  width: 85%;
 `
 
 class FooterPopup extends Component{
@@ -347,64 +370,66 @@ class FooterPopup extends Component{
 
   render(){
     return(
-      <Container>
-        {/* switch between the different popups */}
-        {
+      <div style={{textAlign: 'center'}}>
+        <Container>
+          {/* switch between the different popups */}
           {
-            'clock':
-              <div>
+            {
+              'clock':
                 <div>
-
                   <div>
-                    <TimeForm onSubmit={this.submitWakeupTime.bind(this)}>
-                        <P_Form>Set Wake-up Time</P_Form>
-                        <Input id='wakeupHour' value={this.state.wakeupHour} onChange={this.handleWakeupChange.bind(this)} type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour' required/>
-                        <Input id='wakeupMin' value={this.state.wakeupMin} onChange={this.handleWakeupChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
+
+                    <div>
+                      <TimeForm onSubmit={this.submitWakeupTime.bind(this)}>
+                          <P_Form>Set Wake-up Time</P_Form>
+                          <Input id='wakeupHour' value={this.state.wakeupHour} onChange={this.handleWakeupChange.bind(this)} type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour' required/>
+                          <Input id='wakeupMin' value={this.state.wakeupMin} onChange={this.handleWakeupChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
+                          <button type='submit' style={{display: 'none'}}/>
+                      </TimeForm>
+                      <div style={{float: 'right', padding: '0.5%', marginTop: '4vh'}}>
+                        <ClockModeBtn onClick={this.toggleWakeupClockMode.bind(this)}>{this.state.wakeupClockMode}</ClockModeBtn>
+                      </div>
+                    </div>
+                    <br/><br/><br/>
+
+                    <div>
+                      <TimeForm onSubmit={this.submitRelaxationTime.bind(this)}>
+                        <P_Form>Set Relaxation Time</P_Form>
+                        <Input id='relaxationHour' value={this.state.relaxationHour} onChange={this.handleRelaxationChange.bind(this)} type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour'/>
+                        <Input id='relaxationMin' value={this.state.relaxationMin} onChange={this.handleRelaxationChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute'/>
                         <button type='submit' style={{display: 'none'}}/>
-                    </TimeForm>
-                    <div style={{float: 'right', padding: '0.5%'}}>
-                      <ClockModeBtn onClick={this.toggleWakeupClockMode.bind(this)}>{this.state.wakeupClockMode}</ClockModeBtn>
+                      </TimeForm>
+                      <div style={{float: 'right', padding: '0.5%', marginTop: '4vh'}}>
+                        <ClockModeBtn onClick={this.toggleRelaxationClockMode.bind(this)}>{this.state.relaxationClockMode}</ClockModeBtn>
+                      </div>
                     </div>
-                  </div>
-                  <br/><br/><br/>
+                    <br/><br/><br/>
 
-                  <div>
-                    <TimeForm onSubmit={this.submitRelaxationTime.bind(this)}>
-                      <P_Form>Set Relaxation Time</P_Form>
-                      <Input id='relaxationHour' value={this.state.relaxationHour} onChange={this.handleRelaxationChange.bind(this)} type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour'/>
-                      <Input id='relaxationMin' value={this.state.relaxationMin} onChange={this.handleRelaxationChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute'/>
-                      <button type='submit' style={{display: 'none'}}/>
-                    </TimeForm>
-                    <div style={{float: 'right', padding: '0.5%'}}>
-                      <ClockModeBtn onClick={this.toggleRelaxationClockMode.bind(this)}>{this.state.relaxationClockMode}</ClockModeBtn>
+                    <div>
+                      <TimeForm onSubmit={this.submitSleepTime.bind(this)}>
+                          <P_Form>Set Sleep Time</P_Form>
+                          <Input id='sleepHour' value={this.state.sleepHour} onChange={this.handleSleepChange.bind(this)} type='number' type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour' required/>
+                          <Input id='sleepMin' value={this.state.sleepMin} onChange={this.handleSleepChange.bind(this)} type='number' type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
+                          <button type='submit' style={{display: 'none'}}/>
+                      </TimeForm>
+                      <div style={{float: 'right', padding: '0.5%', marginTop: '4vh'}}>
+                        <ClockModeBtn onClick={this.toggleSleepClockMode.bind(this)}>{this.state.sleepClockMode}</ClockModeBtn>
+                      </div>
                     </div>
-                  </div>
-                  <br/><br/><br/>
 
-                  <div>
-                    <TimeForm onSubmit={this.submitSleepTime.bind(this)}>
-                        <P_Form>Set Sleep Time</P_Form>
-                        <Input id='sleepHour' value={this.state.sleepHour} onChange={this.handleSleepChange.bind(this)} type='number' type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour' required/>
-                        <Input id='sleepMin' value={this.state.sleepMin} onChange={this.handleSleepChange.bind(this)} type='number' type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
-                        <button type='submit' style={{display: 'none'}}/>
-                    </TimeForm>
-                    <div style={{float: 'right', padding: '0.5%'}}>
-                      <ClockModeBtn onClick={this.toggleSleepClockMode.bind(this)}>{this.state.sleepClockMode}</ClockModeBtn>
-                    </div>
                   </div>
-
-                </div>
-              </div>,
-            'moreOptions':
-              <div>
-                <P>Coming soon!</P>
-                <Img src={graphicSquare}/>
-              </div>,
-            'settings':
-              <LogoutButton onClick={this.logout.bind(this)}>Log out</LogoutButton>,
-          }[this.state.popupOption]
-        }
-      </Container>
+                </div>,
+              'moreOptions':
+                <div>
+                  <P>Coming soon!</P>
+                  <Img src={graphicSquare}/>
+                </div>,
+              'settings':
+                <LogoutButton onClick={this.logout.bind(this)}>Log out</LogoutButton>,
+            }[this.state.popupOption]
+          }
+        </Container>
+      </div>
     );
   }
 }

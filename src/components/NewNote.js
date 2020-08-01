@@ -10,6 +10,16 @@ const Container = styled.div`
   background-color: black;
   border-radius: 10px;
   z-index: 20;
+
+  @media (max-width: 1200px) {
+      margin: 0% 25% 10% 25%;
+  }
+  @media (max-width: 800px) {
+      margin: 0% 20% 10% 20%;
+  }
+  @media (max-width: 400px) {
+      margin: 0% 10% 10% 10%;
+  }
 `
 
 const Form = styled.form`
@@ -32,17 +42,28 @@ const NoteInput = styled.input`
   width: 100%;
   padding: 1%;
   z-index: 20;
+  font-size: 120%;
 `
 
 const Triangle = styled.div`
   margin-left: 50%;
   margin-top: 0.5%;
-  transform: translate(-150%, 0);
+  transform: translate(-225%, 0);
   width: 0;
   height: 0;
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
   border-bottom: 15px solid black;
+
+  @media (max-width: 1200px) {
+    transform: translate(-200%, 0);
+  }
+  @media (max-width: 800px) {
+    transform: translate(-180%, 0);
+  }
+  @media (max-width: 600px) {
+    transform: translate(-170%, 0);
+  }
 `
 
 class NewNote extends Component{

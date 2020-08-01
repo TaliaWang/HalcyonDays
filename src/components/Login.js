@@ -7,15 +7,25 @@ import arrow from '../images/arrow.png'
 import loginImg from "../images/login.png";
 
 const ArrowImg = styled.img`
-  height: 35px;
-  width: 35px;
+  height: 30px;
+  width: 30px;
   background-color: ${props=>props.backgroundColor};
   transform: translate(-100%, -100%);
   position: fixed;
 
   &:hover{
-    height: 38px;
-    width: 38px;
+    height: 33px;
+    width: 33px;
+  }
+
+  @media (max-width: 600px) {
+    height: 20px;
+    width: 20px;
+
+    &:hover{
+      height: 22px;
+      width: 22px;
+    }
   }
 `
 
@@ -36,7 +46,9 @@ const CreateAccountButton = styled.button`
   border: none;
   font-family: openSansRegular;
   font-size: 120%;
-  margin-top: 10%;
+  position: fixed;
+  margin-top: 200px;
+  transform: translate(-50%, 0);
 
   &:hover{
     color: grey;
@@ -56,16 +68,26 @@ const FormContainer = styled.div`
   border: 1px solid black;
   border-radius: 10px;
   margin-top: 15%;
-  margin-left: 35%;
-  margin-right: 35%;
+  margin-left: 30%;
+  margin-right: 30%;
+
+  @media (max-width: 1000px) {
+    margin-top: 30%;
+    margin-left: 20%;
+    margin-right: 20%;
+  }
+
+  @media (max-width: 600px) {
+    margin-top: 50%;
+    margin-left: 10%;
+    margin-right: 10%;
+  }
 `
 
 const Img = styled.img`
   height: 150px;
   width: 175px;
   background-color: ${props=>props.backgroundColor};
-  position: fixed;
-  transform: translate(-50%, 0);
 
   &:hover{
     height: 155px;
@@ -78,16 +100,34 @@ const Input = styled.input`
   border-radius: 3px;
   display: block;
   font-family: openSansRegular;
+  font-size: 100%;
   margin-left: auto;
   margin-right: auto;
   margin-top: 3%;
   outline: none;
-  width: 50%;
+  position: relative;
+  width: 75%;
 `
 
 const IntroButton = styled.button`
   background-color: transparent;
   border: none;
+  position: fixed;
+  transform: translate(-50%, 0);
+`
+
+const IntroContainer = styled.div`
+  text-align: center;
+  display: block;
+  margin-top: 15%;
+
+  @media (max-width: 1000px) {
+    margin-top: 30%;
+  }
+
+  @media (max-width: 600px) {
+    margin-top: 40%;
+  }
 `
 
 const P = styled.p`
@@ -199,14 +239,14 @@ class Login extends Component{
         {/* intro page */}
         {this.state.showIntroPage
           ?
-          <div style={{textAlign: 'center', marginTop: '15%', display: 'block'}}>
+          <IntroContainer>
             {/* redirects to login */}
             <IntroButton id='login' onClick={this.toggleShowIntroPage.bind(this)}>
               <Img src={loginImg} backgroundColor='none'/>
             </IntroButton>
-            <br/><br/><br/><br/>
+            <br/>
             <CreateAccountButton id='createAccount' onClick={this.toggleShowIntroPage.bind(this)}>Create an account</CreateAccountButton>
-          </div>
+          </IntroContainer>
           : null
         }
 

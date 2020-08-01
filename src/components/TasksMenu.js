@@ -30,6 +30,23 @@ const Container = styled.div`
     width: 0px;
     background: transparent; /* make scrollbar transparent */
   }
+  @media (max-width: 1200px) {
+    margin: -30% 0 0 80%;
+    width: 20%;
+  }
+  @media (max-width: 1000px) {
+    margin: -30% 0 0 80%;
+    width: 20%;
+  }
+  @media (max-width: 800px) {
+    margin: -40% 0 0 70%;
+    width: 30%;
+  }
+  @media (max-width: 600px) {
+      margin: -40% 0 0 70%;
+      width: 30%;
+      font-size: 80%;
+  }
 `
 
 const Form = styled.form`
@@ -116,7 +133,7 @@ class TasksMenu extends Component{
               <Checkbox id={`${task}${index}`} onClick={this.props.toggleTaskChecked.bind(this)}>
                 {task.finished ? <Img src={checkmark}/> : null}
               </Checkbox>
-              <div style={{display: 'flex'}} onMouseOver={this.displayX.bind(this)} onMouseLeave={this.hideX.bind(this)}>
+              <div style={{display: 'inline-block'}} onMouseOver={this.displayX.bind(this)} onMouseLeave={this.hideX.bind(this)}>
                 <Label className='taskText' id={`${task}${index}_label`}>{task.name}</Label>
                 <XBtn className="XBtn" onClick = {this.deleteTask.bind(this)}>✖</XBtn>
               </div>

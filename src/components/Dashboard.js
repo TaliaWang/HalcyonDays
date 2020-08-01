@@ -22,8 +22,8 @@ const CircleBtn = styled.button`
   border: 1px solid;
   border-color: ${(props) => props.state ? "white" : "black"};
   color: ${(props) => props.state ? "white" : "black"};
-  font-size: 23px;
-  padding: 0 7px 0 7px;
+  font-size: 50px;
+  padding: 0 15px 0 15px;
   margin: 3% 0 0 0;
   transform: translate(50%, 0);
 
@@ -31,49 +31,141 @@ const CircleBtn = styled.button`
     background-color: black;
     color: white;
   }
+
+  @media (max-width: 1200px) {
+    font-size: 40px;
+    padding: 0 12px 0 12px;
+  }
+  @media (max-width: 600px) {
+    font-size: 35px;
+    padding: 0 10px 0 10px;
+  }
 `
 
 const H3 = styled.h3`
 `
 
-const Img = styled.img`
-  margin-left: 54%;
-  position: relative;
+const NewNoteAndTaskContainer = styled.div`
+  margin-top: 1%;
+
+  @media (max-width: 800px) {
+    margin-top: 3%;
+  }
+  @media (max-width: 600px) {
+    margin-top: 10%;
+  }
+  @media (max-width: 400px) {
+    margin-top: 29%;
+  }
 `
 
 const NewNoteButton = styled.button`
-  transform: translate(0, 15%);
+  transform: translate(-20%, 15%);
   background: none;
   border: none;
+  margin: 0 1% 0 0;
   padding: 0;
 `
 
-const P = styled.p`
-  line-height: 30%;
-  font-size: 15px;
-  float: ${props=>props.float};
-  transform: ${props=>props.float=='left'? 'translate(-50%, 0)' : 'translate(50%, 0)'};
-`
+const NewNoteButtonImg = styled.img`
+  width: 90%;
+  height: 90%;
 
-const TasksMenuBtn = styled.button`
-  background-color: transparent;
-  border: none;
-  margin: -19% 0.5% 0 0;
-  float: right;
-  z-index: 15;
-  position: relative;
-`
-
-const TasksMenuImg = styled.img`
+  @media (max-width: 1200px) {
+    width: 75%;
+    height: 75%;
+  }
+  @media (max-width: 600px) {
+    width: 60%;
+    height: 60%;
+  }
 `
 
 const NotesMenuBtn = styled.button`
   background-color: transparent;
   border: none;
-  margin: -19% 0 0 0.5%;
+  margin: -19% 0 0 0;
   float: left;
   z-index: 15;
   position: relative;
+
+  @media (max-width: 1200px) {
+    margin: -29% 0 0 0;
+  }
+  @media (max-width: 800px) {
+    margin: -39% 0 0 0;
+  }
+`
+
+const P = styled.p`
+  width: 70px;
+  font-size: 15px;
+  float: ${props=>props.float};
+  transform: ${props=>props.float=='left'? 'translate(-50%, 0)' : 'translate(50%, 0)'};
+`
+
+const StatsContainer = styled.div`
+  margin-top: -65px;
+
+  @media (max-width: 1200px) {
+    margin-top: -55px;
+  }
+
+  @media (max-width: 1000px) {
+    margin-top: -50px;
+  }
+`
+
+const StatsImg = styled.img`
+  margin-left: 54%;
+  position: relative;
+
+  @media (max-width: 1200px) {
+      margin-left: 65%;
+  }
+
+  @media (max-width: 1000px) {
+    margin-left: 68%;
+  }
+  @media (max-width: 800px) {
+    margin-left: 78%;
+  }
+  @media (max-width: 600px) {
+    margin-left: 78%;
+  }
+  @media (max-width: 400px) {
+    margin-left: 80%;
+  }
+`
+
+const TasksMenuBtn = styled.button`
+  background-color: transparent;
+  border: none;
+  margin: -19% 0 0 0;
+  float: right;
+  z-index: 15;
+  position: relative;
+
+  @media (max-width: 1200px) {
+    margin: -29% 0 0 0;
+  }
+  @media (max-width: 800px) {
+    margin: -39% 0 0 0;
+  }
+`
+
+const TasksMenuImg = styled.img`
+`
+
+const TodayTomorrow =styled.div`
+  margin: 2% 25% 0 25%;
+
+  @media (max-width: 1200px) {
+    margin: 2% 20% 0 20%;
+  }
+  @media (max-width: 800px) {
+    margin: 2% 15% 0 15%;
+  }
 `
 
 class Dashboard extends Component{
@@ -546,12 +638,12 @@ class Dashboard extends Component{
               wakeupClockMode={this.state.wakeupClockMode}
             ></TaskBar>
             {/* start and end times of the day */}
-            <div style={{margin: '2% 25% 0 25%'}}>
+            <TodayTomorrow>
                <P float='left'>{this.state.wakeupHour}:{this.state.wakeupMin} {this.state.wakeupClockMode} today</P>
                <P float='right'>{this.state.wakeupHour}:{this.state.wakeupMin} {this.state.wakeupClockMode} tomorrow</P>
-            </div>
-            <div style={{marginTop: '-65px'}}>
-              <Img onMouseOver={this.showStatistics.bind(this)} onMouseLeave={this.hideStatistics.bind(this)} src={statisticsImg}/>
+            </TodayTomorrow>
+            <StatsContainer>
+              <StatsImg onMouseOver={this.showStatistics.bind(this)} onMouseLeave={this.hideStatistics.bind(this)} src={statisticsImg}/>
               {this.state.showStatistics
                 ?
                 <Statistics
@@ -566,11 +658,10 @@ class Dashboard extends Component{
                 ></Statistics>
                 : null
               }
-            </div>
+            </StatsContainer>
           </div>
-          <br/><br/>
-          <div>
-            <NewNoteButton onClick={this.toggleShowNewNote.bind(this)}><img src={newNoteButton} width='50%' height='50%'/></NewNoteButton>
+          <NewNoteAndTaskContainer>
+            <NewNoteButton onClick={this.toggleShowNewNote.bind(this)}><NewNoteButtonImg src={newNoteButton}/></NewNoteButton>
             <CircleBtn state={this.state.showNewTask} onClick={this.toggleShowNewTask.bind(this)}>+</CircleBtn>
             {this.state.showNewNote?
               <NewNote
@@ -586,7 +677,7 @@ class Dashboard extends Component{
                 hours={this.state.hours}
                 mins={this.state.mins}
               ></NewTask> : null}
-          </div>
+          </NewNoteAndTaskContainer>
         </div>
         {/*<div style={{display: 'block', margin: '0 10% 0 10%'}}>
           <div style={{float: 'left', textAlign: 'left', marginLeft: '15%'}}>

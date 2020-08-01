@@ -6,6 +6,33 @@ import styled from 'styled-components';
 
 const Container = styled.div`
   display: flex;
+  z-index: 20;
+
+  @media (max-width: 1200px) {
+      margin-left: -47%;
+      margin-top: 22%;
+      position: fixed;
+  }
+  @media (max-width: 1000px) {
+      margin-left: -50%;
+      margin-top: 25%;
+      position: fixed;
+  }
+  @media (max-width: 800px) {
+      margin-left: -60%;
+      margin-top: 32%;
+      position: fixed;
+  }
+  @media (max-width: 600px) {
+      margin-left: -60%;
+      margin-top: 42%;
+      position: fixed;
+  }
+  @media (max-width: 400px) {
+      margin-left: -60%;
+      margin-top: 70%;
+      position: fixed;
+  }
 `
 
 const StatsContainer = styled.div`
@@ -15,9 +42,22 @@ const StatsContainer = styled.div`
   margin-left: 80%;
   margin-top: -140px;
   width: 17%;
-  height: 30%;
+  min-height: 30%;
   border-radius: 10px;
   z-index: 20;
+
+  @media (max-width: 1200px) {
+      width: 35%;
+  }
+  @media (max-width: 1000px) {
+      width: 40%;
+  }
+  @media (max-width: 800px) {
+      width: 60%;
+  }
+  @media (max-width: 600px) {
+      width: 60%;
+  }
 `
 
 const H4 = styled.h4`
@@ -42,6 +82,10 @@ const Triangle = styled.div`
   border-left: ${props=>props.left} solid transparent;
   border-right: ${props=>props.right} solid transparent;
   border-bottom: ${props=>props.bottom} solid black;
+
+  @media (max-width: 1200px) {
+      display: none;
+  }
 `
 
 class Statistics extends Component{

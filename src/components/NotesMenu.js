@@ -6,20 +6,11 @@ import checkmark from "../images/checkmark.jpg";
 
 const LockButton = styled.button`
 `
-const Checkbox = styled.button`
-  margin-right: 2%;
-  border: 1px solid white;
-  border-radius: 3px;
-  background-color: transparent;
-  height: 22px;
-  width: 22px;
-  padding: 2px;
-`
 
 const Container = styled.div`
   background-color: #606060;
   width: 20%;
-  margin: -20% 0 0 0%;
+  margin: -20% 0 0 0;
   height: 100vh;
   position: fixed;
   overflow-y: scroll;
@@ -29,6 +20,19 @@ const Container = styled.div`
   ::-webkit-scrollbar {
     width: 0px;
     background: transparent; /* make scrollbar transparent */
+  }
+
+  @media (max-width: 1200px) {
+    margin: -30% 0 0 0;
+    width: 20%;
+  }
+  @media (max-width: 1000px) {
+    margin: -30% 0 0 0;
+    width: 20%;
+  }
+  @media (max-width: 800px) {
+    margin: -40% 0 0 0;
+    width: 30%;
   }
 `
 
@@ -58,10 +62,13 @@ const P = styled.p`
   margin-top: 0.5%;
 `
 const Ul = styled.ul`
-  margin-left: 3%;
   margin-top: 2%;
   margin-right: 3%;
   color: white;
+
+  @media (max-width: 600px) {
+      font-size: 80%;
+  }
 `
 
 const XBtn = styled.button`

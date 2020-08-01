@@ -10,11 +10,9 @@ import FooterPopup from "./FooterPopup.js"
 
 const Container = styled.div`
   text-align: center;
-  position: fixed;
-  margin-bottom: 0px;
-  bottom: 0;
   width: 100%;
-  height: 10vh;
+  height: 45%;
+  z-index: 40;
 `
 
 const Img = styled.img`
@@ -29,13 +27,16 @@ const IconButton = styled.button`
 `
 
 const IconsContainer = styled.div`
-  bottom: 2vh;
+  bottom: 2%;
   position: fixed;
   left: 50%;
-  transform: translate(-52%, 0);
+  transform: translate(-48%, 0);
+  margin-top: 2%;
 `
 
 const Triangle = styled.div`
+  bottom: 9vh;
+  position: relative;
   margin-left: ${props=>props.marginLeft};
   transform: translate(${props=>props.xtranslation}, 0) rotate(180deg);
   width: 0;
@@ -43,6 +44,7 @@ const Triangle = styled.div`
   border-left: ${props=>props.left} solid transparent;
   border-right: ${props=>props.right} solid transparent;
   border-bottom: ${props=>props.bottom} solid black;
+  position: fixed;
 `
 
 class Footer extends Component{
@@ -117,9 +119,9 @@ class Footer extends Component{
               ></FooterPopup>
               {
                 {
-                  'clock': <Triangle left='18px' right='18px' bottom='2.2vh' marginLeft='50%' xtranslation='-180%'/>,
-                  'moreOptions':  <Triangle left='18px' right='18px' bottom='2.2vh' marginLeft='50%' xtranslation='-63%'/>,
-                  'settings': <Triangle left='18px' right='18px' bottom='2.2vh' marginLeft='50%' xtranslation='60%'/>
+                  'clock': <Triangle left='18px' right='18px' bottom='20px' marginLeft='50%' xtranslation='-170%'/>,
+                  'moreOptions':  <Triangle left='18px' right='18px' bottom='20px' marginLeft='50%' xtranslation='-50%'/>,
+                  'settings': <Triangle left='18px' right='18px' bottom='20px' marginLeft='50%' xtranslation='75%'/>
                 }[this.state.popupOption]
               }
             </div>
