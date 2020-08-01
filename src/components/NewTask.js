@@ -9,7 +9,8 @@ const Container = styled.div`
   margin: 0% 35% 10% 35%;
   background-color: black;
   border-radius: 10px;
-  z-index: 50;
+  z-index: 40;
+  position: relative;
 
   @media (max-width: 1200px) {
       margin: 0% 25% 10% 25%;
