@@ -57,14 +57,14 @@ const DateCarousel = styled.div`
     margin: 5% 20% 0 20%;
   }
   @media (max-width: 800px) {
-    margin: 8% 15% 0 15%;
+    margin: 8% 10% 0 10%;
   }
   @media (max-width: 600px) {
-    margin: 10% 7% 0 7%;
+    margin: 10% 5.9% 0 5.9%;
     height: 40px;
   }
   @media (max-width: 400px) {
-    margin: 14% 7% 0 7%;
+    margin: 14% 5% 0 5%;
     height: 30px;
   }
 `
