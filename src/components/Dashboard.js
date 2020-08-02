@@ -278,12 +278,14 @@ class Dashboard extends Component{
         am_pm: "AM"
       },
       todayDate:{
+        todayObject: null,
         day: "",
         date: 0,
         month: "",
         year: 0
       },
       tmrwDate: {
+        tmrwObject: null,
         day: "",
         date: 0,
         month: "",
@@ -329,6 +331,75 @@ class Dashboard extends Component{
     this.setState({
       footerPopupsAllowed: true
     })
+  }
+
+  changeTodayTmrw(e){
+    if (e.target.id == 'backward' || e.target.id == 'backwardImg'){
+      // set tmrw as current today
+      var tmrw = this.state.todayDate.todayObject;
+      var tmrwDay = this.days[tmrw.getDay()];
+      var tmrwDate = tmrw.getDate();
+      var tmrwMonth = this.months[tmrw.getMonth()];
+      var tmrwYear = tmrw.getFullYear();
+
+      // set today as one day back from current today
+      var today = this.state.todayDate.todayObject;
+      today.setDate(today.getDate() - 1);
+      var todayDay = this.days[today.getDay()];
+      var todayDate = today.getDate();
+      var todayMonth = this.months[today.getMonth()];
+      var todayYear = today.getFullYear();
+
+      this.setState({
+        todayDate: {
+          todayObject: today,
+          day: todayDay,
+          date: todayDate,
+          month: todayMonth,
+          year: todayYear
+        },
+        tmrwDate: {
+          tmrwObject: tmrw,
+          day: tmrwDay,
+          date: tmrwDate,
+          month: tmrwMonth,
+          year: tmrwYear
+        }
+      });
+    }
+    else if (e.target.id == 'forward' || e.target.id == 'forwardImg'){
+      // set today as current tmrw
+      var today = this.state.tmrwDate.tmrwObject;
+      var todayDay = this.days[today.getDay()];
+      var todayDate = today.getDate();
+      var todayMonth = this.months[today.getMonth()];
+      var todayYear = today.getFullYear();
+
+      // set tmrw as one day forward from current tmrw
+      var tmrw = this.state.tmrwDate.tmrwObject;
+      tmrw.setDate(tmrw.getDate() + 1);
+      var tmrwDay = this.days[tmrw.getDay()];
+      var tmrwDate = tmrw.getDate();
+      var tmrwMonth = this.months[tmrw.getMonth()];
+      var tmrwYear = tmrw.getFullYear();
+
+      this.setState({
+        todayDate: {
+          todayObject: today,
+          day: todayDay,
+          date: todayDate,
+          month: todayMonth,
+          year: todayYear
+        },
+        tmrwDate: {
+          tmrwObject: tmrw,
+          day: tmrwDay,
+          date: tmrwDate,
+          month: tmrwMonth,
+          year: tmrwYear
+        }
+      });
+    }
   }
 
   componentDidMount(){
@@ -379,10 +450,6 @@ class Dashboard extends Component{
         }).then(result=>{
             this.calculateTimePassedWidth();
 
-            // add today/tomorrow  into database if it doesn't exist yet
-            // actually, we can add JUST TODAY; it's implied that TODAY is the earlier day of the two
-
-
             // update time passed every minute
             setInterval(result=>{
               this.calculateTimePassedWidth();
@@ -394,62 +461,62 @@ class Dashboard extends Component{
             setInterval(result=>{
               this.updateTodayTomorrowDates();
             }, 15000);
+        }).then(result=>{
+            // listen for changes in this user (ie. if they add subcollection notes or tasks)
+            userRef.onSnapshot(userDoc=> {
+                // change wakeup time
+                this.setState({
+                  wakeupHour: userDoc.data().wakeupHour,
+                  wakeupMin: userDoc.data().wakeupMin,
+                  wakeupClockMode: userDoc.data().wakeupClockMode,
+                  relaxationHour: userDoc.data().relaxationHour,
+                  relaxationMin: userDoc.data().relaxationMin,
+                  relaxationClockMode: userDoc.data().relaxationClockMode,
+                  sleepHour: userDoc.data().sleepHour,
+                  sleepMin: userDoc.data().sleepMin,
+                  sleepClockMode: userDoc.data().sleepClockMode,
+                });
+
+                //listen for changes in this user's notes
+                userRef
+                .collection('notes')
+                .onSnapshot(querySnapshot=>{
+                  var tempNotes = [];
+                  querySnapshot.forEach(doc=>{
+                    tempNotes.push(doc.data());
+                  });
+                  this.setState({
+                    notes: tempNotes
+                  })
+                });
+
+                // listen for changes in this user's tasks
+                userRef
+                .collection('tasks')
+                .onSnapshot(querySnapshot=>{
+                  var tempTasks = [];
+                  var tempUnfinishedTasks = [];
+                  var tempMinsNeeded = 0;
+                  var tempHoursNeeded = 0;
+                  querySnapshot.forEach(doc=> {
+                    tempTasks.push(doc.data());
+                    if (!doc.data().finished){
+                      tempUnfinishedTasks.push(doc.data());
+                      tempMinsNeeded = tempMinsNeeded + doc.data().hours*60 + doc.data().mins;
+                    }
+                  });
+                  // calculate hours and mins needed to finish remaining tasks
+                  tempHoursNeeded = parseInt(tempMinsNeeded / 60);
+                  tempMinsNeeded = tempMinsNeeded % 60;
+                  this.setState({
+                    tasks: tempTasks,
+                    unfinishedTasks: tempUnfinishedTasks,
+                    hoursNeededForTasks: tempHoursNeeded,
+                    minsNeededForTasks: tempMinsNeeded
+                  });
+                });
+            });
         });
-      });
-
-      // listen for changes in this user (ie. if they add subcollection notes or tasks)
-      userRef.onSnapshot(userDoc=> {
-          // change wakeup time
-          this.setState({
-            wakeupHour: userDoc.data().wakeupHour,
-            wakeupMin: userDoc.data().wakeupMin,
-            wakeupClockMode: userDoc.data().wakeupClockMode,
-            relaxationHour: userDoc.data().relaxationHour,
-            relaxationMin: userDoc.data().relaxationMin,
-            relaxationClockMode: userDoc.data().relaxationClockMode,
-            sleepHour: userDoc.data().sleepHour,
-            sleepMin: userDoc.data().sleepMin,
-            sleepClockMode: userDoc.data().sleepClockMode,
-          });
-
-          //listen for changes in this user's notes
-          userRef
-          .collection('notes')
-          .onSnapshot(querySnapshot=>{
-            var tempNotes = [];
-            querySnapshot.forEach(doc=>{
-              tempNotes.push(doc.data());
-            });
-            this.setState({
-              notes: tempNotes
-            })
-          });
-
-          // listen for changes in this user's tasks
-          userRef
-          .collection('tasks')
-          .onSnapshot(querySnapshot=>{
-            var tempTasks = [];
-            var tempUnfinishedTasks = [];
-            var tempMinsNeeded = 0;
-            var tempHoursNeeded = 0;
-            querySnapshot.forEach(doc=> {
-              tempTasks.push(doc.data());
-              if (!doc.data().finished){
-                tempUnfinishedTasks.push(doc.data());
-                tempMinsNeeded = tempMinsNeeded + doc.data().hours*60 + doc.data().mins;
-              }
-            });
-            // calculate hours and mins needed to finish remaining tasks
-            tempHoursNeeded = parseInt(tempMinsNeeded / 60);
-            tempMinsNeeded = tempMinsNeeded % 60;
-            this.setState({
-              tasks: tempTasks,
-              unfinishedTasks: tempUnfinishedTasks,
-              hoursNeededForTasks: tempHoursNeeded,
-              minsNeededForTasks: tempMinsNeeded
-            });
-          });
       });
     }
   }
@@ -614,12 +681,14 @@ class Dashboard extends Component{
 
     this.setState({
       todayDate: {
+        todayObject: today,
         day: todayDay,
         date: todayDate,
         month: todayMonth,
         year: todayYear
       },
       tmrwDate: {
+        tmrwObject: tmrw,
         day: tmrwDay,
         date: tmrwDate,
         month: tmrwMonth,
@@ -835,12 +904,12 @@ class Dashboard extends Component{
           </div>
           <DateCarousel>
             <div style={{float: 'left', display: 'flex', transform: 'translate(-20%, 0)', padding: '0', marginRight: '0'}}>
-              <LeftRightBtn><LeftRightBtnImg rotation='0deg' src={leftRightBtnImg}/></LeftRightBtn>
+              <LeftRightBtn id='backward' onClick={this.changeTodayTmrw.bind(this)}><LeftRightBtnImg id='backwardImg' rotation='0deg' src={leftRightBtnImg}/></LeftRightBtn>
               <P_carousel>{this.state.todayDate.day}, {this.state.todayDate.month} {this.state.todayDate.date}, {this.state.todayDate.year}</P_carousel>
             </div>
             <div style={{float: 'right', display: 'flex', transform: 'translate(20%, 0)', padding: '0', marginLeft: '0'}}>
               <P_carousel>{this.state.tmrwDate.day}, {this.state.tmrwDate.month} {this.state.tmrwDate.date}, {this.state.tmrwDate.year}</P_carousel>
-              <LeftRightBtn><LeftRightBtnImg rotation='180deg' src={leftRightBtnImg}/></LeftRightBtn>
+              <LeftRightBtn id='forward' onClick={this.changeTodayTmrw.bind(this)}><LeftRightBtnImg id='forwardImg' rotation='180deg' src={leftRightBtnImg}/></LeftRightBtn>
             </div>
           </DateCarousel>
           <div>
