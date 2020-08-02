@@ -267,6 +267,8 @@ class Dashboard extends Component{
     this.minsInDay = 60*24;
     this.months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     this.days = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
+    this.leftClickedAlready = true; // starts as true because first click shifts dates as expected
+    this.rightClickedAlready = true; // starts as true because first click shifts dates as expected
     this.state = {
       currentDateTime: {
         day: "",
@@ -337,6 +339,10 @@ class Dashboard extends Component{
     if (e.target.id == 'backward' || e.target.id == 'backwardImg'){
       // set tmrw as current today
       var tmrw = this.state.todayDate.todayObject;
+      if (!this.leftClickedAlready){
+        // account for strange bug that only shifts dates back after 2 clicks (exluding first click)
+        tmrw.setDate(tmrw.getDate() - 1);
+      }
       var tmrwDay = this.days[tmrw.getDay()];
       var tmrwDate = tmrw.getDate();
       var tmrwMonth = this.months[tmrw.getMonth()];
@@ -350,6 +356,9 @@ class Dashboard extends Component{
       var todayMonth = this.months[today.getMonth()];
       var todayYear = today.getFullYear();
 
+      this.rightClickedAlready = false;
+      this.leftClickedAlready = true;
+
       this.setState({
         todayDate: {
           todayObject: today,
@@ -365,11 +374,17 @@ class Dashboard extends Component{
           month: tmrwMonth,
           year: tmrwYear
         }
+      }, ()=>{
+        this.switchDate();
       });
     }
     else if (e.target.id == 'forward' || e.target.id == 'forwardImg'){
       // set today as current tmrw
       var today = this.state.tmrwDate.tmrwObject;
+      if (!this.rightClickedAlready){
+        // account for strange bug that only shifts dates forward after 2 clicks (excluding first click)
+        today.setDate(today.getDate() + 1);
+      }
       var todayDay = this.days[today.getDay()];
       var todayDate = today.getDate();
       var todayMonth = this.months[today.getMonth()];
@@ -383,6 +398,9 @@ class Dashboard extends Component{
       var tmrwMonth = this.months[tmrw.getMonth()];
       var tmrwYear = tmrw.getFullYear();
 
+      this.leftClickedAlready = false;
+      this.rightClickedAlready = true;
+
       this.setState({
         todayDate: {
           todayObject: today,
@@ -398,7 +416,9 @@ class Dashboard extends Component{
           month: tmrwMonth,
           year: tmrwYear
         }
-      });
+      }, () =>{
+        this.switchDate();
+      })
     }
   }
 
@@ -407,6 +427,7 @@ class Dashboard extends Component{
     if (this.props.user != null && this.props.user.emailVerified){
       // set the dates for today/tomorrow early here so that today/tomorrow can be created in the database
       this.setTodayTomorrowDates();
+      this.calculateCurrentDateTime();
 
       var db = firebase.firestore();
       const userRef = db.collection('users').doc(this.props.user.uid);
@@ -427,10 +448,11 @@ class Dashboard extends Component{
               sleepMin: this.state.sleepMin,
               sleepClockMode: this.state.sleepClockMode,
           })
-          .then(function(docRef) {
+          .then(docRef=> {
               alert("Sign up successful!");
+              this.switchDate();
           })
-          .catch(function(error) {
+          .catch(error=> {
               alert("Error adding new user to database.");
           });
         }
@@ -450,9 +472,10 @@ class Dashboard extends Component{
         }).then(result=>{
             this.calculateTimePassedWidth();
 
-            // update time passed every minute
+            // update current time and time passed every minute
             setInterval(result=>{
               this.calculateTimePassedWidth();
+              this.calculateCurrentDateTime();
             }, 60000);
 
             // check whether today/tomorrow should up dated every 15 seconds
@@ -462,7 +485,7 @@ class Dashboard extends Component{
               this.updateTodayTomorrowDates();
             }, 15000);
         }).then(result=>{
-            // listen for changes in this user (ie. if they add subcollection notes or tasks)
+            // listen for changes in this user (ie. if they add subcollection notes)
             userRef.onSnapshot(userDoc=> {
                 // change wakeup time
                 this.setState({
@@ -490,8 +513,11 @@ class Dashboard extends Component{
                   })
                 });
 
-                // listen for changes in this user's tasks
-                userRef
+                // listen for changes in this user's tasks for this date
+                this.switchDate();
+
+                // listen for changes in this user's tasks for this date
+                /*userRef
                 .collection('tasks')
                 .onSnapshot(querySnapshot=>{
                   var tempTasks = [];
@@ -513,17 +539,16 @@ class Dashboard extends Component{
                     unfinishedTasks: tempUnfinishedTasks,
                     hoursNeededForTasks: tempHoursNeeded,
                     minsNeededForTasks: tempMinsNeeded
-                  });
                 });
+              });*/
+
             });
         });
       });
     }
   }
 
-  // sets state for current time and width the current time takes up in tasks bar
-  calculateTimePassedWidth(){
-
+  calculateCurrentDateTime(){
     var d = new Date();
     // get current date and time
     var currentDay = this.days[d.getDay()];
@@ -550,6 +575,22 @@ class Dashboard extends Component{
       currentMin = currentMin + "";
     }
 
+    this.setState({
+      currentDateTime:{
+        day: currentDay,
+        date: currentDate,
+        month: currentMonth,
+        year: currentYear,
+        hour: currentHour,
+        min: currentMin,
+        am_pm: currentAm_pm
+      }
+    });
+  }
+
+  // sets state for current time and width the current time takes up in tasks bar
+  calculateTimePassedWidth(){
+    var d = new Date();
 
     // update current time passed and left
     var timePassed = d.getHours()*60 + d.getMinutes();
@@ -586,15 +627,6 @@ class Dashboard extends Component{
     }
 
     this.setState({
-      currentDateTime:{
-        day: currentDay,
-        date: currentDate,
-        month: currentMonth,
-        year: currentYear,
-        hour: currentHour,
-        min: currentMin,
-        am_pm: currentAm_pm
-      },
       timePassedWidth: adjustedTimePassedWidth,
       hoursLeft: hoursLeft,
       minsLeft: minsLeft
@@ -725,11 +757,12 @@ class Dashboard extends Component{
         hours: tempHours,
         mins: tempMins
       }, () =>{
-        // add task to database
+        // add task to today's date collection in database
         //alert(this.state.task + this.state.hours + this.state.mins);
         var db = firebase.firestore();
         db.collection("users").doc(this.props.user.uid)
-        .collection("tasks").doc(this.state.task)
+        .collection("dates").doc(`${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`)
+        .collection('tasks').doc(this.state.task)
         .set({
           name: this.state.task,
           hours: parseInt(this.state.hours),
@@ -745,6 +778,48 @@ class Dashboard extends Component{
         })
       });
     }
+  }
+
+  switchDate(){
+    var db = firebase.firestore();
+    const userRef = db.collection('users').doc(this.props.user.uid);
+    // add this date as new collection if it doesn't exist
+    var dateRef = userRef.collection('dates').doc(`${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`);
+    dateRef.get().then(dateSnapshot=>{
+      if (!dateSnapshot.exists){
+        dateRef.set({
+          date: `${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`
+        });
+      }
+    }).then(result=>{
+        // listen for changes in this user's tasks for this date
+        userRef
+        .collection('dates')
+        .doc(`${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`)
+        .collection('tasks')
+        .onSnapshot(querySnapshot=>{
+          var tempTasks = [];
+          var tempUnfinishedTasks = [];
+          var tempMinsNeeded = 0;
+          var tempHoursNeeded = 0;
+          querySnapshot.forEach(doc=> {
+            tempTasks.push(doc.data());
+            if (!doc.data().finished){
+              tempUnfinishedTasks.push(doc.data());
+              tempMinsNeeded = tempMinsNeeded + doc.data().hours*60 + doc.data().mins;
+            }
+          });
+          // calculate hours and mins needed to finish remaining tasks
+          tempHoursNeeded = parseInt(tempMinsNeeded / 60);
+          tempMinsNeeded = tempMinsNeeded % 60;
+          this.setState({
+            tasks: tempTasks,
+            unfinishedTasks: tempUnfinishedTasks,
+            hoursNeededForTasks: tempHoursNeeded,
+            minsNeededForTasks: tempMinsNeeded
+          });
+        });
+    });
   }
 
   toggleNotesMenuLocked(){
@@ -819,7 +894,8 @@ class Dashboard extends Component{
 
     //get current task finished state of this task in firestore
     var newFinished;
-    userRef.collection('tasks').doc(task)
+    userRef.collection('dates').doc(`${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`)
+    .collection("tasks").doc(task)
     .get().then(doc=>{
       if (doc.exists){
         newFinished = !doc.data().finished;
@@ -827,7 +903,8 @@ class Dashboard extends Component{
     })
     .then(result=>{
       // toggle whether task is finished in database
-      userRef.collection('tasks').doc(task)
+      userRef.collection('dates').doc(`${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`)
+      .collection("tasks").doc(task)
       .update({
         finished: newFinished
       });

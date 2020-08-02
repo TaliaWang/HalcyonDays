@@ -105,6 +105,7 @@ class TasksMenu extends Component{
 
     var db = firebase.firestore();
     db.collection("users").doc(this.props.user.uid)
+    .collection('dates').doc(`${this.props.todayDate.month} ${this.props.todayDate.date}, ${this.props.todayDate.year}`)
     .collection("tasks").doc(task).delete();
   }
 
