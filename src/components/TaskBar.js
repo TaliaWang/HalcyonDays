@@ -21,15 +21,15 @@ const P = styled.p`
 `
 
 const TimeContainer = styled.div`
-  margin: 10% 25% 0 25%;
+  margin: 5% 25% 0 25%;
   height: ${props => props.height}px;
   display: flex;
 
   @media (max-width: 1200px) {
-    margin: 20% 20% 0 20%;
+    margin: 10% 20% 0 20%;
   }
   @media (max-width: 800px) {
-    margin: 30% 15% 0 15%;
+    margin: 20% 15% 0 15%;
   }
 `
 

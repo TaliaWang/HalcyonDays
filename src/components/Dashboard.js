@@ -50,21 +50,21 @@ const DateCarousel = styled.div`
   border-top: 1px solid black;
   border-bottom: 1px solid black;
   height: 50px;
-  margin: 5% 25% 0 25%;
+  margin: 2% 25% 0 25%;
   text-align: left;
 
   @media (max-width: 1200px) {
-    margin: 8% 20% 0 20%;
+    margin: 5% 20% 0 20%;
   }
   @media (max-width: 800px) {
-    margin: 12% 15% 0 15%;
+    margin: 8% 15% 0 15%;
   }
   @media (max-width: 600px) {
-    margin: 15% 7% 0 7%;
+    margin: 10% 7% 0 7%;
     height: 40px;
   }
   @media (max-width: 400px) {
-    margin: 18% 7% 0 7%;
+    margin: 14% 7% 0 7%;
     height: 30px;
   }
 `
@@ -196,7 +196,7 @@ const P_carousel = styled.p`
 `
 
 const StatsContainer = styled.div`
-  margin-top: -65px;
+  margin-top: -66px;
 
   @media (max-width: 1200px) {
     margin-top: -55px;
@@ -274,7 +274,7 @@ class Dashboard extends Component{
         month: "",
         year: 0,
         hour: 0,
-        min: 0,
+        min: "00",
         am_pm: "AM"
       },
       todayDate:{
@@ -334,6 +334,9 @@ class Dashboard extends Component{
   componentDidMount(){
     // Add new user to database if they are verified
     if (this.props.user != null && this.props.user.emailVerified){
+      // set the dates for today/tomorrow early here so that today/tomorrow can be created in the database
+      this.setTodayTomorrowDates();
+
       var db = firebase.firestore();
       const userRef = db.collection('users').doc(this.props.user.uid);
 
@@ -375,13 +378,22 @@ class Dashboard extends Component{
           });
         }).then(result=>{
             this.calculateTimePassedWidth();
-            this.setTodayTomorrowDates();
 
-            // update time passed and today/tomorrow dates every minute
+            // add today/tomorrow  into database if it doesn't exist yet
+            // actually, we can add JUST TODAY; it's implied that TODAY is the earlier day of the two
+
+
+            // update time passed every minute
             setInterval(result=>{
               this.calculateTimePassedWidth();
-              this.setTodayTomorrowDates();
-            }, 60000)
+            }, 60000);
+
+            // check whether today/tomorrow should up dated every 15 seconds
+            // note: checking every minute might not be frequent enough,
+            // since case to reset today/tomorrow occurs when current time == wakeup time
+            setInterval(result=>{
+              this.updateTodayTomorrowDates();
+            }, 15000);
         });
       });
 
@@ -460,9 +472,15 @@ class Dashboard extends Component{
     else if (currentHour == 12){
       currentAm_pm = "PM";
     }
+    else if (currentHour == 0){
+      currentHour = 12;
+    }
     var currentMin = d.getMinutes();
     if (currentMin <= 9){
       currentMin = "0" + currentMin;
+    }
+    else{
+      currentMin = currentMin + "";
     }
 
 
@@ -752,6 +770,16 @@ class Dashboard extends Component{
     this.setState({
       tasksMenuLocked: newLocked
     });
+  }
+
+  updateTodayTomorrowDates(){
+    // compare current time with wake-up time, then change to next day if they match
+    if (this.state.wakeupHour == this.state.currentDateTime.hour
+        && this.state.wakeupMin == this.state.currentDateTime.min
+        && this.state.wakeupClockMode== this.state.currentDateTime.am_pm){
+        // reset today/tomorrow to the next day
+        this.setTodayTomorrowDates();
+    }
   }
 
   render(){
