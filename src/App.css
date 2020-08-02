@@ -13,6 +13,10 @@
   src: url("./fonts/OpenSans-Regular.ttf") format("truetype");
 }
 
+button{
+    cursor: pointer;
+}
+
 button:focus{
   outline: none;
 }
