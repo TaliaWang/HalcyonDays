@@ -38,7 +38,7 @@ class App extends Component{
 
   render(){
     return (
-      <div className="App" style={{textAlign: 'center'}}>
+      <div className="App" style={{textAlign: 'center', minHeight: '800px'}}>
         {this.state.isLoaded
           ?
           <Router>

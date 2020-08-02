@@ -48,6 +48,9 @@ const Form = styled.form`
 `
 
 const H3 = styled.h3`
+  text-align: center;
+  color: white;
+  margin: 0 5% 5% 5%;
 `
 
 const Img = styled.img`
@@ -120,6 +123,9 @@ class TasksMenu extends Component{
       <div onMouseLeave={this.props.toggleShowTasksMenu} style={{textAlign: 'left'}}>
         <Container>
           <br/><br/>
+          <H3>{this.props.todayDate.day}, {this.props.todayDate.month} {this.props.todayDate.date}, {this.props.todayDate.year}
+             &nbsp;-<br/>{this.props.tmrwDate.day}, {this.props.tmrwDate.month} {this.props.tmrwDate.date}, {this.props.tmrwDate.year}
+          </H3>
           {this.state.tasks.map((task, index) =>
             <div style={{marginLeft: '5%', marginTop: '2%', marginRight: '5%'}}>
               <Checkbox id={`${task}${index}`} onClick={this.props.toggleTaskChecked.bind(this)}>

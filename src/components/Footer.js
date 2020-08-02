@@ -30,7 +30,7 @@ const IconsContainer = styled.div`
   bottom: 2%;
   position: fixed;
   left: 50%;
-  transform: translate(-48%, 0);
+  transform: translate(-45%, 0);
   margin-top: 2%;
 `
 
@@ -119,9 +119,9 @@ class Footer extends Component{
               ></FooterPopup>
               {
                 {
-                  'clock': <Triangle left='18px' right='18px' bottom='20px' marginLeft='50%' xtranslation='-170%'/>,
-                  'moreOptions':  <Triangle left='18px' right='18px' bottom='20px' marginLeft='50%' xtranslation='-50%'/>,
-                  'settings': <Triangle left='18px' right='18px' bottom='20px' marginLeft='50%' xtranslation='75%'/>
+                  'clock': <Triangle left='18px' right='18px' bottom='20px' marginLeft='50%' xtranslation='-160%'/>,
+                  'moreOptions':  <Triangle left='18px' right='18px' bottom='20px' marginLeft='50%' xtranslation='-40%'/>,
+                  'settings': <Triangle left='18px' right='18px' bottom='20px' marginLeft='50%' xtranslation='85%'/>
                 }[this.state.popupOption]
               }
             </div>

@@ -9,6 +9,7 @@ import NotesMenu from "./NotesMenu.js"
 import Statistics from "./Statistics.js"
 import TaskBar from "./TaskBar.js"
 import TasksMenu from "./TasksMenu.js"
+import leftRightBtnImg from "../images/leftRightBtn.png"
 import locked from "../images/locked.png"
 import newNoteButton from "../images/newNoteButton.png"
 import notesMenuImg from "../images/notesMenu.png"
@@ -45,6 +46,29 @@ const CircleBtn = styled.button`
 const CurrentDateTime = styled.div`
 `
 
+const DateCarousel = styled.div`
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  height: 50px;
+  margin: 5% 25% 0 25%;
+  text-align: left;
+
+  @media (max-width: 1200px) {
+    margin: 8% 20% 0 20%;
+  }
+  @media (max-width: 800px) {
+    margin: 12% 15% 0 15%;
+  }
+  @media (max-width: 600px) {
+    margin: 15% 7% 0 7%;
+    height: 40px;
+  }
+  @media (max-width: 400px) {
+    margin: 18% 7% 0 7%;
+    height: 30px;
+  }
+`
+
 const H1 = styled.h1`
   margin-top: 5%;
   font-family: ISOCT2;
@@ -78,6 +102,27 @@ const H3 = styled.h3`
   }
 `
 
+const LeftRightBtn = styled.button`
+  border: none;
+  outline: none;
+  background: none;
+  padding: 0;
+`
+
+const LeftRightBtnImg = styled.img`
+  transform: rotate(${props=>props.rotation});
+  height: 40px;
+  width: 50px;
+
+  @media (max-width: 800px) {
+    height: 30px;
+    width: 40px;
+  }
+  @media (max-width: 600px) {
+    height: 24px;
+    width: 30px;
+  }
+`
 
 const NewNoteAndTaskContainer = styled.div`
   margin-top: 1%;
@@ -138,15 +183,29 @@ const P = styled.p`
   transform: ${props=>props.float=='left'? 'translate(-50%, 0)' : 'translate(50%, 0)'};
 `
 
+const P_carousel = styled.p`
+  font-size: 15px;
+  float: ${props=>props.float};
+
+  @media (max-width: 600px) {
+     font-size: 12.25px;
+  }
+  @media (max-width: 400px) {
+     font-size: 9px;
+  }
+`
+
 const StatsContainer = styled.div`
   margin-top: -65px;
 
   @media (max-width: 1200px) {
     margin-top: -55px;
   }
-
   @media (max-width: 1000px) {
     margin-top: -50px;
+  }
+  @media (max-width: 600px) {
+    margin-top: -45px;
   }
 `
 
@@ -165,10 +224,10 @@ const StatsImg = styled.img`
     margin-left: 78%;
   }
   @media (max-width: 600px) {
-    margin-left: 78%;
+    margin-left: 79%;
   }
   @media (max-width: 400px) {
-    margin-left: 80%;
+    margin-left: 82%;
   }
 `
 
@@ -217,6 +276,18 @@ class Dashboard extends Component{
         hour: 0,
         min: 0,
         am_pm: "AM"
+      },
+      todayDate:{
+        day: "",
+        date: 0,
+        month: "",
+        year: 0
+      },
+      tmrwDate: {
+        day: "",
+        date: 0,
+        month: "",
+        year: 0
       },
       showNewNote: false,
       showNotesMenu: false,
@@ -304,10 +375,12 @@ class Dashboard extends Component{
           });
         }).then(result=>{
             this.calculateTimePassedWidth();
+            this.setTodayTomorrowDates();
 
-            // update time left every minute
+            // update time passed and today/tomorrow dates every minute
             setInterval(result=>{
               this.calculateTimePassedWidth();
+              this.setTodayTomorrowDates();
             }, 60000)
         });
       });
@@ -504,6 +577,39 @@ class Dashboard extends Component{
     })
   }
 
+  setTodayTomorrowDates(){
+    // get today's date and time (today being the date for which user wants to edit/view tasks)
+    var today = new Date();
+    var todayDay = this.days[today.getDay()];
+    var todayDate = today.getDate();
+    var todayMonth = this.months[today.getMonth()];
+    var todayYear = today.getFullYear();
+
+    // get tomorrow's date and time
+    var tmrw = new Date();
+    tmrw = new Date(today);
+    tmrw.setDate(tmrw.getDate() + 1);
+    var tmrwDay = this.days[tmrw.getDay()];
+    var tmrwDate = tmrw.getDate();
+    var tmrwMonth = this.months[tmrw.getMonth()];
+    var tmrwYear = tmrw.getFullYear();
+
+    this.setState({
+      todayDate: {
+        day: todayDay,
+        date: todayDate,
+        month: todayMonth,
+        year: todayYear
+      },
+      tmrwDate: {
+        day: tmrwDay,
+        date: tmrwDate,
+        month: tmrwMonth,
+        year: tmrwYear
+      }
+    })
+  }
+
   showStatistics(){
     this.setState({
       showStatistics: true
@@ -688,7 +794,7 @@ class Dashboard extends Component{
             </TasksMenuBtn>
         }
         <div style={{float: 'right', zIndex: '10', position: 'fixed', opacity: this.state.showTasksMenu?1:0, transition: 'opacity 0.3s'}}>
-          {this.state.showTasksMenu? <TasksMenu user={this.props.user} tasks={this.state.tasks} toggleShowTasksMenu={this.toggleShowTasksMenu.bind(this)} toggleTaskChecked={this.toggleTaskChecked.bind(this)}></TasksMenu> : null}
+          {this.state.showTasksMenu? <TasksMenu user={this.props.user} tasks={this.state.tasks} todayDate={this.state.todayDate} tmrwDate={this.state.tmrwDate} toggleShowTasksMenu={this.toggleShowTasksMenu.bind(this)} toggleTaskChecked={this.toggleTaskChecked.bind(this)}></TasksMenu> : null}
         </div>
 
         {/* main center components */}
@@ -699,6 +805,16 @@ class Dashboard extends Component{
               <H1>{this.state.currentDateTime.hour}:{this.state.currentDateTime.min} {this.state.currentDateTime.am_pm}</H1>
               <H3>{this.state.currentDateTime.day}, {this.state.currentDateTime.month} {this.state.currentDateTime.date}, {this.state.currentDateTime.year}</H3>
           </div>
+          <DateCarousel>
+            <div style={{float: 'left', display: 'flex', transform: 'translate(-20%, 0)', padding: '0', marginRight: '0'}}>
+              <LeftRightBtn><LeftRightBtnImg rotation='0deg' src={leftRightBtnImg}/></LeftRightBtn>
+              <P_carousel>{this.state.todayDate.day}, {this.state.todayDate.month} {this.state.todayDate.date}, {this.state.todayDate.year}</P_carousel>
+            </div>
+            <div style={{float: 'right', display: 'flex', transform: 'translate(20%, 0)', padding: '0', marginLeft: '0'}}>
+              <P_carousel>{this.state.tmrwDate.day}, {this.state.tmrwDate.month} {this.state.tmrwDate.date}, {this.state.tmrwDate.year}</P_carousel>
+              <LeftRightBtn><LeftRightBtnImg rotation='180deg' src={leftRightBtnImg}/></LeftRightBtn>
+            </div>
+          </DateCarousel>
           <div>
             <TaskBar
               setSleepTime={this.setSleepTime.bind(this)}
@@ -719,8 +835,8 @@ class Dashboard extends Component{
             ></TaskBar>
             {/* start and end times of the day */}
             <TodayTomorrow>
-               <P float='left'>{this.state.wakeupHour}:{this.state.wakeupMin} {this.state.wakeupClockMode} today</P>
-               <P float='right'>{this.state.wakeupHour}:{this.state.wakeupMin} {this.state.wakeupClockMode} tomorrow</P>
+               <P float='left'>{this.state.wakeupHour}:{this.state.wakeupMin} {this.state.wakeupClockMode}</P>
+               <P float='right'>{this.state.wakeupHour}:{this.state.wakeupMin} {this.state.wakeupClockMode}</P>
             </TodayTomorrow>
             <StatsContainer>
               <StatsImg onMouseOver={this.showStatistics.bind(this)} onMouseLeave={this.hideStatistics.bind(this)} src={statisticsImg}/>
