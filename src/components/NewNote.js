@@ -83,15 +83,32 @@ class NewNote extends Component{
   submitNote(e){
     e.preventDefault();
     var db = firebase.firestore();
-    db.collection("users").doc(this.props.user.uid)
-    .collection("notes").doc(this.state.newNote)
-    .set({
-      text: this.state.newNote
-    }).then(result=>{
-      this.setState({
-        newNote: ""
-      });
-    })
+    // either submit to general notes or notes for this specific task
+    if (this.props.selectedTask == ""){
+      db.collection("users").doc(this.props.user.uid)
+      .collection("notes").doc(this.state.newNote)
+      .set({
+        text: this.state.newNote
+      }).then(result=>{
+        this.setState({
+          newNote: ""
+        });
+      })
+    }
+    else{
+      db.collection("users").doc(this.props.user.uid)
+      .collection("dates").doc(`${this.props.todayDate.month} ${this.props.todayDate.date}, ${this.props.todayDate.year}`)
+      .collection('tasks').doc(this.props.selectedTask).collection('notes')
+      .doc(this.state.newNote)
+      .set({
+        text: this.state.newNote
+      })
+      .then(result=>{
+        this.setState({
+          newNote: ""
+        });
+      })
+    }
   }
 
   render(){
@@ -100,7 +117,7 @@ class NewNote extends Component{
         <Triangle/>
         <Container>
           <Form onSubmit={this.submitNote.bind(this)}>
-              <NoteInput id='note' value={this.state.newNote} onChange={this.handleNewNoteChange.bind(this)} placeholder="New Note"/>
+              <NoteInput id='note' value={this.state.newNote} onChange={this.handleNewNoteChange.bind(this)} placeholder="New Note" required/>
               <button type='submit' onClick={this.props.submitNote} style={{display:'none'}}/>
           </Form>
         </Container>

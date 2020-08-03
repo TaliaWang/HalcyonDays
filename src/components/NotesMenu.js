@@ -127,8 +127,18 @@ class NotesMenu extends Component{
     var note = listItem.getElementsByClassName("noteText")[0].innerHTML;
 
     var db = firebase.firestore();
-    db.collection("users").doc(this.props.user.uid)
-    .collection("notes").doc(note).delete();
+    if (this.props.selectedTask == ""){
+      // delete note from general notes
+      db.collection("users").doc(this.props.user.uid)
+      .collection("notes").doc(note).delete();
+    }
+    else{
+      // delete notes from selected task
+      db.collection("users").doc(this.props.user.uid)
+      .collection('dates').doc(`${this.props.todayDate.month} ${this.props.todayDate.date}, ${this.props.todayDate.year}`)
+      .collection("tasks").doc(this.props.selectedTask)
+      .collection('notes').doc(note).delete();
+    }
   }
 
   displayX(e){

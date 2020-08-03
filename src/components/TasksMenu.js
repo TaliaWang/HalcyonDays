@@ -126,14 +126,45 @@ class TasksMenu extends Component{
     }
   }
 
+  deleteNotesForSelectedTask(task){
+    var db = firebase.firestore();
+    var notesRef = db.collection("users").doc(this.props.user.uid)
+                  .collection('dates').doc(`${this.props.todayDate.month} ${this.props.todayDate.date}, ${this.props.todayDate.year}`)
+                  .collection("tasks").doc(task).collection('notes');
+    // get all notes for this task
+    var notes = [];
+    notesRef.get().then(querySnapshot=>{
+      querySnapshot.forEach(doc=>{
+        notes.push(doc.data());
+      })
+    // delete the notes for this task
+    }).then(()=>{
+      notes.forEach(note => {
+        notesRef.doc(note.text).delete();
+      });
+    }).then(()=>{
+      this.props.backToGeneralNotes();
+    });
+  }
+
   deleteTask(e){
     // parse the task name
     var task = e.target.parentElement.getElementsByClassName('taskText')[0].textContent;
 
-    var db = firebase.firestore();
-    db.collection("users").doc(this.props.user.uid)
-    .collection('dates').doc(`${this.props.todayDate.month} ${this.props.todayDate.date}, ${this.props.todayDate.year}`)
-    .collection("tasks").doc(task).delete();
+    var confirmDelete = window.confirm(`Are you sure you want to delete "${task}?" Doing so will delete this task and all of its notes.`);
+
+    if (confirmDelete){
+      var db = firebase.firestore();
+      // delete all notes for task
+      this.deleteNotesForSelectedTask(task);
+
+      // delete task itself
+      db.collection("users").doc(this.props.user.uid)
+      .collection('dates').doc(`${this.props.todayDate.month} ${this.props.todayDate.date}, ${this.props.todayDate.year}`)
+      .collection("tasks").doc(task).delete();
+      // display general notes since this task and its notes have been deleted
+      this.props.backToGeneralNotes();
+    }
   }
 
   displayX(e){

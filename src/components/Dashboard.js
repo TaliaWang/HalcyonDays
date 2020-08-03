@@ -329,6 +329,9 @@ class Dashboard extends Component{
   backToGeneralNotes(){
     this.setState({
       selectedTask: ""
+    }, ()=>{
+      // display general notes
+      this.switchNotes();
     })
   }
 
@@ -339,15 +342,19 @@ class Dashboard extends Component{
       selectedTask: taskName,
       showNotesMenu: true,
       notesMenuLocked: true
+    }, () =>{
+       this.switchNotes(); // change notes displayed in notes menu
     });
   }
 
   changeSelectedTaskFromTaskMenu(e){
-    var taskName = e.target.innerHTML;
+    var taskName = e.target.parentElement.getElementsByClassName('taskText')[0].textContent;
     this.setState({
       selectedTask: taskName,
       showNotesMenu: true,
       notesMenuLocked: true
+    }, ()=>{
+        this.switchNotes(); // change notes displayed in notes menu
     });
   }
 
@@ -516,18 +523,8 @@ class Dashboard extends Component{
                   sleepClockMode: userDoc.data().sleepClockMode,
                 });
 
-                //listen for changes in this user's notes
-                userRef
-                .collection('notes')
-                .onSnapshot(querySnapshot=>{
-                  var tempNotes = [];
-                  querySnapshot.forEach(doc=>{
-                    tempNotes.push(doc.data());
-                  });
-                  this.setState({
-                    notes: tempNotes
-                  })
-                });
+                //listen for changes in this user's general notes
+                this.switchNotes();
 
                 // listen for changes in this user's tasks for this date
                 this.switchDate();
@@ -809,9 +806,7 @@ class Dashboard extends Component{
       }
     }).then(result=>{
         // listen for changes in this user's tasks for this date
-        userRef
-        .collection('dates')
-        .doc(`${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`)
+        dateRef
         .collection('tasks')
         .onSnapshot(querySnapshot=>{
           var tempTasks = [];
@@ -836,6 +831,44 @@ class Dashboard extends Component{
           });
         });
     });
+  }
+
+  switchNotes(){
+    var db = firebase.firestore();
+    if (this.state.selectedTask == ""){
+      // show general notes
+      const userRef = db.collection('users').doc(this.props.user.uid);
+      userRef
+      .collection('notes')
+      .onSnapshot(querySnapshot=>{
+        var tempNotes = [];
+        querySnapshot.forEach(doc=>{
+          tempNotes.push(doc.data());
+        });
+        this.setState({
+          notes: tempNotes
+        })
+      });
+    }
+    else{
+      // show notes specific to this task
+      const taskRef = db.collection('users').doc(this.props.user.uid)
+                      .collection("dates").doc(`${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`)
+                      .collection('tasks').doc(this.state.selectedTask);
+
+      // the selected task will always already exist in the database, so no need to check and create the task
+      taskRef
+      .collection('notes')
+      .onSnapshot(querySnapshot=>{
+        var tempNotes = [];
+        querySnapshot.forEach(doc=>{
+          tempNotes.push(doc.data());
+        });
+        this.setState({
+          notes: tempNotes
+        })
+      });
+    }
   }
 
   toggleNotesMenuLocked(){
@@ -960,7 +993,9 @@ class Dashboard extends Component{
             </NotesMenuBtn>
         }
         <div style={{float: 'left', zIndex: '10', position: 'fixed', opacity: this.state.showNotesMenu?1:0, transition: 'opacity 0.3s'}}>
-          {this.state.showNotesMenu? <NotesMenu user={this.props.user} selectedTask={this.state.selectedTask} notes={this.state.notes} backToGeneralNotes={this.backToGeneralNotes.bind(this)} toggleShowNotesMenu={this.toggleShowNotesMenu.bind(this)}></NotesMenu> : null}
+          {this.state.showNotesMenu? <NotesMenu user={this.props.user} selectedTask={this.state.selectedTask} notes={this.state.notes} todayDate={this.state.todayDate}
+                                      backToGeneralNotes={this.backToGeneralNotes.bind(this)} toggleShowNotesMenu={this.toggleShowNotesMenu.bind(this)}>
+                                      </NotesMenu> : null}
         </div>
 
         {/* tasks menu side bar*/}
@@ -985,7 +1020,9 @@ class Dashboard extends Component{
         }
         <div style={{float: 'right', zIndex: '10', position: 'fixed', opacity: this.state.showTasksMenu?1:0, transition: 'opacity 0.3s'}}>
           {this.state.showTasksMenu? <TasksMenu user={this.props.user} tasks={this.state.tasks} todayDate={this.state.todayDate} tmrwDate={this.state.tmrwDate}
-                                      changeSelectedTaskFromTaskMenu={this.changeSelectedTaskFromTaskMenu.bind(this)} toggleShowTasksMenu={this.toggleShowTasksMenu.bind(this)} toggleTaskChecked={this.toggleTaskChecked.bind(this)}>
+                                      changeSelectedTaskFromTaskMenu={this.changeSelectedTaskFromTaskMenu.bind(this)} toggleShowTasksMenu={this.toggleShowTasksMenu.bind(this)}
+                                      backToGeneralNotes={this.backToGeneralNotes.bind(this)} switchNotes={this.switchNotes.bind(this)}
+                                      toggleTaskChecked={this.toggleTaskChecked.bind(this)}>
                                       </TasksMenu> : null}
         </div>
 
@@ -1054,7 +1091,9 @@ class Dashboard extends Component{
             <CircleBtn state={this.state.showNewTask} onClick={this.toggleShowNewTask.bind(this)}>+</CircleBtn>
             {this.state.showNewNote?
               <NewNote
+                todayDate={this.state.todayDate}
                 user={this.props.user}
+                selectedTask={this.state.selectedTask}
               ></NewNote>
               : null}
             {this.state.showNewTask?
