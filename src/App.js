@@ -23,17 +23,15 @@ class App extends Component{
 
   authListener(){
     firebase.auth().onAuthStateChanged((user)=>{
-      this.setState({user: user});
+      this.setState({
+        user: user,
+        isLoaded: true
+      });
     });
   }
 
   componentDidMount(){
     this.authListener();
-    setTimeout(()=>{
-      this.setState({
-        isLoaded: true
-      });
-    }, 300);
   }
 
   render(){
