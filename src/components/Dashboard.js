@@ -163,17 +163,12 @@ const NewNoteButtonImg = styled.img`
 const NotesMenuBtn = styled.button`
   background-color: transparent;
   border: none;
-  margin: -4% 0 0 0;
   float: left;
+  top: 1vh;
+  left: 0;
   z-index: 15;
-  position: relative;
-
-  @media (max-width: 1200px) {
-    margin: -4% 0 0 0;
-  }
-  @media (max-width: 800px) {
-    margin: -4% 0 0 0;
-  }
+  position: fixed;
+  margin: 0;
 `
 
 const P = styled.p`
@@ -234,17 +229,12 @@ const StatsImg = styled.img`
 const TasksMenuBtn = styled.button`
   background-color: transparent;
   border: none;
-  margin: -4% 0 0 0;
+  margin: 0;
+  top: 1vh;
+  right: 0;
   float: right;
   z-index: 15;
-  position: relative;
-
-  @media (max-width: 1200px) {
-    margin: -4% 0 0 0;
-  }
-  @media (max-width: 800px) {
-    margin: -4% 0 0 0;
-  }
+  position: fixed;
 `
 
 const TasksMenuImg = styled.img`

@@ -6,26 +6,31 @@ import checkmark from "../images/checkmark.jpg";
 
 const BackToGeneralBtn = styled.button`
   color: white;
-  border: none;
-  background-color: transparent;
-  width: 100%;
+  border-top: 1px solid white;
+  border-right: none;
+  border-left: none;
+  border-bottom: none;
+  background-color: #606060;
+  font-size: 100%;
+  width: 20%;
   text-align: center;
+  bottom: 0;
+  height: 7vh;
+  padding: 1vh;
+  position: fixed;
+  z-index: 50;
+
+  @media (max-width: 800px) {
+    width: 30%;
+  }
 `
 
 const Container = styled.div`
   background-color: #606060;
   width: 20%;
   margin: -5% 0 0 0;
-  min-height: 120vh;
+  height: 100vh;
   position: fixed;
-  overflow-y: scroll;
-  -webkit-transition: 0.3s ease-out;
-  -webkit-transition: 0.3s ease-in;
-
-  ::-webkit-scrollbar {
-    width: 0px;
-    background: transparent; /* make scrollbar transparent */
-  }
 
   @media (max-width: 1200px) {
     width: 20%;
@@ -44,7 +49,9 @@ const Form = styled.form`
 const H3 = styled.h3`
   text-align: center;
   color: white;
-  margin: 0 5% 5% 5%;
+  margin: 0 5% 0% 5%;
+  border-bottom: 1px solid white;
+  padding: 3%;
 
   @media (max-width: 600px) {
       font-size: 100%;
@@ -71,9 +78,17 @@ const Ul = styled.ul`
   margin-top: 2%;
   margin-right: 3%;
   color: white;
+  height: 100vh;
+  overflow-y: scroll;
+  z-index: 20;
+
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+  }
 
   @media (max-width: 600px) {
-      font-size: 80%;
+    font-size: 80%;
   }
 `
 
@@ -142,7 +157,7 @@ class NotesMenu extends Component{
               </li>
             )}
           </Ul>
-          {this.props.selectedTask == "" ? null : <BackToGeneralBtn onClick={this.props.backToGeneralNotes}>Back to General Notes</BackToGeneralBtn>}
+          <BackToGeneralBtn onClick={this.props.backToGeneralNotes}>Back to General Notes</BackToGeneralBtn>
         </Container>
       </div>
     );

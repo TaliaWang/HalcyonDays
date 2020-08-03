@@ -26,16 +26,9 @@ const Container = styled.div`
   background-color: #606060;
   width: 20%;
   margin: -5% 0 0 80%;
-  height: 120vh;
+  height: 100vh;
   position: fixed;
-  overflow-y: scroll;
-  -webkit-transition: 0.3s ease-out;
-  -webkit-transition: 0.3s ease-in;
 
-  ::-webkit-scrollbar {
-    width: 0px;
-    background: transparent; /* make scrollbar transparent */
-  }
   @media (max-width: 800px) {
     margin: -5% 0 0 70%;
     width: 30%;
@@ -57,6 +50,8 @@ const H3 = styled.h3`
   text-align: center;
   color: white;
   margin: 0 5% 5% 5%;
+  border-bottom: 1px solid white;
+  padding: 3%;
 
   @media (max-width: 600px) {
       font-size: 100%;
@@ -86,6 +81,16 @@ const P = styled.p`
   margin-top: 0;
   margin-bottom: 0;
   font-family: openSansRegular;
+`
+
+const TasksContainer = styled.div`
+  overflow-y: scroll;
+  height: 85vh;
+
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+  }
 `
 
 const XBtn = styled.button`
@@ -149,20 +154,22 @@ class TasksMenu extends Component{
           <H3>{this.props.todayDate.day}, {this.props.todayDate.month} {this.props.todayDate.date}, {this.props.todayDate.year}
              &nbsp;-<br/>{this.props.tmrwDate.day}, {this.props.tmrwDate.month} {this.props.tmrwDate.date}, {this.props.tmrwDate.year}
           </H3>
-          {this.state.tasks.map((task, index) =>
-            <div style={{margin: '6% 5% 6% 5%'}}>
-              <Checkbox id={`${task}${index}`} onClick={this.props.toggleTaskChecked.bind(this)}>
-                {task.finished ? <Img src={checkmark}/> : null}
-              </Checkbox>
-              <div onMouseOver={this.displayX.bind(this)} onMouseLeave={this.hideX.bind(this)}>
-                <LabelBtn id={`${task}${index}_label`}>
-                  <P className='taskText' onClick={this.props.changeSelectedTaskFromTaskMenu}>{task.name}</P>
-                  <XBtn className="XBtn" onClick = {this.deleteTask.bind(this)}>✖</XBtn>
-                </LabelBtn>
+          <TasksContainer>
+            {this.state.tasks.map((task, index) =>
+              <div style={{margin: '6% 5% 6% 5%'}}>
+                <Checkbox id={`${task}${index}`} onClick={this.props.toggleTaskChecked.bind(this)}>
+                  {task.finished ? <Img src={checkmark}/> : null}
+                </Checkbox>
+                <div onMouseOver={this.displayX.bind(this)} onMouseLeave={this.hideX.bind(this)}>
+                  <LabelBtn id={`${task}${index}_label`}>
+                    <P className='taskText' onClick={this.props.changeSelectedTaskFromTaskMenu}>{task.name}</P>
+                    <XBtn className="XBtn" onClick = {this.deleteTask.bind(this)}>✖</XBtn>
+                  </LabelBtn>
+                </div>
+                <P>({task.hours}h {task.mins}m)</P>
               </div>
-              <P>({task.hours}h {task.mins}m)</P>
-            </div>
-          )}
+            )}
+          </TasksContainer>
         </Container>
       </div>
     );
