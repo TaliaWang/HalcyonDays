@@ -4,14 +4,19 @@ import firebase from '../firebase';
 import styled from 'styled-components'
 import checkmark from "../images/checkmark.jpg";
 
-const LockButton = styled.button`
+const BackToGeneralBtn = styled.button`
+  color: white;
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  text-align: center;
 `
 
 const Container = styled.div`
   background-color: #606060;
   width: 20%;
   margin: -5% 0 0 0;
-  height: 100vh;
+  min-height: 120vh;
   position: fixed;
   overflow-y: scroll;
   -webkit-transition: 0.3s ease-out;
@@ -37,6 +42,13 @@ const Form = styled.form`
 `
 
 const H3 = styled.h3`
+  text-align: center;
+  color: white;
+  margin: 0 5% 5% 5%;
+
+  @media (max-width: 600px) {
+      font-size: 100%;
+  }
 `
 
 const Img = styled.img`
@@ -119,6 +131,7 @@ class NotesMenu extends Component{
       <div onMouseLeave={this.props.toggleShowNotesMenu} style={{textAlign: 'left'}}>
         <Container>
           <br/><br/>
+          {this.props.selectedTask == "" ? <H3>General Notes</H3> : <H3>Notes for: {this.props.selectedTask}</H3>}
           <Ul>
             {this.state.notes.map((note, index) =>
               <li className="note" onMouseOver={this.displayX.bind(this)} onMouseLeave={this.hideX.bind(this)} id={`${note}${index}_label`}>
@@ -129,6 +142,7 @@ class NotesMenu extends Component{
               </li>
             )}
           </Ul>
+          {this.props.selectedTask == "" ? null : <BackToGeneralBtn onClick={this.props.backToGeneralNotes}>Back to General Notes</BackToGeneralBtn>}
         </Container>
       </div>
     );

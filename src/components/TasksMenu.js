@@ -8,19 +8,25 @@ const LockButton = styled.button`
 `
 const Checkbox = styled.button`
   margin-right: 2%;
+  transform: translate(0, 20%);
   border: 1px solid white;
   border-radius: 3px;
   background-color: transparent;
   height: 22px;
   width: 22px;
   padding: 2px;
+  float: left;
+
+  @media (max-width: 600px) {
+    transform: translate(0, 5%);
+  }
 `
 
 const Container = styled.div`
   background-color: #606060;
   width: 20%;
   margin: -5% 0 0 80%;
-  height: 100vh;
+  height: 120vh;
   position: fixed;
   overflow-y: scroll;
   -webkit-transition: 0.3s ease-out;
@@ -51,6 +57,10 @@ const H3 = styled.h3`
   text-align: center;
   color: white;
   margin: 0 5% 5% 5%;
+
+  @media (max-width: 600px) {
+      font-size: 100%;
+  }
 `
 
 const Img = styled.img`
@@ -59,15 +69,23 @@ const Img = styled.img`
   width: 100%;
 `
 
-const Label = styled.label`
+const LabelBtn = styled.button`
   color: white;
-  font-size: 120%;
+  border: none;
+  background-color: transparent;
+  display: flex;
+  font-size: 100%;
+  font-family: openSansRegular;
+  text-align: left;
+  padding: 0;
 `
 
 const P = styled.p`
   font-size: 120%;
   color: white;
   margin-top: 0;
+  margin-bottom: 0;
+  font-family: openSansRegular;
 `
 
 const XBtn = styled.button`
@@ -76,6 +94,10 @@ const XBtn = styled.button`
   font-size: 120%;
   color: white;
   display: none;
+
+  &:hover{
+    font-size: 140%;
+  }
 `
 
 
@@ -101,7 +123,7 @@ class TasksMenu extends Component{
 
   deleteTask(e){
     // parse the task name
-    var task = e.target.parentElement.getElementsByClassName('taskText')[0].innerHTML;
+    var task = e.target.parentElement.getElementsByClassName('taskText')[0].textContent;
 
     var db = firebase.firestore();
     db.collection("users").doc(this.props.user.uid)
@@ -128,13 +150,15 @@ class TasksMenu extends Component{
              &nbsp;-<br/>{this.props.tmrwDate.day}, {this.props.tmrwDate.month} {this.props.tmrwDate.date}, {this.props.tmrwDate.year}
           </H3>
           {this.state.tasks.map((task, index) =>
-            <div style={{marginLeft: '5%', marginTop: '2%', marginRight: '5%'}}>
+            <div style={{margin: '6% 5% 6% 5%'}}>
               <Checkbox id={`${task}${index}`} onClick={this.props.toggleTaskChecked.bind(this)}>
                 {task.finished ? <Img src={checkmark}/> : null}
               </Checkbox>
-              <div style={{display: 'inline-block'}} onMouseOver={this.displayX.bind(this)} onMouseLeave={this.hideX.bind(this)}>
-                <Label className='taskText' id={`${task}${index}_label`}>{task.name}</Label>
-                <XBtn className="XBtn" onClick = {this.deleteTask.bind(this)}>✖</XBtn>
+              <div onMouseOver={this.displayX.bind(this)} onMouseLeave={this.hideX.bind(this)}>
+                <LabelBtn id={`${task}${index}_label`}>
+                  <P className='taskText' onClick={this.props.changeSelectedTaskFromTaskMenu}>{task.name}</P>
+                  <XBtn className="XBtn" onClick = {this.deleteTask.bind(this)}>✖</XBtn>
+                </LabelBtn>
               </div>
               <P>({task.hours}h {task.mins}m)</P>
             </div>

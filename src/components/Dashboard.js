@@ -325,7 +325,8 @@ class Dashboard extends Component{
       relaxationTimeMins: 0,
       sleepTimeHours: 0,
       sleepTimeMins: 0,
-      footerPopupsAllowed: true
+      footerPopupsAllowed: true,
+      selectedTask: ""
     }
   }
 
@@ -333,6 +334,31 @@ class Dashboard extends Component{
     this.setState({
       footerPopupsAllowed: true
     })
+  }
+
+  backToGeneralNotes(){
+    this.setState({
+      selectedTask: ""
+    })
+  }
+
+  changeSelectedTaskFromTaskBar(e){
+    var taskId = e.target.id;
+    var taskName = taskId.substring(taskId.indexOf('taskChunk_')+10, taskId.length);
+    this.setState({
+      selectedTask: taskName,
+      showNotesMenu: true,
+      notesMenuLocked: true
+    });
+  }
+
+  changeSelectedTaskFromTaskMenu(e){
+    var taskName = e.target.innerHTML;
+    this.setState({
+      selectedTask: taskName,
+      showNotesMenu: true,
+      notesMenuLocked: true
+    });
   }
 
   changeTodayTmrw(e){
@@ -944,7 +970,7 @@ class Dashboard extends Component{
             </NotesMenuBtn>
         }
         <div style={{float: 'left', zIndex: '10', position: 'fixed', opacity: this.state.showNotesMenu?1:0, transition: 'opacity 0.3s'}}>
-          {this.state.showNotesMenu? <NotesMenu user={this.props.user} notes={this.state.notes} toggleShowNotesMenu={this.toggleShowNotesMenu.bind(this)}></NotesMenu> : null}
+          {this.state.showNotesMenu? <NotesMenu user={this.props.user} selectedTask={this.state.selectedTask} notes={this.state.notes} backToGeneralNotes={this.backToGeneralNotes.bind(this)} toggleShowNotesMenu={this.toggleShowNotesMenu.bind(this)}></NotesMenu> : null}
         </div>
 
         {/* tasks menu side bar*/}
@@ -968,7 +994,9 @@ class Dashboard extends Component{
             </TasksMenuBtn>
         }
         <div style={{float: 'right', zIndex: '10', position: 'fixed', opacity: this.state.showTasksMenu?1:0, transition: 'opacity 0.3s'}}>
-          {this.state.showTasksMenu? <TasksMenu user={this.props.user} tasks={this.state.tasks} todayDate={this.state.todayDate} tmrwDate={this.state.tmrwDate} toggleShowTasksMenu={this.toggleShowTasksMenu.bind(this)} toggleTaskChecked={this.toggleTaskChecked.bind(this)}></TasksMenu> : null}
+          {this.state.showTasksMenu? <TasksMenu user={this.props.user} tasks={this.state.tasks} todayDate={this.state.todayDate} tmrwDate={this.state.tmrwDate}
+                                      changeSelectedTaskFromTaskMenu={this.changeSelectedTaskFromTaskMenu.bind(this)} toggleShowTasksMenu={this.toggleShowTasksMenu.bind(this)} toggleTaskChecked={this.toggleTaskChecked.bind(this)}>
+                                      </TasksMenu> : null}
         </div>
 
         {/* main center components */}
@@ -991,6 +1019,7 @@ class Dashboard extends Component{
           </DateCarousel>
           <div>
             <TaskBar
+              changeSelectedTaskFromTaskBar={this.changeSelectedTaskFromTaskBar.bind(this)}
               setSleepTime={this.setSleepTime.bind(this)}
               setRelaxationTime={this.setRelaxationTime.bind(this)}
               user={this.props.user}

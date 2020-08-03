@@ -24,6 +24,7 @@ const TimeContainer = styled.div`
   margin: 5% 25% 0 25%;
   height: ${props => props.height}px;
   display: flex;
+  z-index: 2;
 
   @media (max-width: 1200px) {
     margin: 10% 20% 0 20%;
@@ -69,23 +70,32 @@ const SleepTime = styled.div`
 
 const TimePassed = styled.div`
   height: ${props => props.height}px;
+  background: transparent;
   margin-left: ${props => props.width}%;
   margin-top: -5px;
   margin-bottom: -5px;
   min-width: 5px;
   border: 1px solid black;
   background-color: white;
-  z-index: 10;
+  z-index: 2;
 `
 
-const Task = styled.div`
+const Task = styled.button`
   border-left: 1px solid white;
+  border-top: none;
+  border-bottom: none;
+  border-right: none;
   background-color: ${props=>props.finished? '#9ae5ff' : '#00BFFF'};
   color: white;
   float: right;
   height: 40px;
   text-align: center;
+  z-index: 8;
   width: ${props => props.width}%;
+
+  &:hover{
+    background-color: ${props=>props.finished? '#67d8ff' : '#00ace6'};
+  }
 `
 
 
@@ -309,10 +319,10 @@ class TaskBar extends Component{
             </BufferTime>
             {/* unfinished tasks come before finished tasks */}
             {this.state.tasks.map((task, index) =>
-              task.finished? null : <Task id={`taskChunk_${task}${index}`} task={task} width={this.getTaskWidth(task)} finished={task.finished}/>
+              task.finished? null : <Task id={`${index}taskChunk_${task.name}`} key={`${index}taskChunk_${task}`} onClick={this.props.changeSelectedTaskFromTaskBar} width={this.getTaskWidth(task)} finished={task.finished}/>
             )}
             {this.state.tasks.map((task, index) =>
-              task.finished? <Task id={`taskChunk_${task}${index}`} task={task} width={this.getTaskWidth(task)} finished={task.finished}><P>✓</P></Task> : null
+              task.finished? <Task id={`${index}taskChunk_${task.name}`} key={`${index}taskChunk_${task}`} onClick={this.props.changeSelectedTaskFromTaskBar} width={this.getTaskWidth(task)} finished={task.finished}><P>✓</P></Task> : null
             )}
           </div>
         </TasksContainer>
