@@ -18,13 +18,13 @@ const Button = styled.button`
 
 const P = styled.p`
     margin-top: 10px;
+    pointer-events: none;
 `
 
 const TimeContainer = styled.div`
   margin: 5% 25% 0 25%;
   height: ${props => props.height}px;
   display: flex;
-  z-index: 2;
 
   @media (max-width: 1200px) {
     margin: 10% 20% 0 20%;
@@ -77,7 +77,8 @@ const TimePassed = styled.div`
   min-width: 5px;
   border: 1px solid black;
   background-color: white;
-  z-index: 2;
+  z-index: 12;
+  pointer-events: none;
 `
 
 const Task = styled.button`
@@ -90,7 +91,7 @@ const Task = styled.button`
   float: right;
   height: 40px;
   text-align: center;
-  z-index: 8;
+  z-index: 11;
   width: ${props => props.width}%;
 
   &:hover{
@@ -304,7 +305,7 @@ class TaskBar extends Component{
         </TimeContainer>
         {/* NOTE: top to bottom appears in order right to left */}
         <TasksContainer height={this.barheight}>
-          <div style={{width: '100%'}}>
+          <div style={{width: '100%', zIndex: '10'}}>
             <SleepTime width={this.state.sleepWidth}>
               <div style={{marginTop: '-30px', minWidth: '75px'}}>
                 <Button>{this.state.sleepHour}:{this.state.sleepMin} {this.state.sleepClockMode}</Button>
