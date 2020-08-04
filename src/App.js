@@ -4,6 +4,7 @@ import {BrowserRouter as Router, Switch, Route, Redirect} from 'react-router-dom
 import Dashboard from "./components/Dashboard.js";
 import EmailVerification from "./components/EmailVerification.js"
 import Login from "./components/Login.js";
+import PasswordReset from "./components/PasswordReset.js"
 import styled from 'styled-components'
 import "./App.css"
 
@@ -18,6 +19,7 @@ class App extends Component{
       isLoaded: false,
       showLogin: true,
       user: {},
+      showPasswordReset: false
     }
   }
 
@@ -34,19 +36,32 @@ class App extends Component{
     this.authListener();
   }
 
+  hidePasswordResetScreen(){
+    this.setState({
+      showPasswordReset: false
+    });
+  }
+
+  showPasswordResetScreen(){
+    this.setState({
+      showPasswordReset: true
+    });
+  }
+
   render(){
     return (
       <div className="App" style={{textAlign: 'center', minHeight: '800px'}}>
         {this.state.isLoaded
           ?
           <Router>
-            {this.state.user == null? <Redirect to="/login"/> :
-              (this.state.user.emailVerified? <Redirect to="/dashboard"/> :
-              <Redirect to="/emailVerification"/>)}
+            {this.state.user == null? (this.state.showPasswordReset ? <Redirect to="/passwordReset"/> : <Redirect to="/login"/>)
+              : (this.state.user.emailVerified? <Redirect to="/dashboard"/> : <Redirect to="/emailVerification"/>)
+            }
             <Switch>
-              <Route exact path = "/login" component={Login}/>}/>
+              <Route exact path = "/login" render = {(props) => <Login showPasswordResetScreen={this.showPasswordResetScreen.bind(this)}/>}/>
               <Route exact path = "/dashboard" render = {(props) => <Dashboard user = {this.state.user} />}/>
               <Route exact path = "/emailVerification" render = {(props) => <EmailVerification user = {this.state.user} />}/>
+              <Route exact path = "/passwordReset" render = {(props) => <PasswordReset user = {this.state.user} hidePasswordResetScreen={this.hidePasswordResetScreen.bind(this)}/>}/>
             </Switch>
           </Router>
           : <P>LOADING...</P>

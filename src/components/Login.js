@@ -62,6 +62,20 @@ const Button = styled.button`
   border: none;
   outline: none;
 `
+
+const ForgotPasswordBtn = styled.button`
+  border: none;
+  background-color: white;
+  font-family: openSansRegular;
+  margin: 0;
+  font-size: 120%;
+  width: 100%;
+
+  &:hover{
+    color: grey;
+  }
+`
+
 const FormContainer = styled.div`
   text-align: center;
   background-color: black;
@@ -145,7 +159,8 @@ class Login extends Component{
       isLogin: true,
       text: "Log In",
       email: "",
-      password: ""
+      password: "",
+      showForgotPassword: false
     }
   }
 
@@ -179,10 +194,15 @@ class Login extends Component{
     if (this.state.isLogin){
       // log in
       firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-      .catch(function(error) {
+      .catch(error=> {
         var errorCode = error.code;
         var errorMessage = error.message;
         alert(errorCode + ": " + errorMessage);
+        if (errorCode == "auth/wrong-password"){
+          this.setState({
+            showForgotPassword: true
+          });
+        }
       });
     }
     else{
@@ -236,9 +256,9 @@ class Login extends Component{
     return(
       <div style={{textAlign: 'center'}}>
 
-        {/* intro page */}
         {this.state.showIntroPage
           ?
+          /* intro page */
           <IntroContainer>
             {/* redirects to login */}
             <IntroButton id='login' onClick={this.toggleShowIntroPage.bind(this)}>
@@ -247,12 +267,8 @@ class Login extends Component{
             <br/>
             <CreateAccountButton id='createAccount' onClick={this.toggleShowIntroPage.bind(this)}>Create an account</CreateAccountButton>
           </IntroContainer>
-          : null
-        }
-
-        {this.state.showIntroPage
-          ? null
           :
+          /* login/signup */
           <div>
             <FormContainer>
               <form onSubmit={this.handleLogin.bind(this)}>
@@ -267,9 +283,16 @@ class Login extends Component{
             <ChangeLoginSignUpBtn onClick={this.changeLogInSignUp.bind(this)}>
               {this.state.isLogin? 'Create an account' : 'Aready have an account? Log In'}
             </ChangeLoginSignUpBtn>
+            {this.state.isLogin && this.state.showForgotPassword
+              ?
+              <ForgotPasswordBtn onClick={this.props.showPasswordResetScreen.bind(this)}>
+                Psst...forgot your password?
+              </ForgotPasswordBtn>
+              : null
+            }
           </div>
         }
-      </div>
+    </div>
     );
   }
 }

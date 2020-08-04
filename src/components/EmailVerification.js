@@ -8,8 +8,27 @@ const Button = styled.button`
   background-color: black;
   border: none;
   border-radius: 5px;
-  padding: 2.5%;
+  padding: 15px;
   margin-bottom: 2%;
+`
+
+const Container = styled.div`
+  text-align: center;
+  margin: 15% 35% 0 40%;
+  width: 30%;
+
+  @media (max-width: 800px) {
+    margin: 30% 35% 0 38%;
+    width: 35%;
+  }
+  @media (max-width: 600px) {
+    margin: 40% 15% 0 30%;
+    width: 50%;
+  }
+  @media (max-width: 400px) {
+    margin: 40% 15% 0 20%;
+    width: 65%;
+  }
 `
 
 const H1 = styled.h1`
@@ -45,7 +64,7 @@ class EmailVerification extends Component{
 
   render(){
     return(
-      <div style={{textAlign: 'center', margin: '15% 35% 0 40%', width: '25%'}}>
+      <Container>
         <div style={{textAlign: 'left'}}>
           <H1>Almost done!</H1>
           <P>Please check your email to verify your account.</P>
@@ -53,7 +72,7 @@ class EmailVerification extends Component{
           <br/>
           <Button onClick={this.backToLogin.bind(this)}>Go back to login</Button>
         </div>
-      </div>
+      </Container>
     );
   }
 }
