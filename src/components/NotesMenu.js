@@ -14,11 +14,10 @@ const BackToGeneralBtn = styled.button`
   font-size: 100%;
   width: 20%;
   text-align: center;
-  bottom: 0;
+  bottom: 1vh;
   height: 7vh;
   padding: 1vh;
   position: fixed;
-  z-index: 50;
 
   @media (max-width: 800px) {
     width: 30%;
@@ -78,7 +77,7 @@ const Ul = styled.ul`
   margin-top: 2%;
   margin-right: 3%;
   color: white;
-  height: 100vh;
+  height: 80vh;
   overflow-y: scroll;
   z-index: 20;
 
