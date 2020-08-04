@@ -85,11 +85,19 @@ const P = styled.p`
 
 const TasksContainer = styled.div`
   overflow-y: scroll;
+  overflow-x: scroll;
   height: 85vh;
 
   ::-webkit-scrollbar {
     width: 0px;
     background: transparent; /* make scrollbar transparent */
+  }
+
+  @media (max-width: 800px) {
+    height: 75vh;
+  }
+  @media (max-width: 400px) {
+    height: 70vh;
   }
 `
 

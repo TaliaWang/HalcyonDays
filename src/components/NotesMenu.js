@@ -22,6 +22,11 @@ const BackToGeneralBtn = styled.button`
   @media (max-width: 800px) {
     width: 30%;
   }
+  @media (max-width: 600px) {
+    font-size: 80%;
+    bottom: 5vh;
+    height: 10vh;
+  }
 `
 
 const Container = styled.div`
@@ -79,6 +84,7 @@ const Ul = styled.ul`
   color: white;
   height: 80vh;
   overflow-y: scroll;
+  overflow-x: scroll;
   z-index: 20;
 
   ::-webkit-scrollbar {
@@ -88,6 +94,7 @@ const Ul = styled.ul`
 
   @media (max-width: 600px) {
     font-size: 80%;
+    height: 75vh;
   }
 `
 
