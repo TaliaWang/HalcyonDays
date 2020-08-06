@@ -224,8 +224,6 @@ class TaskBar extends Component{
 
   componentDidUpdate(prevProps, prevState){
     if (this.props.tasks != prevProps.tasks){
-      /* oldest tasks on left */
-      //var reversedTasks = this.props.tasks.reverse();
       this.setState({
         tasks: this.props.tasks
       })
