@@ -131,6 +131,10 @@ const Textarea = styled.textarea`
   &:focus{
     outline: none;
   }
+
+  @media (max-width: 600px) {
+      font-size: 100%;
+  }
 `
 
 const XBtn = styled.button`

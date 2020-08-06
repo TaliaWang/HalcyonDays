@@ -44,6 +44,23 @@ const Container = styled.div`
   }
 `
 
+const EditBtn = styled.button`
+  background: none;
+  border: none;
+  font-size: 120%;
+  color: white;
+  display: none;
+  transform: translate(0, -25%);
+
+  &:hover{
+    font-size: 140%;
+  }
+
+  @media (max-width: 600px) {
+      transform: translate(0, -15%);
+  }
+`
+
 const Form = styled.form`
   margin: 0 15% 0 15%;
   text-align: center;
@@ -78,6 +95,35 @@ const P = styled.p`
   color: white;
   margin-top: 0.5%;
 `
+
+const Textarea = styled.textarea`
+  cursor: default;
+  font-size: 120%;
+  width: 100%;
+  min-height: 1em;
+  overflow: scroll;
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+  }
+  position: relative;
+  color: white;
+  background-color: transparent;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-family: openSansRegular;
+  resize: none;
+  border: none;
+
+  &:focus{
+    outline: none;
+  }
+
+  @media (max-width: 600px) {
+      font-size: 100%;
+  }
+`
+
 const Ul = styled.ul`
   margin-top: 2%;
   margin-right: 3%;
@@ -104,10 +150,14 @@ const XBtn = styled.button`
   font-size: 120%;
   color: white;
   display: none;
-  margin-top: -5%;
+  transform: translate(0, -25%);
 
   &:hover{
     font-size: 140%;
+  }
+
+  @media (max-width: 600px) {
+      transform: translate(0, -15%);
   }
 `
 
@@ -131,6 +181,63 @@ class NotesMenu extends Component{
     }
   }
 
+  enableNoteEdit(e){
+    var textarea = e.target.parentElement.getElementsByClassName('noteText')[0];
+    textarea.readOnly = false;
+    textarea.style.cursor='text';
+
+    // add listener for enter to submit new note
+    textarea.addEventListener('keypress', event =>{
+      if (event.keyCode == 13 && !event.shiftKey){
+        event.preventDefault();
+        var editedNote = textarea.value;
+
+        var oldNote = textarea.textContent;
+        var date;
+        var db = firebase.firestore();
+        var notesCollectionRef;
+        if (this.props.selectedTask == ""){
+          // find note from general notes
+          notesCollectionRef = db.collection("users").doc(this.props.user.uid).collection("notes");
+          notesCollectionRef.doc(oldNote).get()
+          .then(doc=>{
+            // record the old timestamp to assign this to edited note
+            date = doc.data().timestamp.toDate();
+          }).then(()=>{
+            // delete old note and create a new one with edited note
+            notesCollectionRef.doc(oldNote).delete();
+            notesCollectionRef.doc(editedNote).set({
+              text: editedNote,
+              timestamp: firebase.firestore.Timestamp.fromDate(date)
+            });
+          })
+        }
+        else{
+          // find note from selected task notes
+          notesCollectionRef = db.collection("users").doc(this.props.user.uid)
+          .collection('dates').doc(`${this.props.todayDate.month} ${this.props.todayDate.date}, ${this.props.todayDate.year}`)
+          .collection("tasks").doc(this.props.selectedTask)
+          .collection('notes');
+
+          notesCollectionRef.doc(oldNote).get()
+          .then(doc=>{
+            // record the old timestamp to assign this to edited note
+            date = doc.data().timestamp.toDate();
+          }).then(()=>{
+            // delete old note and create a new one with edited note
+            notesCollectionRef.doc(oldNote).delete();
+            notesCollectionRef.doc(editedNote).set({
+              text: editedNote,
+              timestamp: firebase.firestore.Timestamp.fromDate(date)
+            });
+          })
+        }
+        textarea.readOnly = true;
+        textarea.style.cursor = 'pointer';
+      }
+    })
+  }
+
   deleteNote(e){
     // parse the note name
     var listItem = e.target.parentElement;
@@ -151,13 +258,19 @@ class NotesMenu extends Component{
     }
   }
 
-  displayX(e){
+  displayBtns(e){
     var button = e.target.parentElement.getElementsByClassName('XBtn')[0];
+    button.style.display='inline-block';
+
+    var button = e.target.parentElement.getElementsByClassName('editBtn')[0];
     button.style.display='inline-block';
   }
 
-  hideX(e){
+  hideBtns(e){
     var button = e.target.parentElement.getElementsByClassName('XBtn')[0];
+    button.style.display='none';
+
+    var button = e.target.parentElement.getElementsByClassName('editBtn')[0];
     button.style.display='none';
   }
 
@@ -169,9 +282,10 @@ class NotesMenu extends Component{
           {this.props.selectedTask == "" ? <H3>General Notes</H3> : <H3>Notes for: {this.props.selectedTask}</H3>}
           <Ul>
             {this.state.notes.map((note, index) =>
-              <li className="note" onMouseOver={this.displayX.bind(this)} onMouseLeave={this.hideX.bind(this)} id={`${note}${index}_label`}>
+              <li className="note" onMouseOver={this.displayBtns.bind(this)} onMouseLeave={this.hideBtns.bind(this)} id={`${note}${index}_label`}>
                 <div style={{display: "flex"}}>
-                  <P className="noteText">{note.text}</P>
+                  <Textarea className="noteText" readOnly={true}>{note.text}</Textarea>
+                  <EditBtn className='editBtn' onClick={this.enableNoteEdit.bind(this)}>✎</EditBtn>
                   <XBtn className="XBtn" onClick = {this.deleteNote.bind(this)}>✖</XBtn>
                 </div>
               </li>
