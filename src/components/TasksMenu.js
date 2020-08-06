@@ -40,6 +40,19 @@ const Container = styled.div`
   }
 `
 
+const EditBtn = styled.button`
+  background: none;
+  border: none;
+  font-size: 120%;
+  color: white;
+  display: none;
+
+  &:hover{
+    font-size: 140%;
+  }
+`
+
+
 const Form = styled.form`
   margin: 0 15% 0 15%;
   text-align: center;
@@ -98,6 +111,25 @@ const TasksContainer = styled.div`
   }
   @media (max-width: 400px) {
     height: 70vh;
+  }
+`
+
+const Textarea = styled.textarea`
+  font-size: 120%;
+  width: 100%;
+  height: 1em;
+  overflow-y: scroll;
+  position: relative;
+  color: white;
+  background-color: transparent;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-family: openSansRegular;
+  resize: none;
+  border: none;
+
+  &:focus{
+    outline: none;
   }
 `
 
@@ -175,13 +207,19 @@ class TasksMenu extends Component{
     }
   }
 
-  displayX(e){
+  displayBtns(e){
     var button = e.target.parentElement.getElementsByClassName('XBtn')[0];
+    button.style.display='inline-block';
+
+    var button = e.target.parentElement.getElementsByClassName('editBtn')[0];
     button.style.display='inline-block';
   }
 
-  hideX(e){
+  hideBtns(e){
     var button = e.target.parentElement.getElementsByClassName('XBtn')[0];
+    button.style.display='none';
+
+    var button = e.target.parentElement.getElementsByClassName('editBtn')[0];
     button.style.display='none';
   }
 
@@ -199,9 +237,10 @@ class TasksMenu extends Component{
                 <Checkbox id={`${task}${index}`} onClick={this.props.toggleTaskChecked.bind(this)}>
                   {task.finished ? <Img src={checkmark}/> : null}
                 </Checkbox>
-                <div onMouseOver={this.displayX.bind(this)} onMouseLeave={this.hideX.bind(this)}>
+                <div onMouseOver={this.displayBtns.bind(this)} onMouseLeave={this.hideBtns.bind(this)}>
                   <LabelBtn id={`${task}${index}_label`}>
                     <P className='taskText' onClick={this.props.changeSelectedTaskFromTaskMenu}>{task.name}</P>
+                    <EditBtn className='editBtn'>✎</EditBtn>
                     <XBtn className="XBtn" onClick = {this.deleteTask.bind(this)}>✖</XBtn>
                   </LabelBtn>
                 </div>

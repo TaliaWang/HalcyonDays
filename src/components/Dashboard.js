@@ -770,8 +770,7 @@ class Dashboard extends Component{
         hours: tempHours,
         mins: tempMins
       }, () =>{
-        // add task to today's date collection in database
-        //alert(this.state.task + this.state.hours + this.state.mins);
+        // add task to today's dates collection in database
         var db = firebase.firestore();
         db.collection("users").doc(this.props.user.uid)
         .collection("dates").doc(`${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`)
@@ -780,7 +779,8 @@ class Dashboard extends Component{
           name: this.state.task,
           hours: parseInt(this.state.hours),
           mins: parseInt(this.state.mins),
-          finished: false
+          finished: false,
+          timestamp: firebase.firestore.Timestamp.fromDate(new Date())
         }).then(result =>{
           //alert("Task added!");
           this.setState({
@@ -808,7 +808,7 @@ class Dashboard extends Component{
         // listen for changes in this user's tasks for this date
         dateRef
         .collection('tasks')
-        .onSnapshot(querySnapshot=>{
+        .orderBy('timestamp', 'asc').onSnapshot(querySnapshot=>{
           var tempTasks = [];
           var tempUnfinishedTasks = [];
           var tempMinsNeeded = 0;
@@ -840,7 +840,7 @@ class Dashboard extends Component{
       const userRef = db.collection('users').doc(this.props.user.uid);
       userRef
       .collection('notes')
-      .onSnapshot(querySnapshot=>{
+      .orderBy('timestamp', 'asc').onSnapshot(querySnapshot=>{
         var tempNotes = [];
         querySnapshot.forEach(doc=>{
           tempNotes.push(doc.data());
@@ -859,6 +859,7 @@ class Dashboard extends Component{
       // the selected task will always already exist in the database, so no need to check and create the task
       taskRef
       .collection('notes')
+      .orderBy('timestamp', 'asc')
       .onSnapshot(querySnapshot=>{
         var tempNotes = [];
         querySnapshot.forEach(doc=>{

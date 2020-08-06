@@ -105,6 +105,10 @@ const XBtn = styled.button`
   color: white;
   display: none;
   margin-top: -5%;
+
+  &:hover{
+    font-size: 140%;
+  }
 `
 
 class NotesMenu extends Component{

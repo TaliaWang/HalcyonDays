@@ -319,7 +319,8 @@ class TaskBar extends Component{
             <BufferTime width={this.getBufferWidth()}>
             </BufferTime>
             {/* unfinished tasks come before finished tasks */}
-            {this.state.tasks.map((task, index) =>
+            {/* map unfinished tasks in reverse order so most recently added task is on the right */}
+            {this.state.tasks.reverse().map((task, index) =>
               task.finished? null : <Task id={`${index}taskChunk_${task.name}`} key={`${index}taskChunk_${task}`} onClick={this.props.changeSelectedTaskFromTaskBar} width={this.getTaskWidth(task)} finished={task.finished}/>
             )}
             {this.state.tasks.map((task, index) =>

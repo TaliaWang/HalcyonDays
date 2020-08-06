@@ -88,7 +88,8 @@ class NewNote extends Component{
       db.collection("users").doc(this.props.user.uid)
       .collection("notes").doc(this.state.newNote)
       .set({
-        text: this.state.newNote
+        text: this.state.newNote,
+        timestamp: firebase.firestore.Timestamp.fromDate(new Date())
       }).then(result=>{
         this.setState({
           newNote: ""
@@ -101,7 +102,8 @@ class NewNote extends Component{
       .collection('tasks').doc(this.props.selectedTask).collection('notes')
       .doc(this.state.newNote)
       .set({
-        text: this.state.newNote
+        text: this.state.newNote,
+        timestamp: firebase.firestore.Timestamp.fromDate(new Date())
       })
       .then(result=>{
         this.setState({
