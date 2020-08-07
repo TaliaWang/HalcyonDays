@@ -96,7 +96,7 @@ const P = styled.p`
   margin-top: 0.5%;
 `
 
-const Textarea = styled.textarea`
+const Textarea = styled.div`
   cursor: default;
   font-size: 120%;
   width: 100%;
@@ -183,19 +183,21 @@ class NotesMenu extends Component{
 
   enableNoteEdit(e){
     var textarea = e.target.parentElement.getElementsByClassName('noteText')[0];
-    textarea.readOnly = false;
+    textarea.contentEditable = true;
     textarea.style.cursor='text';
+
+    var oldNote = textarea.textContent;
 
     // add listener for enter to submit new note
     textarea.addEventListener('keypress', event =>{
-      if (event.keyCode == 13 && !event.shiftKey){
+      if (event.keyCode == 13){
         event.preventDefault();
-        var editedNote = textarea.value;
+        var editedNote = textarea.textContent.trim();
 
-        var oldNote = textarea.textContent;
         var date;
         var db = firebase.firestore();
         var notesCollectionRef;
+
         if (this.props.selectedTask == ""){
           // find note from general notes
           notesCollectionRef = db.collection("users").doc(this.props.user.uid).collection("notes");
@@ -232,7 +234,7 @@ class NotesMenu extends Component{
             });
           })
         }
-        textarea.readOnly = true;
+        textarea.contentEditable = false;
         textarea.style.cursor = 'pointer';
       }
     })
@@ -284,7 +286,7 @@ class NotesMenu extends Component{
             {this.state.notes.map((note, index) =>
               <li className="note" onMouseOver={this.displayBtns.bind(this)} onMouseLeave={this.hideBtns.bind(this)} id={`${note}${index}_label`}>
                 <div style={{display: "flex"}}>
-                  <Textarea className="noteText" readOnly={true}>{note.text}</Textarea>
+                  <Textarea className="noteText" contentEditable={false}>{note.text}</Textarea>
                   <EditBtn className='editBtn' onClick={this.enableNoteEdit.bind(this)}>✎</EditBtn>
                   <XBtn className="XBtn" onClick = {this.deleteNote.bind(this)}>✖</XBtn>
                 </div>
