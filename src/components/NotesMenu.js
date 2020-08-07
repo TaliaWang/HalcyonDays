@@ -110,10 +110,12 @@ const Textarea = styled.div`
   color: white;
   background-color: transparent;
   margin-top: 0;
+  margin-right: 3%;
   margin-bottom: 0;
   font-family: openSansRegular;
   resize: none;
   border: none;
+  border-radius: 5px;
 
   &:focus{
     outline: none;
@@ -185,6 +187,7 @@ class NotesMenu extends Component{
     var textarea = e.target.parentElement.getElementsByClassName('noteText')[0];
     textarea.contentEditable = true;
     textarea.style.cursor='text';
+    textarea.style.border='1px solid white';
 
     var oldNote = textarea.textContent;
 
@@ -236,6 +239,7 @@ class NotesMenu extends Component{
         }
         textarea.contentEditable = false;
         textarea.style.cursor = 'pointer';
+        textarea.style.border='none';
       }
     })
   }

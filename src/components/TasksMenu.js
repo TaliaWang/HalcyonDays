@@ -86,6 +86,7 @@ const LabelBtn = styled.button`
   font-family: openSansRegular;
   text-align: left;
   padding: 0;
+  max-width: 100%;
 `
 
 const P = styled.p`
@@ -94,6 +95,11 @@ const P = styled.p`
   margin-top: 0;
   margin-bottom: 0;
   font-family: openSansRegular;
+  display: flex;
+
+  @media (max-width: 600px) {
+      font-size: 100%;
+  }
 `
 
 const TasksContainer = styled.div`
@@ -114,11 +120,16 @@ const TasksContainer = styled.div`
   }
 `
 
-const Textarea = styled.textarea`
+const TextareaTask = styled.div`
+  cursor: pointer;
   font-size: 120%;
   width: 100%;
-  height: 1em;
-  overflow-y: scroll;
+  min-height: 1em;
+  overflow: scroll;
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+  }
   position: relative;
   color: white;
   background-color: transparent;
@@ -127,6 +138,7 @@ const Textarea = styled.textarea`
   font-family: openSansRegular;
   resize: none;
   border: none;
+  border-radius: 5px;
 
   &:focus{
     outline: none;
@@ -136,6 +148,30 @@ const Textarea = styled.textarea`
       font-size: 100%;
   }
 `
+
+const TextareaTime = styled.div`
+  cursor: default;
+  min-height: 1em;
+  overflow: scroll;
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+  }
+  position: relative;
+  color: white;
+  background-color: transparent;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-family: openSansRegular;
+  resize: none;
+  border: none;
+  border-radius: 5px;
+
+  &:focus{
+    outline: none;
+  }
+`
+
 
 const XBtn = styled.button`
   background: none;
@@ -155,6 +191,7 @@ class TasksMenu extends Component{
     super(props);
     this.state = {
       tasks: this.props.tasks,
+      noteSwitchesAllowed: true
     }
   }
 
@@ -167,6 +204,12 @@ class TasksMenu extends Component{
           tasks: this.props.tasks
         })
       })
+    }
+  }
+
+  decideWhetherToChangeSelectedTaskFromTaskMenu(e){
+    if (this.state.noteSwitchesAllowed){
+        this.props.changeSelectedTaskFromTaskMenu(e);
     }
   }
 
@@ -212,19 +255,163 @@ class TasksMenu extends Component{
   }
 
   displayBtns(e){
-    var button = e.target.parentElement.getElementsByClassName('XBtn')[0];
+    var button = e.target.parentElement.getElementsByClassName('XBtn')[0] || e.target.parentElement.parentElement.getElementsByClassName('XBtn')[0];
     button.style.display='inline-block';
 
-    var button = e.target.parentElement.getElementsByClassName('editBtn')[0];
+    var button = e.target.parentElement.getElementsByClassName('editBtn')[0] || e.target.parentElement.parentElement.getElementsByClassName('editBtn')[0];
     button.style.display='inline-block';
   }
 
   hideBtns(e){
-    var button = e.target.parentElement.getElementsByClassName('XBtn')[0];
+    var button = e.target.parentElement.getElementsByClassName('XBtn')[0] || e.target.parentElement.parentElement.getElementsByClassName('XBtn')[0];
     button.style.display='none';
 
-    var button = e.target.parentElement.getElementsByClassName('editBtn')[0];
+    var button = e.target.parentElement.getElementsByClassName('editBtn')[0] || e.target.parentElement.parentElement.getElementsByClassName('editBtn')[0];
     button.style.display='none';
+  }
+
+  enableTaskEdit(e){
+    this.props.changeSelectedTaskFromTaskMenu(e);
+
+    this.setState({
+      noteSwitchesAllowed: false // prevent notes from changing while tasks are being edited
+    });
+
+    var textareaTask = e.target.parentElement.getElementsByClassName('taskText')[0];
+    textareaTask.contentEditable = true;
+    textareaTask.style.cursor='text';
+    textareaTask.style.border='1px solid white';
+
+    var oldTask = textareaTask.textContent;
+
+    var textareaHours = e.target.parentElement.parentElement.getElementsByClassName('taskHours')[0];
+    textareaHours.contentEditable = true;
+    textareaHours.style.cursor='text';
+    textareaHours.style.border='1px solid white';
+
+    var oldHours = textareaHours.textContent;
+
+    var textareaMins = e.target.parentElement.parentElement.getElementsByClassName('taskMins')[0];
+    textareaMins.contentEditable = true;
+    textareaMins.style.cursor='text';
+    textareaMins.style.border='1px solid white';
+
+    var oldMins = textareaMins.textContent;
+
+    // prevent non-number input for time
+    textareaHours.onkeypress = function(ev) {
+      if (isNaN(String.fromCharCode(ev.which))) {
+        ev.preventDefault();
+      }
+    }
+    textareaMins.onkeypress = function(ev) {
+      if (isNaN(String.fromCharCode(ev.which))) {
+        ev.preventDefault();
+      }
+    }
+
+    // add listener for enter to submit new task
+    textareaTask.addEventListener('keypress', event => {
+      this.submitEditedTask(event, textareaTask, textareaHours, textareaMins, oldTask, oldHours, oldMins);
+    });
+    textareaHours.addEventListener('keypress', event => {
+      this.submitEditedTask(event, textareaTask, textareaHours, textareaMins, oldTask, oldHours, oldMins);
+    });
+    textareaMins.addEventListener('keypress', event => {
+      this.submitEditedTask(event, textareaTask, textareaHours, textareaMins, oldTask, oldHours, oldMins);
+    });
+
+  }
+
+  submitEditedTask(event, textareaTask, textareaHours, textareaMins, oldTask, oldHours, oldMins){
+    if (event.keyCode == 13){
+      event.preventDefault();
+      var editedTask = textareaTask.textContent.trim();
+      var editedHours = parseInt(textareaHours.textContent.trim());
+      var editedMins = parseInt(textareaMins.textContent.trim());
+
+      var db = firebase.firestore();
+      var tasksCollectionRef = db.collection("users").doc(this.props.user.uid)
+      .collection('dates').doc(`${this.props.todayDate.month} ${this.props.todayDate.date}, ${this.props.todayDate.year}`)
+      .collection("tasks");
+
+      if (editedTask != oldTask){
+
+        var finished;
+        var hours = editedHours + Math.floor(editedMins / 60);
+        var mins = editedMins % 60;
+        var name = editedTask;
+        var date;
+
+        var notes = [];
+
+        // get fields from old task
+        tasksCollectionRef.doc(oldTask)
+        .get().then(doc=>{
+          finished = doc.data().finished;
+          date = doc.data().timestamp.toDate();
+        }).then(()=>{
+          // create new task
+          tasksCollectionRef.doc(editedTask)
+          .set({
+            finished: finished,
+            hours: hours,
+            mins: mins,
+            name: name,
+            timestamp: firebase.firestore.Timestamp.fromDate(date)
+          }).then(()=>{
+            // delete old task (notes subcollection still exists to be deleted after)
+            tasksCollectionRef.doc(oldTask).delete();
+
+            tasksCollectionRef.doc(oldTask).collection('notes')
+            .get().then(querySnapshot=>{
+              // copy over notes from old task into notes of new task
+              querySnapshot.forEach(doc=>{
+                notes.push(doc.data());
+                tasksCollectionRef.doc(editedTask).collection('notes').doc(doc.data().text)
+                .set({
+                  text: doc.data().text,
+                  timestamp: firebase.firestore.Timestamp.fromDate(doc.data().timestamp.toDate())
+                });
+              });
+            }).then(()=>{
+              // delete notes from old task
+              notes.forEach(note => {
+                  tasksCollectionRef.doc(oldTask).collection('notes').doc(note.text).delete();
+              });
+            }).then(()=>{
+              this.props.backToGeneralNotes();
+            });
+          });
+        });
+      }
+      else if (editedHours != oldHours || editedMins != oldMins){
+        var hours = editedHours + Math.floor(editedMins / 60);
+        var mins = editedMins % 60;
+        // no need to copy collections, just update the hours and mins of this task in the database
+        tasksCollectionRef.doc(oldTask)
+          .update({
+            hours: hours,
+            mins: mins
+          });
+      }
+
+      textareaTask.contentEditable = false;
+      textareaTask.style.cursor='pointer';
+      textareaTask.style.border='none';
+
+      textareaHours.contentEditable = false;
+      textareaHours.style.cursor='default';
+      textareaHours.style.border='none';
+
+      textareaMins.contentEditable = false;
+      textareaMins.style.cursor='default';
+      textareaMins.style.border='none';
+
+      this.setState({
+        noteSwitchesAllowed: true
+      });
+    }
   }
 
   render(){
@@ -237,18 +424,18 @@ class TasksMenu extends Component{
           </H3>
           <TasksContainer>
             {this.state.tasks.map((task, index) =>
-              <div style={{margin: '6% 5% 6% 5%'}}>
+              <div style={{margin: '5% 5% 1% 5%'}}>
                 <Checkbox id={`${task}${index}`} onClick={this.props.toggleTaskChecked.bind(this)}>
                   {task.finished ? <Img src={checkmark}/> : null}
                 </Checkbox>
                 <div onMouseOver={this.displayBtns.bind(this)} onMouseLeave={this.hideBtns.bind(this)}>
                   <LabelBtn id={`${task}${index}_label`}>
-                    <P className='taskText' onClick={this.props.changeSelectedTaskFromTaskMenu}>{task.name}</P>
-                    <EditBtn className='editBtn'>✎</EditBtn>
+                    <TextareaTask className='taskText' onClick={this.decideWhetherToChangeSelectedTaskFromTaskMenu.bind(this)} contentEditable={false}>{task.name}</TextareaTask>
+                    <EditBtn className='editBtn' onClick={this.enableTaskEdit.bind(this)}>✎</EditBtn>
                     <XBtn className="XBtn" onClick = {this.deleteTask.bind(this)}>✖</XBtn>
                   </LabelBtn>
+                  <P>(<TextareaTime className='taskHours' contentEditable={false}>{task.hours}</TextareaTime>h&nbsp;<TextareaTime className='taskMins' contentEditable={false}>{task.mins}</TextareaTime>m)</P>
                 </div>
-                <P>({task.hours}h {task.mins}m)</P>
               </div>
             )}
           </TasksContainer>
