@@ -15,18 +15,21 @@ const BackToGeneralBtn = styled.button`
   font-size: 100%;
   width: 20%;
   text-align: center;
-  bottom: 1vh;
+  bottom: 0vh;
   height: 7vh;
   padding: 1vh;
   position: fixed;
+  overflow-y: scroll;
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+  }
 
   @media (max-width: 800px) {
     width: 30%;
   }
   @media (max-width: 600px) {
     font-size: 80%;
-    bottom: 5vh;
-    height: 10vh;
   }
 `
 
@@ -143,7 +146,6 @@ const Ul = styled.ul`
 
   @media (max-width: 600px) {
     font-size: 80%;
-    height: 75vh;
   }
 `
 

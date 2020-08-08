@@ -760,7 +760,8 @@ class Dashboard extends Component{
        alert("Please enter a task.");
     }
     // ensure hours/mins are integers
-    else if (!Number.isInteger(parseFloat(this.state.hours)) && !Number.isInteger(parseFloat(this.state.mins))){
+    else if (!Number.isInteger(parseFloat(this.state.hours)) && !Number.isInteger(parseFloat(this.state.mins))
+              || (parseFloat(this.state.hours) < 0 || parseFloat(this.state.mins) < 0)){
        alert("Please enter positive integers (or zero) for the hours and/or minutes needed to complete this task.");
     }
     else{

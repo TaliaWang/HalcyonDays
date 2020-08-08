@@ -27,7 +27,7 @@ const Container = styled.div`
   background-color: #606060;
   width: 20%;
   margin: -5% 0 0 80%;
-  height: 100vh;
+  height: 110vh;
   position: fixed;
 
   @media (max-width: 800px) {
@@ -106,7 +106,7 @@ const P = styled.p`
 const TasksContainer = styled.div`
   overflow-y: scroll;
   overflow-x: scroll;
-  height: 85vh;
+  height: 80vh;
 
   ::-webkit-scrollbar {
     width: 0px;
@@ -300,7 +300,7 @@ class TasksMenu extends Component{
 
     var oldMins = textareaMins.textContent;
 
-    // prevent non-number input for time
+    // allow only 0 or positive input for time
     textareaHours.onkeypress = function(ev) {
       if (isNaN(String.fromCharCode(ev.which))) {
         ev.preventDefault();
