@@ -1,5 +1,6 @@
 /*global chrome*/
 import React, { Component } from 'react';
+import {BeatLoader} from "react-spinners"
 import firebase from '../firebase';
 import styled from 'styled-components'
 import checkmark from "../images/checkmark.jpg";
@@ -167,7 +168,7 @@ class NotesMenu extends Component{
   constructor(props){
     super(props);
     this.state = {
-      notes: this.props.notes,
+      notes: this.props.notes
     }
   }
 
@@ -178,7 +179,7 @@ class NotesMenu extends Component{
       }, ()=>{
         this.setState({
           notes: this.props.notes
-        })
+        });
       })
     }
   }
@@ -195,48 +196,55 @@ class NotesMenu extends Component{
     textarea.addEventListener('keypress', event =>{
       if (event.keyCode == 13){
         event.preventDefault();
+
         var editedNote = textarea.textContent.trim();
 
-        var date;
-        var db = firebase.firestore();
-        var notesCollectionRef;
-
-        if (this.props.selectedTask == ""){
-          // find note from general notes
-          notesCollectionRef = db.collection("users").doc(this.props.user.uid).collection("notes");
-          notesCollectionRef.doc(oldNote).get()
-          .then(doc=>{
-            // record the old timestamp to assign this to edited note
-            date = doc.data().timestamp.toDate();
-          }).then(()=>{
-            // delete old note and create a new one with edited note
-            notesCollectionRef.doc(oldNote).delete();
-            notesCollectionRef.doc(editedNote).set({
-              text: editedNote,
-              timestamp: firebase.firestore.Timestamp.fromDate(date)
-            });
-          })
+        if (editedNote == ""){
+          textarea.textContent = oldNote;
         }
         else{
-          // find note from selected task notes
-          notesCollectionRef = db.collection("users").doc(this.props.user.uid)
-          .collection('dates').doc(`${this.props.todayDate.month} ${this.props.todayDate.date}, ${this.props.todayDate.year}`)
-          .collection("tasks").doc(this.props.selectedTask)
-          .collection('notes');
+          var date;
+          var db = firebase.firestore();
+          var notesCollectionRef;
 
-          notesCollectionRef.doc(oldNote).get()
-          .then(doc=>{
-            // record the old timestamp to assign this to edited note
-            date = doc.data().timestamp.toDate();
-          }).then(()=>{
-            // delete old note and create a new one with edited note
-            notesCollectionRef.doc(oldNote).delete();
-            notesCollectionRef.doc(editedNote).set({
-              text: editedNote,
-              timestamp: firebase.firestore.Timestamp.fromDate(date)
-            });
-          })
+          if (this.props.selectedTask == ""){
+            // find note from general notes
+            notesCollectionRef = db.collection("users").doc(this.props.user.uid).collection("notes");
+            notesCollectionRef.doc(oldNote).get()
+            .then(doc=>{
+              // record the old timestamp to assign this to edited note
+              date = doc.data().timestamp.toDate();
+            }).then(()=>{
+              // delete old note and create a new one with edited note
+              notesCollectionRef.doc(oldNote).delete();
+              notesCollectionRef.doc(editedNote).set({
+                text: editedNote,
+                timestamp: firebase.firestore.Timestamp.fromDate(date)
+              });
+            })
+          }
+          else{
+            // find note from selected task notes
+            notesCollectionRef = db.collection("users").doc(this.props.user.uid)
+            .collection('dates').doc(`${this.props.todayDate.month} ${this.props.todayDate.date}, ${this.props.todayDate.year}`)
+            .collection("tasks").doc(this.props.selectedTask)
+            .collection('notes');
+
+            notesCollectionRef.doc(oldNote).get()
+            .then(doc=>{
+              // record the old timestamp to assign this to edited note
+              date = doc.data().timestamp.toDate();
+            }).then(()=>{
+              // delete old note and create a new one with edited note
+              notesCollectionRef.doc(oldNote).delete();
+              notesCollectionRef.doc(editedNote).set({
+                text: editedNote,
+                timestamp: firebase.firestore.Timestamp.fromDate(date)
+              });
+            })
+          }
         }
+
         textarea.contentEditable = false;
         textarea.style.cursor = 'pointer';
         textarea.style.border='none';
@@ -286,17 +294,24 @@ class NotesMenu extends Component{
         <Container>
           <br/><br/>
           {this.props.selectedTask == "" ? <H3>General Notes</H3> : <H3>Notes for: {this.props.selectedTask}</H3>}
-          <Ul>
-            {this.state.notes.map((note, index) =>
-              <li className="note" onMouseOver={this.displayBtns.bind(this)} onMouseLeave={this.hideBtns.bind(this)} id={`${note}${index}_label`}>
-                <div style={{display: "flex"}}>
-                  <Textarea className="noteText" contentEditable={false}>{note.text}</Textarea>
-                  <EditBtn className='editBtn' onClick={this.enableNoteEdit.bind(this)}>✎</EditBtn>
-                  <XBtn className="XBtn" onClick = {this.deleteNote.bind(this)}>✖</XBtn>
-                </div>
-              </li>
-            )}
-          </Ul>
+          {this.props.notesLoaded
+            ?
+            <Ul>
+              {this.state.notes.map((note, index) =>
+                <li className="note" onMouseOver={this.displayBtns.bind(this)} onMouseLeave={this.hideBtns.bind(this)} id={`${note}${index}_label`}>
+                  <div style={{display: "flex"}}>
+                    <Textarea className="noteText" contentEditable={false}>{note.text}</Textarea>
+                    <EditBtn className='editBtn' onClick={this.enableNoteEdit.bind(this)}>✎</EditBtn>
+                    <XBtn className="XBtn" onClick = {this.deleteNote.bind(this)}>✖</XBtn>
+                  </div>
+                </li>
+              )}
+            </Ul>
+            :
+            <div style={{textAlign: 'center', marginTop: '5%'}}>
+              <BeatLoader color='white' size='10'/>
+            </div>
+          }
           <BackToGeneralBtn onClick={this.props.backToGeneralNotes}>Back to General Notes</BackToGeneralBtn>
         </Container>
       </div>

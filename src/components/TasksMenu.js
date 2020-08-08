@@ -1,5 +1,6 @@
 /*global chrome*/
 import React, { Component } from 'react';
+import {BeatLoader} from 'react-spinners';
 import firebase from '../firebase';
 import styled from 'styled-components'
 import checkmark from "../images/checkmark.jpg";
@@ -92,7 +93,7 @@ const LabelBtn = styled.button`
 const P = styled.p`
   font-size: 120%;
   color: white;
-  margin-top: 0;
+  margin-top: 1%;
   margin-bottom: 0;
   font-family: openSansRegular;
   display: flex;
@@ -125,6 +126,7 @@ const TextareaTask = styled.div`
   font-size: 120%;
   width: 100%;
   min-height: 1em;
+  min-width: 50px;
   overflow: scroll;
   ::-webkit-scrollbar {
     width: 0px;
@@ -153,6 +155,7 @@ const TextareaTime = styled.div`
   cursor: default;
   min-height: 1em;
   overflow: scroll;
+  min-width: 10px;
   ::-webkit-scrollbar {
     width: 0px;
     background: transparent; /* make scrollbar transparent */
@@ -160,7 +163,6 @@ const TextareaTime = styled.div`
   position: relative;
   color: white;
   background-color: transparent;
-  margin-top: 0;
   margin-bottom: 0;
   font-family: openSansRegular;
   resize: none;
@@ -335,7 +337,7 @@ class TasksMenu extends Component{
       .collection('dates').doc(`${this.props.todayDate.month} ${this.props.todayDate.date}, ${this.props.todayDate.year}`)
       .collection("tasks");
 
-      if (editedTask != oldTask){
+      if (editedTask != oldTask && editedTask != ""){
 
         var finished;
         var hours = editedHours + Math.floor(editedMins / 60);
@@ -351,6 +353,10 @@ class TasksMenu extends Component{
           finished = doc.data().finished;
           date = doc.data().timestamp.toDate();
         }).then(()=>{
+          // delete old task (notes subcollection still exists to be deleted after)
+          // deleting old task early on prevents tasks menu from glitching with old task and edited task both showing
+          tasksCollectionRef.doc(oldTask).delete();
+
           // create new task
           tasksCollectionRef.doc(editedTask)
           .set({
@@ -360,8 +366,6 @@ class TasksMenu extends Component{
             name: name,
             timestamp: firebase.firestore.Timestamp.fromDate(date)
           }).then(()=>{
-            // delete old task (notes subcollection still exists to be deleted after)
-            tasksCollectionRef.doc(oldTask).delete();
 
             tasksCollectionRef.doc(oldTask).collection('notes')
             .get().then(querySnapshot=>{
@@ -379,13 +383,11 @@ class TasksMenu extends Component{
               notes.forEach(note => {
                   tasksCollectionRef.doc(oldTask).collection('notes').doc(note.text).delete();
               });
-            }).then(()=>{
-              this.props.backToGeneralNotes();
             });
           });
         });
       }
-      else if (editedHours != oldHours || editedMins != oldMins){
+      else if ((editedHours != oldHours || editedMins != oldMins) && editedTask != ""){
         var hours = editedHours + Math.floor(editedMins / 60);
         var mins = editedMins % 60;
         // no need to copy collections, just update the hours and mins of this task in the database
@@ -394,6 +396,11 @@ class TasksMenu extends Component{
             hours: hours,
             mins: mins
           });
+      }
+      else if (editedTask == ""){
+        textareaTask.textContent = oldTask;
+        textareaHours.textContent = oldHours;
+        textareaMins.textContent = oldMins;
       }
 
       textareaTask.contentEditable = false;
@@ -422,23 +429,30 @@ class TasksMenu extends Component{
           <H3>{this.props.todayDate.day}, {this.props.todayDate.month} {this.props.todayDate.date}, {this.props.todayDate.year}
              &nbsp;-<br/>{this.props.tmrwDate.day}, {this.props.tmrwDate.month} {this.props.tmrwDate.date}, {this.props.tmrwDate.year}
           </H3>
-          <TasksContainer>
-            {this.state.tasks.map((task, index) =>
-              <div style={{margin: '5% 5% 1% 5%'}}>
-                <Checkbox id={`${task}${index}`} onClick={this.props.toggleTaskChecked.bind(this)}>
-                  {task.finished ? <Img src={checkmark}/> : null}
-                </Checkbox>
-                <div onMouseOver={this.displayBtns.bind(this)} onMouseLeave={this.hideBtns.bind(this)}>
-                  <LabelBtn id={`${task}${index}_label`}>
-                    <TextareaTask className='taskText' onClick={this.decideWhetherToChangeSelectedTaskFromTaskMenu.bind(this)} contentEditable={false}>{task.name}</TextareaTask>
-                    <EditBtn className='editBtn' onClick={this.enableTaskEdit.bind(this)}>✎</EditBtn>
-                    <XBtn className="XBtn" onClick = {this.deleteTask.bind(this)}>✖</XBtn>
-                  </LabelBtn>
-                  <P>(<TextareaTime className='taskHours' contentEditable={false}>{task.hours}</TextareaTime>h&nbsp;<TextareaTime className='taskMins' contentEditable={false}>{task.mins}</TextareaTime>m)</P>
+          {this.props.tasksLoaded
+            ?
+            <TasksContainer>
+              {this.state.tasks.map((task, index) =>
+                <div style={{margin: '5% 5% 1% 5%'}}>
+                  <Checkbox id={`${task}${index}`} onClick={this.props.toggleTaskChecked.bind(this)}>
+                    {task.finished ? <Img src={checkmark}/> : null}
+                  </Checkbox>
+                  <div onMouseOver={this.displayBtns.bind(this)} onMouseLeave={this.hideBtns.bind(this)}>
+                    <LabelBtn id={`${task}${index}_label`}>
+                      <TextareaTask className='taskText' onClick={this.decideWhetherToChangeSelectedTaskFromTaskMenu.bind(this)} contentEditable={false}>{task.name}</TextareaTask>
+                      <EditBtn className='editBtn' onClick={this.enableTaskEdit.bind(this)}>✎</EditBtn>
+                      <XBtn className="XBtn" onClick = {this.deleteTask.bind(this)}>✖</XBtn>
+                    </LabelBtn>
+                    <P>(<TextareaTime className='taskHours' contentEditable={false}>{task.hours}</TextareaTime>h&nbsp;<TextareaTime className='taskMins' contentEditable={false}>{task.mins}</TextareaTime>m)</P>
+                  </div>
                 </div>
-              </div>
-            )}
-          </TasksContainer>
+              )}
+            </TasksContainer>
+            :
+            <div style={{textAlign: 'center', marginTop: '5%'}}>
+              <BeatLoader color='white' size='10'/>
+            </div>
+          }
         </Container>
       </div>
     );

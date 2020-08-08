@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import firebase from './firebase.js';
+import {PuffLoader} from "react-spinners";
 import {BrowserRouter as Router, Switch, Route, Redirect} from 'react-router-dom';
 import Dashboard from "./components/Dashboard.js";
 import EmailVerification from "./components/EmailVerification.js"
@@ -64,7 +65,10 @@ class App extends Component{
               <Route exact path = "/passwordReset" render = {(props) => <PasswordReset user = {this.state.user} hidePasswordResetScreen={this.hidePasswordResetScreen.bind(this)}/>}/>
             </Switch>
           </Router>
-          : <P>LOADING...</P>
+          :   <div style={{left: '50%', top: '50%', transform: 'translate(-50%, -75%)', position: 'fixed'}}>
+                <PuffLoader size='120'/>
+              </div>
+
         }
       </div>
     );

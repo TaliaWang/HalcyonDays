@@ -10,22 +10,11 @@ const ArrowImg = styled.img`
   height: 30px;
   width: 30px;
   background-color: ${props=>props.backgroundColor};
-  transform: translate(-100%, -100%);
-  position: fixed;
-
-  &:hover{
-    height: 33px;
-    width: 33px;
-  }
+  position: relative;
 
   @media (max-width: 600px) {
     height: 20px;
     width: 20px;
-
-    &:hover{
-      height: 22px;
-      width: 22px;
-    }
   }
 `
 

@@ -316,7 +316,9 @@ class Dashboard extends Component{
       sleepTimeHours: 0,
       sleepTimeMins: 0,
       footerPopupsAllowed: true,
-      selectedTask: ""
+      selectedTask: "",
+      notesLoaded: false,
+      tasksLoaded: false
     }
   }
 
@@ -348,7 +350,10 @@ class Dashboard extends Component{
   }
 
   changeSelectedTaskFromTaskMenu(e){
-    var taskName = e.target.parentElement.getElementsByClassName('taskText')[0].textContent;
+    var textarea = e.target.parentElement.getElementsByClassName('taskText')[0];
+    textarea = (textarea == undefined? e.target.parentElement.parentElement.getElementsByClassName('taskText')[0] : textarea);
+
+    var taskName = textarea.textContent;
     this.setState({
       selectedTask: taskName,
       showNotesMenu: true,
@@ -795,81 +800,92 @@ class Dashboard extends Component{
 
   switchDate(){
     var db = firebase.firestore();
-    const userRef = db.collection('users').doc(this.props.user.uid);
-    // add this date as new collection if it doesn't exist
-    var dateRef = userRef.collection('dates').doc(`${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`);
-    dateRef.get().then(dateSnapshot=>{
-      if (!dateSnapshot.exists){
-        dateRef.set({
-          date: `${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`
-        });
-      }
-    }).then(result=>{
-        // listen for changes in this user's tasks for this date
-        dateRef
-        .collection('tasks')
-        .orderBy('timestamp', 'asc').onSnapshot(querySnapshot=>{
-          var tempTasks = [];
-          var tempUnfinishedTasks = [];
-          var tempMinsNeeded = 0;
-          var tempHoursNeeded = 0;
-          querySnapshot.forEach(doc=> {
-            tempTasks.push(doc.data());
-            if (!doc.data().finished){
-              tempUnfinishedTasks.push(doc.data());
-              tempMinsNeeded = tempMinsNeeded + doc.data().hours*60 + doc.data().mins;
-            }
+    this.setState({
+      tasksLoaded: false
+    }, ()=>{
+      const userRef = db.collection('users').doc(this.props.user.uid);
+      // add this date as new collection if it doesn't exist
+      var dateRef = userRef.collection('dates').doc(`${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`);
+      dateRef.get().then(dateSnapshot=>{
+        if (!dateSnapshot.exists){
+          dateRef.set({
+            date: `${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`
           });
-          // calculate hours and mins needed to finish remaining tasks
-          tempHoursNeeded = parseInt(tempMinsNeeded / 60);
-          tempMinsNeeded = tempMinsNeeded % 60;
-          this.setState({
-            tasks: tempTasks,
-            unfinishedTasks: tempUnfinishedTasks,
-            hoursNeededForTasks: tempHoursNeeded,
-            minsNeededForTasks: tempMinsNeeded
+        }
+      }).then(result=>{
+          // listen for changes in this user's tasks for this date
+          dateRef
+          .collection('tasks')
+          .orderBy('timestamp', 'asc').onSnapshot(querySnapshot=>{
+            var tempTasks = [];
+            var tempUnfinishedTasks = [];
+            var tempMinsNeeded = 0;
+            var tempHoursNeeded = 0;
+            querySnapshot.forEach(doc=> {
+              tempTasks.push(doc.data());
+              if (!doc.data().finished){
+                tempUnfinishedTasks.push(doc.data());
+                tempMinsNeeded = tempMinsNeeded + doc.data().hours*60 + doc.data().mins;
+              }
+            });
+            // calculate hours and mins needed to finish remaining tasks
+            tempHoursNeeded = parseInt(tempMinsNeeded / 60);
+            tempMinsNeeded = tempMinsNeeded % 60;
+            this.setState({
+              tasks: tempTasks,
+              unfinishedTasks: tempUnfinishedTasks,
+              hoursNeededForTasks: tempHoursNeeded,
+              minsNeededForTasks: tempMinsNeeded,
+              tasksLoaded: true
+            });
           });
-        });
+      });
     });
   }
 
   switchNotes(){
     var db = firebase.firestore();
-    if (this.state.selectedTask == ""){
-      // show general notes
-      const userRef = db.collection('users').doc(this.props.user.uid);
-      userRef
-      .collection('notes')
-      .orderBy('timestamp', 'asc').onSnapshot(querySnapshot=>{
-        var tempNotes = [];
-        querySnapshot.forEach(doc=>{
-          tempNotes.push(doc.data());
+    this.setState({
+      notesLoaded: false
+    }, ()=>{
+      if (this.state.selectedTask == ""){
+        // show general notes
+        const userRef = db.collection('users').doc(this.props.user.uid);
+        userRef
+        .collection('notes')
+        .orderBy('timestamp', 'asc').onSnapshot(querySnapshot=>{
+          var tempNotes = [];
+          querySnapshot.forEach(doc=>{
+            tempNotes.push(doc.data());
+          });
+          this.setState({
+            notes: tempNotes,
+            notesLoaded: true
+          });
         });
-        this.setState({
-          notes: tempNotes
-        })
-      });
-    }
-    else{
-      // show notes specific to this task
-      const taskRef = db.collection('users').doc(this.props.user.uid)
-                      .collection("dates").doc(`${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`)
-                      .collection('tasks').doc(this.state.selectedTask);
+      }
+      else{
+        // show notes specific to this task
+        const taskRef = db.collection('users').doc(this.props.user.uid)
+                        .collection("dates").doc(`${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`)
+                        .collection('tasks').doc(this.state.selectedTask);
 
-      // the selected task will always already exist in the database, so no need to check and create the task
-      taskRef
-      .collection('notes')
-      .orderBy('timestamp', 'asc')
-      .onSnapshot(querySnapshot=>{
-        var tempNotes = [];
-        querySnapshot.forEach(doc=>{
-          tempNotes.push(doc.data());
+        // the selected task will always already exist in the database, so no need to check and create the task
+        taskRef
+        .collection('notes')
+        .orderBy('timestamp', 'asc')
+        .onSnapshot(querySnapshot=>{
+          var tempNotes = [];
+          querySnapshot.forEach(doc=>{
+            tempNotes.push(doc.data());
+          });
+          this.setState({
+            notes: tempNotes,
+            notesLoaded: true
+          });
         });
-        this.setState({
-          notes: tempNotes
-        })
-      });
-    }
+      }
+    });
   }
 
   toggleNotesMenuLocked(){
@@ -994,7 +1010,8 @@ class Dashboard extends Component{
             </NotesMenuBtn>
         }
         <div style={{float: 'left', zIndex: '13', position: 'fixed', opacity: this.state.showNotesMenu?1:0, transition: 'opacity 0.3s'}}>
-          {this.state.showNotesMenu? <NotesMenu user={this.props.user} selectedTask={this.state.selectedTask} notes={this.state.notes} todayDate={this.state.todayDate}
+          {this.state.showNotesMenu? <NotesMenu user={this.props.user} selectedTask={this.state.selectedTask} notes={this.state.notes}
+                                      notesLoaded={this.state.notesLoaded} todayDate={this.state.todayDate}
                                       backToGeneralNotes={this.backToGeneralNotes.bind(this)} toggleShowNotesMenu={this.toggleShowNotesMenu.bind(this)}>
                                       </NotesMenu> : null}
         </div>
@@ -1020,7 +1037,7 @@ class Dashboard extends Component{
             </TasksMenuBtn>
         }
         <div style={{float: 'right', zIndex: '13', position: 'fixed', opacity: this.state.showTasksMenu?1:0, transition: 'opacity 0.3s'}}>
-          {this.state.showTasksMenu? <TasksMenu user={this.props.user} tasks={this.state.tasks} todayDate={this.state.todayDate} tmrwDate={this.state.tmrwDate}
+          {this.state.showTasksMenu? <TasksMenu user={this.props.user} tasks={this.state.tasks} todayDate={this.state.todayDate} tmrwDate={this.state.tmrwDate} tasksLoaded={this.state.tasksLoaded}
                                       changeSelectedTaskFromTaskMenu={this.changeSelectedTaskFromTaskMenu.bind(this)} toggleShowTasksMenu={this.toggleShowTasksMenu.bind(this)}
                                       backToGeneralNotes={this.backToGeneralNotes.bind(this)} switchNotes={this.switchNotes.bind(this)}
                                       toggleTaskChecked={this.toggleTaskChecked.bind(this)}>
