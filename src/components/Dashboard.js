@@ -760,13 +760,13 @@ class Dashboard extends Component{
        alert("Please enter a task.");
     }
     // ensure hours/mins are integers
-    else if (!Number.isInteger(parseFloat(this.state.hours)) || !Number.isInteger(parseFloat(this.state.mins))){
-       alert("Please enter positive integers (or zero) for the hours and minutes needed to complete this task.");
+    else if (!Number.isInteger(parseFloat(this.state.hours)) && !Number.isInteger(parseFloat(this.state.mins))){
+       alert("Please enter positive integers (or zero) for the hours and/or minutes needed to complete this task.");
     }
     else{
       // convert minutes to hours if needed
-      var tempHours = this.state.hours;
-      var tempMins = this.state.mins;
+      var tempHours = (this.state.hours == "" ? 0 : this.state.hours);
+      var tempMins = (this.state.mins == "" ? 0 : this.state.mins);
       while (tempMins >= 60){
         tempHours++;
         tempMins = tempMins - 60;

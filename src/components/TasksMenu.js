@@ -329,8 +329,8 @@ class TasksMenu extends Component{
     if (event.keyCode == 13){
       event.preventDefault();
       var editedTask = textareaTask.textContent.trim();
-      var editedHours = parseInt(textareaHours.textContent.trim());
-      var editedMins = parseInt(textareaMins.textContent.trim());
+      var editedHours = (textareaHours.textContent.trim() == "" ? 0 : parseInt(textareaHours.textContent.trim()));
+      var editedMins = (textareaMins.textContent.trim() == "" ? 0 : parseInt(textareaMins.textContent.trim()));
 
       var db = firebase.firestore();
       var tasksCollectionRef = db.collection("users").doc(this.props.user.uid)
