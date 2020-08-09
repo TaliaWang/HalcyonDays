@@ -4,7 +4,7 @@ import firebase from '../firebase';
 import styled from 'styled-components'
 
 const BufferTime = styled.div`
-  background-color: #cefdce;
+  background-color: #FFEFD5;
   width: ${props=>props.width}%;
   float: right;
   height: 40px;
@@ -57,7 +57,7 @@ const RelaxationTime = styled.div`
   text-Align: left;
   width: ${props=>props.width}%;
   float: right;
-  background-color: #FFD4FA;
+  background-color: #B7C6FB;
 `
 
 const SleepTime = styled.div`
@@ -65,7 +65,7 @@ const SleepTime = styled.div`
   text-Align: left;
   width: ${props=>props.width}%;
   float: right;
-  background-color: #FF7DD6;
+  background-color: #95ABFB;
 `
 
 const TimePassed = styled.div`
@@ -86,7 +86,7 @@ const Task = styled.button`
   border-top: none;
   border-bottom: none;
   border-right: none;
-  background-color: ${props=>props.finished? '#9ae5ff' : '#00BFFF'};
+  background-color: ${props=>props.finished? '#FFADD7' : '#FDCBBC'};
   color: white;
   float: right;
   height: 40px;
@@ -95,7 +95,7 @@ const Task = styled.button`
   width: ${props => props.width}%;
 
   &:hover{
-    background-color: ${props=>props.finished? '#67d8ff' : '#00ace6'};
+    background-color: ${props=>props.finished? '#ff94cb' : '#fcb8a3'};
   }
 `
 

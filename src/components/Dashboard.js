@@ -49,7 +49,7 @@ const CalendarContainer = styled.div`
   margin-top: 10%;
   transform: translate(-50%, 0);
   position: absolute;
-  z-index: 30;
+  z-index: 50;
 
   @media (max-width: 1200px) {
     margin-top: 17%;

@@ -14,7 +14,25 @@
 }
 /*current day button */
 .react-calendar__tile.react-calendar__tile--now.react-calendar__month-view__days__day.react-calendar__month-view__days__day--weekend{
-  background-color: #9ae5ff;
+  background-color: #B7C6FB;
+}
+/* selected day button */
+.react-calendar__tile.react-calendar__tile--active.react-calendar__tile--range{
+  background-color: #95ABFB;
+}
+/* current date buttons */
+.react-calendar__tile.react-calendar__tile--now{
+  background-color: #B7C6FB;
+}
+.react-calendar__tile.react-calendar__tile--now:hover{
+  background-color: #B7C6FB;
+}
+/* selected date buttons */
+.react-calendar__tile.react-calendar__tile--hasActive{
+  background-color: #95ABFB;
+}
+.react-calendar__tile.react-calendar__tile--hasActive:hover{
+  background-color: #95ABFB;
 }
 /* header */
 .react-calendar__navigation__label{
