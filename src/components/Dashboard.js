@@ -328,9 +328,6 @@ class Dashboard extends Component{
       tasks:[],
       timePassedInMins: 0,
       timePassedWidth: 0,
-      task: "",
-      hours: "", // for new task
-      mins: "", // for new task
       unfinishedTasks: [],
       hoursLeft: 0,
       minsLeft: 0,
@@ -734,24 +731,6 @@ class Dashboard extends Component{
     });
   }
 
-  handleNewTaskChange(e){
-    if (e.target.id == 'task'){
-      this.setState({
-        task: e.target.value
-      });
-    }
-    else if (e.target.id == 'hours'){
-      this.setState({
-        hours: e.target.value
-      });
-    }
-    else if (e.target.id == 'mins'){
-      this.setState({
-        mins: e.target.value
-      });
-    }
-  }
-
   hideNoteTaskPopups(){
     this.setState({
       showNewNote: false,
@@ -821,52 +800,6 @@ class Dashboard extends Component{
     this.setState({
       showStatistics: true
     });
-  }
-
-  submitTask(e){
-    e.preventDefault();
-    // prevent empty task
-    if (this.state.task == ""){
-       alert("Please enter a task.");
-    }
-    // ensure hours/mins are integers
-    else if (!Number.isInteger(parseFloat(this.state.hours)) && !Number.isInteger(parseFloat(this.state.mins))
-              || (parseFloat(this.state.hours) < 0 || parseFloat(this.state.mins) < 0)){
-       alert("Please enter positive integers (or zero) for the hours and/or minutes needed to complete this task.");
-    }
-    else{
-      // convert minutes to hours if needed
-      var tempHours = (this.state.hours == "" ? 0 : this.state.hours);
-      var tempMins = (this.state.mins == "" ? 0 : this.state.mins);
-      while (tempMins >= 60){
-        tempHours++;
-        tempMins = tempMins - 60;
-      }
-      this.setState({
-        hours: tempHours,
-        mins: tempMins
-      }, () =>{
-        // add task to today's dates collection in database
-        var db = firebase.firestore();
-        db.collection("users").doc(this.props.user.uid)
-        .collection("dates").doc(`${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`)
-        .collection('tasks').doc(this.state.task)
-        .set({
-          name: this.state.task,
-          hours: parseInt(this.state.hours),
-          mins: parseInt(this.state.mins),
-          finished: false,
-          timestamp: firebase.firestore.Timestamp.fromDate(new Date())
-        }).then(result =>{
-          //alert("Task added!");
-          this.setState({
-            task: "",
-            hours: "",
-            mins: ""
-          });
-        })
-      });
-    }
   }
 
   switchDate(){
@@ -1204,12 +1137,8 @@ class Dashboard extends Component{
               : null}
             {this.state.showNewTask?
               <NewTask
+                todayDate={this.state.todayDate}
                 user={this.props.user}
-                submitTask={this.submitTask.bind(this)}
-                handleNewTaskChange={this.handleNewTaskChange.bind(this)}
-                task={this.state.task}
-                hours={this.state.hours}
-                mins={this.state.mins}
               ></NewTask> : null}
           </NewNoteAndTaskContainer>
         </div>

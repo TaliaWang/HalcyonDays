@@ -425,7 +425,10 @@ class FooterPopup extends Component{
                   <Img src={graphicSquare}/>
                 </div>,
               'settings':
-                <LogoutButton onClick={this.logout.bind(this)}>Log out</LogoutButton>,
+                <div>
+                  <LogoutButton onClick={this.logout.bind(this)}>Log out</LogoutButton>
+                  {this.props.user == null ? null : <P>{this.props.user.email}</P>}
+                </div>,
             }[this.state.popupOption]
           }
         </Container>

@@ -340,8 +340,10 @@ class TasksMenu extends Component{
       if (editedTask != oldTask && editedTask != ""){
 
         var finished;
-        var hours = editedHours + Math.floor(editedMins / 60);
-        var mins = editedMins % 60;
+        var hours = (editedHours == "" ? 0 : editedHours);
+        var mins = (editedMins == "" ? 0 : editedMins);
+        hours = editedHours + Math.floor(editedMins / 60);
+        mins = editedMins % 60;
         var name = editedTask;
         var date;
 
@@ -388,8 +390,10 @@ class TasksMenu extends Component{
         });
       }
       else if ((editedHours != oldHours || editedMins != oldMins) && editedTask != ""){
-        var hours = editedHours + Math.floor(editedMins / 60);
-        var mins = editedMins % 60;
+        var hours = (editedHours == "" ? 0 : editedHours);
+        var mins = (editedMins == "" ? 0 : editedMins);
+        hours = editedHours + Math.floor(editedMins / 60);
+        mins = editedMins % 60;
         // no need to copy collections, just update the hours and mins of this task in the database
         tasksCollectionRef.doc(oldTask)
           .update({

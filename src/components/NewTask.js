@@ -83,6 +83,78 @@ class NewTask extends Component{
   constructor(props){
     super(props);
     this.state = {
+      task: "",
+      hours: "",
+      mins: ""
+    }
+  }
+
+  handleNewTaskChange(e){
+    if (e.target.id == 'task'){
+      this.setState({
+        task: e.target.value
+      });
+    }
+    else if (e.target.id == 'hours'){
+      this.setState({
+        hours: e.target.value
+      });
+    }
+    else if (e.target.id == 'mins'){
+      this.setState({
+        mins: e.target.value
+      });
+    }
+  }
+
+  submitTask(e){
+    e.preventDefault();
+    // prevent empty task
+    if (this.state.task == ""){
+       alert("Please enter a task.");
+    }
+    // ensure hours/mins are integers
+    else if (!parseFloat(this.state.hours) && !parseFloat(this.state.mins)
+              || (parseFloat(this.state.hours) < 0 || parseFloat(this.state.mins) < 0)){
+       alert("Please enter positive numbers (or zero) for the hours and/or minutes needed to complete this task.");
+    }
+    else{
+      // convert minutes to hours if needed
+      var tempHours = (this.state.hours == "" ? 0 : parseFloat(this.state.hours));
+      var tempMins = (this.state.mins == "" ? 0 : parseFloat(this.state.mins));
+
+      // round floats to integers
+      tempMins = Math.floor(tempMins + tempHours * 60);
+      tempHours = 0;
+
+      while (tempMins >= 60){
+        tempHours++;
+        tempMins = tempMins - 60;
+      }
+      this.setState({
+        hours: tempHours,
+        mins: tempMins
+      }, () =>{
+        // add task to today's dates collection in database
+        var db = firebase.firestore();
+        db.collection("users").doc(this.props.user.uid)
+        .collection("dates").doc(`${this.props.todayDate.month} ${this.props.todayDate.date}, ${this.props.todayDate.year}`)
+        .collection('tasks').doc(this.state.task)
+        .set({
+          name: this.state.task,
+          hours: this.state.hours,
+          mins: this.state.mins,
+          finished: false,
+          timestamp: firebase.firestore.Timestamp.fromDate(new Date())
+        }).then(result =>{
+          //alert("Task added!");
+          this.setState({
+            task: "",
+            hours: "",
+            mins: ""
+          });
+        })
+      });
     }
   }
 
@@ -91,19 +163,19 @@ class NewTask extends Component{
       <div style={{textAlign: 'center'}}>
         <Triangle/>
         <Container>
-          <Form onSubmit={this.props.submitTask}>
+          <Form onSubmit={this.submitTask.bind(this)}>
               <div style={{display: 'block', backgroundColor: 'black', margin: '0 0 5% 0'}}>
-                <TaskInput id='task' value={this.props.task} onChange={this.props.handleNewTaskChange} placeholder="New Task"/>
+                <TaskInput id='task' value={this.state.task} onChange={this.handleNewTaskChange.bind(this)} placeholder="New Task"/>
               </div>
               <div style={{paddingBottom: '15%'}}>
                 <div style={{float: 'left', width: '45%'}}>
-                  <TimeInput id='hours' type='number' pattern="\d+" min="0" step="1" value={this.props.hours} onChange={this.props.handleNewTaskChange} placeholder="Hour(s)"/>
+                  <TimeInput id='hours' type='number' min="0" value={this.state.hours} onChange={this.handleNewTaskChange.bind(this)} placeholder="Hour(s)"/>
                 </div>
                 <div style={{float: 'right', width: '45%', marginRight: '-1%'}}>
-                  <TimeInput id='mins' type='number' pattern="\d+" min="0" step="1" value={this.props.mins} onChange={this.props.handleNewTaskChange} placeholder="Minute(s)"/>
+                  <TimeInput id='mins' type='number' min="0" value={this.state.mins} onChange={this.handleNewTaskChange.bind(this)} placeholder="Minute(s)"/>
                 </div>
               </div>
-              <button type='submit' onClick={this.props.submitTask} style={{display:'none'}}/>
+              <button type='submit' onClick={this.submitTask.bind(this)} style={{display:'none'}}/>
           </Form>
         </Container>
       </div>
