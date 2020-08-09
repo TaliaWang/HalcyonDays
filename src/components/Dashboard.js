@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import '../additionalCSS/calendar.css';
 import firebase from '../firebase';
 import styled from 'styled-components'
 import Footer from "./Footer.js"
@@ -49,6 +50,20 @@ const CalendarContainer = styled.div`
   transform: translate(-50%, 0);
   position: absolute;
   z-index: 30;
+
+  @media (max-width: 1200px) {
+    margin-top: 17%;
+  }
+  @media (max-width: 800px) {
+    margin-top: 30%;
+  }
+  @media (max-width: 600px) {
+    margin-top: 40%;
+  }
+  @media (max-width: 400px) {
+    margin-top: 45%;
+  }
+
 `
 
 const CurrentDateTime = styled.div`

@@ -1,0 +1,37 @@
+/* calendar div */
+.react-calendar{
+  font-family: openSansRegular;
+  -webkit-box-shadow: 21px 13px 44px 0px rgb(152,152,152);
+  -moz-box-shadow: 21px 13px 44px 0px rgb(152,152,152);
+  box-shadow: 21px 13px 44px 0px rgb(152,152,152);
+  border-radius: 5px;
+}
+/* buttons for any day */
+.react-calendar__tile{
+  font-family: openSansRegular;
+  border-radius: 40px;
+  height: 50px;
+}
+/*current day button */
+.react-calendar__tile.react-calendar__tile--now.react-calendar__month-view__days__day.react-calendar__month-view__days__day--weekend{
+  background-color: #9ae5ff;
+}
+/* header */
+.react-calendar__navigation__label{
+  font-family: openSansRegular;
+}
+
+
+@media (max-width: 400px) {
+  /* calendar div */
+  .react-calendar{
+    width: 320px;
+    height: 370px;
+  }
+  /* buttons for any day */
+  .react-calendar__tile{
+    font-family: openSansRegular;
+    border-radius: 40px;
+    height: 45px;
+  }
+}
