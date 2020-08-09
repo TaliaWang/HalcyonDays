@@ -1,5 +1,7 @@
 /*global chrome*/
 import React, { Component } from 'react';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 import firebase from '../firebase';
 import styled from 'styled-components'
 import Footer from "./Footer.js"
@@ -17,30 +19,36 @@ import statisticsImg from "../images/statistics.png"
 import tasksMenuImg from "../images/tasksMenu.png"
 import unlocked from "../images/unlocked.png"
 
-const CircleBtn = styled.button`
-  background-color: ${(props) => props.state ? "black" : "white"};
-  border-radius:50%;
-  border: 1px solid;
-  border-color: ${(props) => props.state ? "white" : "black"};
-  color: ${(props) => props.state ? "white" : "black"};
-  font-size: 50px;
-  padding: 0 15px 0 15px;
-  margin: 3% 0 0 0;
-  transform: translate(50%, 0);
+const CalendarBtn = styled.button`
+  background-color: black;
+  color: white;
+  border-radius: 5px;
+  outline: none;
+  z-index: 30;
+  position: absolute;
+  margin-top: 7px;
+  margin-left: 0;
+  padding: 5px;
+  font-size: 120%;
+  transform: translate(-50%, 0);
 
-  &:hover{
-    background-color: black;
-    color: white;
-  }
-
-  @media (max-width: 1200px) {
-    font-size: 40px;
-    padding: 0 12px 0 12px;
-  }
   @media (max-width: 600px) {
-    font-size: 35px;
-    padding: 0 10px 0 10px;
+    margin-top: 5px;
+    font-size: 100%;
   }
+  @media (max-width: 400px) {
+    padding: 3px;
+    margin-top: 2px;
+    font-size: 80%;
+  }
+`
+
+const CalendarContainer = styled.div`
+  margin-left: 50%;
+  margin-top: 10%;
+  transform: translate(-50%, 0);
+  position: absolute;
+  z-index: 30;
 `
 
 const CurrentDateTime = styled.div`
@@ -157,6 +165,32 @@ const NewNoteButtonImg = styled.img`
   @media (max-width: 600px) {
     width: 60%;
     height: 60%;
+  }
+`
+
+const NewTaskBtn = styled.button`
+  background-color: ${(props) => props.state ? "black" : "white"};
+  border-radius:50%;
+  border: 1px solid;
+  border-color: ${(props) => props.state ? "white" : "black"};
+  color: ${(props) => props.state ? "white" : "black"};
+  font-size: 50px;
+  padding: 0 15px 0 15px;
+  margin: 3% 0 0 0;
+  transform: translate(30%, 0);
+
+  &:hover{
+    background-color: black;
+    color: white;
+  }
+
+  @media (max-width: 1200px) {
+    font-size: 40px;
+    padding: 0 12px 0 12px;
+  }
+  @media (max-width: 600px) {
+    font-size: 35px;
+    padding: 0 10px 0 10px;
   }
 `
 
@@ -318,7 +352,8 @@ class Dashboard extends Component{
       footerPopupsAllowed: true,
       selectedTask: "",
       notesLoaded: false,
-      tasksLoaded: false
+      tasksLoaded: false,
+      showCalendar: false
     }
   }
 
@@ -446,8 +481,44 @@ class Dashboard extends Component{
         }
       }, () =>{
         this.switchDate();
-      })
+      });
     }
+  }
+
+  changeTodayTmrwFromCalendar(value, event){
+    var today = new Date(value);
+
+    var todayDay = this.days[today.getDay()];
+    var todayDate = today.getDate();
+    var todayMonth = this.months[today.getMonth()];
+    var todayYear = today.getFullYear();
+
+    var tmrw = new Date(today);
+    tmrw.setDate(tmrw.getDate() + 1);
+
+    var tmrwDay = this.days[tmrw.getDay()];
+    var tmrwDate = tmrw.getDate();
+    var tmrwMonth = this.months[tmrw.getMonth()];
+    var tmrwYear = tmrw.getFullYear();
+
+    this.setState({
+      todayDate: {
+        todayObject: today,
+        day: todayDay,
+        date: todayDate,
+        month: todayMonth,
+        year: todayYear
+      },
+      tmrwDate: {
+        tmrwObject: tmrw,
+        day: tmrwDay,
+        date: tmrwDate,
+        month: tmrwMonth,
+        year: tmrwYear
+      }
+    }, () =>{
+      this.switchDate();
+    });
   }
 
   componentDidMount(){
@@ -721,8 +792,7 @@ class Dashboard extends Component{
     var todayYear = today.getFullYear();
 
     // get tomorrow's date and time
-    var tmrw = new Date();
-    tmrw = new Date(today);
+    var tmrw = new Date(today);
     tmrw.setDate(tmrw.getDate() + 1);
     var tmrwDay = this.days[tmrw.getDay()];
     var tmrwDate = tmrw.getDate();
@@ -896,6 +966,13 @@ class Dashboard extends Component{
     });
   }
 
+  toggleShowCalendar(){
+    var newState = !this.state.showCalendar;
+    this.setState({
+      showCalendar: newState
+    });
+  }
+
   toggleShowNewNote(){
     this.setState(prevState => ({
       showNewNote: !prevState.showNewNote,
@@ -1058,11 +1135,21 @@ class Dashboard extends Component{
               <LeftRightBtn id='backward' onClick={this.changeTodayTmrw.bind(this)}><LeftRightBtnImg id='backwardImg' rotation='0deg' src={leftRightBtnImg}/></LeftRightBtn>
               <P_carousel>{this.state.todayDate.day}, {this.state.todayDate.month} {this.state.todayDate.date}, {this.state.todayDate.year}</P_carousel>
             </div>
+            <div style={{width: '100%', marginLeft: '50%'}}>
+              <CalendarBtn onClick={this.toggleShowCalendar.bind(this)}>Calendar</CalendarBtn>
+            </div>
             <div style={{float: 'right', display: 'flex', transform: 'translate(20%, 0)', padding: '0', marginLeft: '0'}}>
               <P_carousel>{this.state.tmrwDate.day}, {this.state.tmrwDate.month} {this.state.tmrwDate.date}, {this.state.tmrwDate.year}</P_carousel>
               <LeftRightBtn id='forward' onClick={this.changeTodayTmrw.bind(this)}><LeftRightBtnImg id='forwardImg' rotation='180deg' src={leftRightBtnImg}/></LeftRightBtn>
             </div>
           </DateCarousel>
+          {this.state.showCalendar
+            ?
+            <CalendarContainer>
+              <Calendar onChange={this.changeTodayTmrwFromCalendar.bind(this)}/>
+            </CalendarContainer>
+            : null
+          }
           <div>
             <TaskBar
               changeSelectedTaskFromTaskBar={this.changeSelectedTaskFromTaskBar.bind(this)}
@@ -1107,7 +1194,7 @@ class Dashboard extends Component{
           </div>
           <NewNoteAndTaskContainer>
             <NewNoteButton onClick={this.toggleShowNewNote.bind(this)}><NewNoteButtonImg src={newNoteButton}/></NewNoteButton>
-            <CircleBtn state={this.state.showNewTask} onClick={this.toggleShowNewTask.bind(this)}>+</CircleBtn>
+            <NewTaskBtn state={this.state.showNewTask} onClick={this.toggleShowNewTask.bind(this)}>+</NewTaskBtn>
             {this.state.showNewNote?
               <NewNote
                 todayDate={this.state.todayDate}

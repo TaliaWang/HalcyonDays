@@ -58,7 +58,7 @@ const TimeInput = styled.input`
 const Triangle = styled.div`
   margin-left: 50%;
   margin-top: 0.5%;
-  transform: translate(180%, 0);
+  transform: translate(140%, 10%);
   width: 0;
   height: 0;
   border-left: 15px solid transparent;
@@ -66,16 +66,16 @@ const Triangle = styled.div`
   border-bottom: 15px solid black;
 
   @media (max-width: 1200px) {
-    transform: translate(150%, 0);
+    transform: translate(120%, 10%);
   }
   @media (max-width: 800px) {
-    transform: translate(140%, 0);
+    transform: translate(115%, 10%);
   }
   @media (max-width: 600px) {
-    transform: translate(130%, 0);
+    transform: translate(105%, 10%);
   }
   @media (max-width: 400px) {
-    transform: translate(125%, 0);
+    transform: translate(100%, 10%);
   }
 `
 

@@ -48,7 +48,7 @@ const NoteInput = styled.input`
 const Triangle = styled.div`
   margin-left: 50%;
   margin-top: 0.5%;
-  transform: translate(-225%, 0);
+  transform: translate(-225%, 10%);
   width: 0;
   height: 0;
   border-left: 15px solid transparent;
@@ -56,13 +56,13 @@ const Triangle = styled.div`
   border-bottom: 15px solid black;
 
   @media (max-width: 1200px) {
-    transform: translate(-200%, 0);
+    transform: translate(-200%, 10%);
   }
   @media (max-width: 800px) {
-    transform: translate(-180%, 0);
+    transform: translate(-180%, 10%);
   }
   @media (max-width: 600px) {
-    transform: translate(-170%, 0);
+    transform: translate(-170%, 10%);
   }
 `
 
