@@ -21,27 +21,20 @@ import tasksMenuImg from "../images/tasksMenu.png"
 import unlocked from "../images/unlocked.png"
 
 const CalendarBtn = styled.button`
-  background-color: black;
-  color: white;
-  border-radius: 5px;
+  background-color: white;
   outline: none;
+  border: none;
   z-index: 30;
   position: absolute;
-  margin-top: 7px;
+  margin-top: 45px;
   margin-left: 0;
   padding: 5px;
   font-size: 120%;
   transform: translate(-50%, 0);
 
-  @media (max-width: 600px) {
-    margin-top: 5px;
-    font-size: 100%;
-  }
-  @media (max-width: 400px) {
-    padding: 3px;
-    margin-top: 2px;
-    font-size: 80%;
-  }
+  webkitBoxShadow: -1px 2px 5px 0px rgba(134,134,134,1);
+  mozBoxShadow: -1px 2px 5px 0px rgba(134,134,134,1);
+  box-shadow: -1px 2px 5px 0px rgba(134,134,134,1);
 `
 
 const CalendarContainer = styled.div`
@@ -70,31 +63,33 @@ const CurrentDateTime = styled.div`
 `
 
 const DateCarousel = styled.div`
-  border-top: 1px solid black;
-  border-bottom: 1px solid black;
-  height: 50px;
-  margin: 2% 25% 0 25%;
+  height: 35px;
+  width: 450px;
   text-align: left;
+  left: 50%;
+  transform: translate(-50%, 0);
+  padding-left: 15px;
+  padding-right: 15px;
+  position: absolute;
 
-  @media (max-width: 1200px) {
-    margin: 5% 20% 0 20%;
-  }
-  @media (max-width: 800px) {
-    margin: 8% 10% 0 10%;
-  }
+  webkitBoxShadow: -1px 2px 5px 0px rgba(134,134,134,1);
+  mozBoxShadow: -1px 2px 5px 0px rgba(134,134,134,1);
+  box-shadow: -1px 2px 5px 0px rgba(134,134,134,1);
+
   @media (max-width: 600px) {
-    margin: 10% 5.9% 0 5.9%;
-    height: 40px;
+    width: 350px;
   }
   @media (max-width: 400px) {
-    margin: 14% 5% 0 5%;
-    height: 30px;
+    width: 275px;
+    height: 25px;
+    padding-left: 7px;
+    padding-right: 7px;
   }
 `
 
 const H1 = styled.h1`
   margin-top: 5%;
-  font-family: ISOCT2;
+  font-family: openSansRegular;
   font-size: 80px;
 
   @media (max-width: 1200px) {
@@ -130,12 +125,15 @@ const LeftRightBtn = styled.button`
   outline: none;
   background: none;
   padding: 0;
+  font-size: 150%;
+  color: #868686;
+  text-shadow: -1px 3px 3px #868686;
 `
 
 const LeftRightBtnImg = styled.img`
   transform: rotate(${props=>props.rotation});
-  height: 40px;
-  width: 50px;
+  height: 20px;
+  width: 20px;
 
   @media (max-width: 800px) {
     height: 30px;
@@ -238,6 +236,9 @@ const P = styled.p`
 
 const P_carousel = styled.p`
   font-size: 15px;
+  margin-top: 5px;
+  color: #868686;
+  font-weight: ${props=>props.isToday ? 'bold' : 'normal'};
   float: ${props=>props.float};
 
   @media (max-width: 600px) {
@@ -319,6 +320,7 @@ class Dashboard extends Component{
     this.rightClickedAlready = true; // starts as true because first click shifts dates as expected
     this.state = {
       currentDateTime: {
+        currentDayObject: null,
         day: "",
         date: 0,
         month: "",
@@ -332,14 +334,16 @@ class Dashboard extends Component{
         day: "",
         date: 0,
         month: "",
-        year: 0
+        year: 0,
+        isCurrent: false,
       },
       tmrwDate: {
         tmrwObject: null,
         day: "",
         date: 0,
         month: "",
-        year: 0
+        year: 0,
+        isCurrent: false
       },
       showNewNote: false,
       showNotesMenu: false,
@@ -449,16 +453,19 @@ class Dashboard extends Component{
           day: todayDay,
           date: todayDate,
           month: todayMonth,
-          year: todayYear
+          year: todayYear,
+          isCurrent: false
         },
         tmrwDate: {
           tmrwObject: tmrw,
           day: tmrwDay,
           date: tmrwDate,
           month: tmrwMonth,
-          year: tmrwYear
+          year: tmrwYear,
+          isCurrent: false
         }
       }, ()=>{
+        this.compareTodayTomorrowWithCurrentDate();
         this.switchDate();
       });
     }
@@ -491,16 +498,19 @@ class Dashboard extends Component{
           day: todayDay,
           date: todayDate,
           month: todayMonth,
-          year: todayYear
+          year: todayYear,
+          isCurrent: false,
         },
         tmrwDate: {
           tmrwObject: tmrw,
           day: tmrwDay,
           date: tmrwDate,
           month: tmrwMonth,
-          year: tmrwYear
+          year: tmrwYear,
+          isCurrent: false,
         }
       }, () =>{
+        this.compareTodayTomorrowWithCurrentDate();
         this.switchDate();
       });
     }
@@ -528,17 +538,49 @@ class Dashboard extends Component{
         day: todayDay,
         date: todayDate,
         month: todayMonth,
-        year: todayYear
+        year: todayYear,
+        isCurrent: false,
       },
       tmrwDate: {
         tmrwObject: tmrw,
         day: tmrwDay,
         date: tmrwDate,
         month: tmrwMonth,
-        year: tmrwYear
+        year: tmrwYear,
+        isCurrent: false,
       }
     }, () =>{
+      this.compareTodayTomorrowWithCurrentDate();
       this.switchDate();
+    });
+  }
+
+  compareTodayTomorrowWithCurrentDate(){
+    var tempTodayDate = this.state.todayDate;
+    var tempTmrwDate = this.state.tmrwDate;
+
+    // determine whether to set today as current day
+    if (this.state.todayDate.month == this.state.currentDateTime.month
+        && this.state.todayDate.date == this.state.currentDateTime.date
+        && this.state.todayDate.day == this.state.currentDateTime.day){
+          tempTodayDate.isCurrent = true;
+          tempTmrwDate.isCurrent = false;
+    }
+    // if today is not current day, then tomorrow MIGHT be current day
+    else if (this.state.tmrwDate.month == this.state.currentDateTime.month
+        && this.state.tmrwDate.date == this.state.currentDateTime.date
+        && this.state.tmrwDate.day == this.state.currentDateTime.day){
+          tempTodayDate.isCurrent = false;
+          tempTmrwDate.isCurrent = true;
+    }
+    // else neither date is current date because the user is scrolling to future/past days
+    else{
+        tempTodayDate.isCurrent = false;
+        tempTmrwDate.isCurrent = false;
+    }
+    this.setState({
+      todayDate: tempTodayDate,
+      tmrwDate: tempTmrwDate
     });
   }
 
@@ -687,6 +729,7 @@ class Dashboard extends Component{
 
     this.setState({
       currentDateTime:{
+        currentDayeObject: d,
         day: currentDay,
         date: currentDate,
         month: currentMonth,
@@ -802,22 +845,26 @@ class Dashboard extends Component{
     var tmrwMonth = this.months[tmrw.getMonth()];
     var tmrwYear = tmrw.getFullYear();
 
-    this.setState({
+    this.setState(prevState=>({
       todayDate: {
         todayObject: today,
         day: todayDay,
         date: todayDate,
         month: todayMonth,
-        year: todayYear
+        year: todayYear,
+        isCurrent: prevState.todayDate.isCurrent
       },
       tmrwDate: {
         tmrwObject: tmrw,
         day: tmrwDay,
         date: tmrwDate,
         month: tmrwMonth,
-        year: tmrwYear
+        year: tmrwYear,
+        isCurrent: prevState.tmrwDate.isCurrent
       }
-    })
+    }), ()=>{
+      this.compareTodayTomorrowWithCurrentDate();
+    });
   }
 
   showStatistics(){
@@ -1020,6 +1067,10 @@ class Dashboard extends Component{
   }
 
   updateTodayTomorrowDates(){
+    // need to compare this constantly to update today/tomorrow bar accordingly
+    // this guards against time after 12 AM before wake-up, to update current day as "tomorrow"
+    this.compareTodayTomorrowWithCurrentDate();
+
     // compare current time with wake-up time, then change to next day if they match
     if (this.state.wakeupHour == this.state.currentDateTime.hour
         && this.state.wakeupMin == this.state.currentDateTime.min
@@ -1093,23 +1144,26 @@ class Dashboard extends Component{
         <div style={{textAlign: 'center'}}>
           {/*<H3>Dashboard</H3>
           {this.props.user ? <P>{this.props.user.email}</P> : null}*/}
-          <div>
-              <H1>{this.state.currentDateTime.hour}:{this.state.currentDateTime.min} {this.state.currentDateTime.am_pm}</H1>
-              <H3>{this.state.currentDateTime.day}, {this.state.currentDateTime.month} {this.state.currentDateTime.date}, {this.state.currentDateTime.year}</H3>
-          </div>
+          <H1>{this.state.currentDateTime.hour}:{this.state.currentDateTime.min} {this.state.currentDateTime.am_pm}</H1>
           <DateCarousel>
             <div style={{float: 'left', display: 'flex', transform: 'translate(-20%, 0)', padding: '0', marginRight: '0'}}>
-              <LeftRightBtn id='backward' onClick={this.changeTodayTmrw.bind(this)}><LeftRightBtnImg id='backwardImg' rotation='0deg' src={leftRightBtnImg}/></LeftRightBtn>
-              <P_carousel>{this.state.todayDate.day}, {this.state.todayDate.month} {this.state.todayDate.date}, {this.state.todayDate.year}</P_carousel>
-            </div>
-            <div style={{width: '100%', marginLeft: '50%'}}>
-              <CalendarBtn onClick={this.toggleShowCalendar.bind(this)}>Calendar</CalendarBtn>
+              <LeftRightBtn id='backward' onClick={this.changeTodayTmrw.bind(this)}>
+                &lt;&nbsp;&nbsp;
+              </LeftRightBtn>
+              <P_carousel isToday={this.state.todayDate.isCurrent}>{this.state.todayDate.day}, {this.state.todayDate.month} {this.state.todayDate.date}, {this.state.todayDate.year}</P_carousel>
             </div>
             <div style={{float: 'right', display: 'flex', transform: 'translate(20%, 0)', padding: '0', marginLeft: '0'}}>
-              <P_carousel>{this.state.tmrwDate.day}, {this.state.tmrwDate.month} {this.state.tmrwDate.date}, {this.state.tmrwDate.year}</P_carousel>
-              <LeftRightBtn id='forward' onClick={this.changeTodayTmrw.bind(this)}><LeftRightBtnImg id='forwardImg' rotation='180deg' src={leftRightBtnImg}/></LeftRightBtn>
+              <P_carousel isToday={this.state.tmrwDate.isCurrent}>{this.state.tmrwDate.day}, {this.state.tmrwDate.month} {this.state.tmrwDate.date}, {this.state.tmrwDate.year}</P_carousel>
+              <LeftRightBtn id='forward' onClick={this.changeTodayTmrw.bind(this)}>
+                &nbsp;&nbsp;&gt;
+              </LeftRightBtn>
             </div>
           </DateCarousel>
+          <div style={{width: '100%'}}>
+            <CalendarBtn onClick={this.toggleShowCalendar.bind(this)}>
+              🗓️
+            </CalendarBtn>
+          </div>
           {this.state.showCalendar
             ?
             <CalendarContainer>
