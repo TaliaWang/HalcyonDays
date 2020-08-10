@@ -5,34 +5,34 @@ import 'firebase/firestore'
 import styled from 'styled-components';
 
 const Container = styled.div`
-  display: flex;
-  z-index: 20;
-
-  @media (max-width: 1200px) {
-      margin-left: -47%;
-      margin-top: 22%;
-      position: fixed;
-  }
-  @media (max-width: 1000px) {
-      margin-left: -50%;
-      margin-top: 25%;
-      position: fixed;
-  }
-  @media (max-width: 800px) {
-      margin-left: -60%;
-      margin-top: 32%;
-      position: fixed;
-  }
-  @media (max-width: 600px) {
-      margin-left: -60%;
-      margin-top: 42%;
-      position: fixed;
-  }
-  @media (max-width: 400px) {
-      margin-left: -60%;
-      margin-top: 70%;
-      position: fixed;
-  }
+display: flex;
+z-index: 20;
+margin-left: -122%;
+@media (max-width: 1200px) {
+    margin-left: -112%;
+    margin-top: 15%;
+    position: fixed;
+}
+@media (max-width: 1000px) {
+    margin-left: -115%;
+    margin-top: 20%;
+    position: fixed;
+}
+@media (max-width: 800px) {
+    margin-left: -132%;
+    margin-top: 25%;
+    position: fixed;
+}
+@media (max-width: 600px) {
+    margin-left: -140%;
+    margin-top: 40%;
+    position: fixed;
+}
+@media (max-width: 400px) {
+    margin-left: -142%;
+    margin-top: 50%;
+    position: fixed;
+}
 `
 
 const StatsContainer = styled.div`
@@ -42,10 +42,9 @@ const StatsContainer = styled.div`
   margin-left: 80%;
   margin-top: -140px;
   width: 17%;
-  min-height: 30%;
+  min-height: 25%;
   border-radius: 10px;
   z-index: 20;
-
   @media (max-width: 1200px) {
       width: 35%;
   }
@@ -53,7 +52,7 @@ const StatsContainer = styled.div`
       width: 40%;
   }
   @media (max-width: 800px) {
-      width: 60%;
+      width: 50%;
   }
   @media (max-width: 600px) {
       width: 60%;
@@ -74,7 +73,7 @@ const P = styled.p`
 
 const Triangle = styled.div`
   margin-left: ${props=>props.marginLeft};
-  transform: translate(-70%, -120%) rotate(270deg);
+  transform: translate(-70%, -150%) rotate(270deg);
   position: fixed;
   z-index: 20;
   width: 0;

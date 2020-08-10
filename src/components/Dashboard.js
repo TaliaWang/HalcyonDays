@@ -210,14 +210,23 @@ const NewTaskBtn = styled.button`
 `
 
 const NotesMenuBtn = styled.button`
-  background-color: transparent;
+  background-color: ${props=>props.backgroundColor};
+  color: #868686;
+  font-size: 120%;
   border: none;
   float: left;
   top: 1vh;
-  left: 0;
+  left: 1vh;
   z-index: 15;
   position: fixed;
   margin: 0;
+  -webkit-box-shadow: ${props=>props.webkitBoxShadow};
+  -moz-box-shadow: ${props=>props.mozBoxShadow};
+  box-shadow: ${props=>props.boxShadow};
+
+  @media (max-width: 600px) {
+      font-size: 100%;
+  }
 `
 
 const P = styled.p`
@@ -240,50 +249,50 @@ const P_carousel = styled.p`
 `
 
 const StatsContainer = styled.div`
-  margin-top: -66px;
+  position: relative;
+  margin-left: 55%;
+  margin-top: calc(-2% - 40px);
 
   @media (max-width: 1200px) {
-    margin-top: -55px;
+        margin-left: 67%;
   }
-  @media (max-width: 1000px) {
-    margin-top: -50px;
+  @media (max-width: 800px) {
+      margin-left: 80%;
   }
   @media (max-width: 600px) {
-    margin-top: -45px;
+      margin-left: 82%;
+  }
+  @media (max-width: 400px) {
+      margin-left: 85%;
   }
 `
 
 const StatsImg = styled.img`
-  margin-left: 54%;
   position: relative;
-
-  @media (max-width: 1200px) {
-      margin-left: 65%;
-  }
-
-  @media (max-width: 1000px) {
-    margin-left: 68%;
-  }
-  @media (max-width: 800px) {
-    margin-left: 78%;
-  }
-  @media (max-width: 600px) {
-    margin-left: 79%;
-  }
-  @media (max-width: 400px) {
-    margin-left: 82%;
-  }
+  padding: 5px;
+  webkitBoxShadow: -1px 2px 5px 0px rgba(134,134,134,1);
+  mozBoxShadow: -1px 2px 5px 0px rgba(134,134,134,1);
+  box-shadow: -1px 2px 5px 0px rgba(134,134,134,1);
 `
 
 const TasksMenuBtn = styled.button`
-  background-color: transparent;
+  background-color: ${props=>props.backgroundColor};
+  color: #868686;
   border: none;
+  font-size: 120%;
   margin: 0;
   top: 1vh;
-  right: 0;
+  right: 1vh;
   float: right;
   z-index: 15;
   position: fixed;
+  -webkit-box-shadow: ${props=>props.webkitBoxShadow};
+  -moz-box-shadow: ${props=>props.mozBoxShadow};
+  box-shadow: ${props=>props.boxShadow};
+
+  @media (max-width: 600px) {
+      font-size: 100%;
+  }
 `
 
 const TasksMenuImg = styled.img`
@@ -1027,12 +1036,17 @@ class Dashboard extends Component{
         {
           this.state.showNotesMenu
           ?
-            <NotesMenuBtn onClick={this.toggleNotesMenuLocked.bind(this)}>
+            <NotesMenuBtn backgroundColor={'transparent'} webkitBoxShadow={'none'} mozBoxShadow={'none'} box-shadow={'none'} onClick={this.toggleNotesMenuLocked.bind(this)}>
               <img width='80%' height= '80%' src={this.state.notesMenuLocked? locked : unlocked}/>
             </NotesMenuBtn>
           :
-            <NotesMenuBtn onMouseOver={this.handleNotesMouseOver.bind(this)}>
-              <img width='80%' height= '80%' src={notesMenuImg}/>
+            <NotesMenuBtn
+              backgroundColor={'white'}
+              webkitBoxShadow={'-1px 2px 5px 0px rgba(134,134,134,1)'}
+              mozBoxShadow={'-1px 2px 5px 0px rgba(134,134,134,1)'}
+              box-shadow={'-1px 2px 5px 0px rgba(134,134,134,1)'}
+              onMouseOver={this.handleNotesMouseOver.bind(this)}>
+              My Notes
             </NotesMenuBtn>
         }
         <div style={{float: 'left', zIndex: '13', position: 'fixed', opacity: this.state.showNotesMenu?1:0, transition: 'opacity 0.3s'}}>
@@ -1049,17 +1063,22 @@ class Dashboard extends Component{
             (
               this.state.tasksMenuLocked
               ?
-                <TasksMenuBtn onClick={this.toggleTasksMenuLocked.bind(this)}>
+                <TasksMenuBtn backgroundColor={'transparent'} webkitBoxShadow={'none'} mozBoxShadow={'none'} box-shadow={'none'} onClick={this.toggleTasksMenuLocked.bind(this)}>
                   <img width='80%' height= '80%' src={locked}/>
                 </TasksMenuBtn>
               :
-                <TasksMenuBtn onClick={this.toggleTasksMenuLocked.bind(this)}>
+                <TasksMenuBtn backgroundColor={'transparent'} webkitBoxShadow={'none'} mozBoxShadow={'none'} box-shadow={'none'} onClick={this.toggleTasksMenuLocked.bind(this)}>
                   <img width='80%' height= '80%' src={unlocked}/>
                 </TasksMenuBtn>
             )
           :
-            <TasksMenuBtn onMouseOver={this.handleTasksMouseOver.bind(this)}>
-              <TasksMenuImg width='80%' height= '80%' src={tasksMenuImg}/>
+            <TasksMenuBtn
+              backgroundColor={'white'}
+              webkitBoxShadow={'-1px 2px 5px 0px rgba(134,134,134,1)'}
+              mozBoxShadow={'-1px 2px 5px 0px rgba(134,134,134,1)'}
+              box-shadow={'-1px 2px 5px 0px rgba(134,134,134,1)'}
+              onMouseOver={this.handleTasksMouseOver.bind(this)}>
+              My Tasks
             </TasksMenuBtn>
         }
         <div style={{float: 'right', zIndex: '13', position: 'fixed', opacity: this.state.showTasksMenu?1:0, transition: 'opacity 0.3s'}}>
