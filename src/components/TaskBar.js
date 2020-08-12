@@ -8,6 +8,7 @@ const BufferTime = styled.div`
   width: ${props=>props.width}%;
   float: right;
   height: 40px;
+  display: ${props=>props.currentDayIsToday ? 'auto' : 'none'}
 `
 
 const Button = styled.button`
@@ -88,6 +89,7 @@ const TimePassed = styled.div`
   background-color: white;
   z-index: 12;
   pointer-events: none;
+  opacity: ${props=>props.currentDayIsToday ? 1 : 0}
 `
 
 const Task = styled.button`
@@ -310,7 +312,14 @@ class TaskBar extends Component{
       <div style={{display: 'block', width: '100%'}}>
         {/* tasks container is below time container*/}
         <TimeContainer height={this.barheight}>
-            <TimePassed height={this.barHeight} width={this.state.timePassedWidth}></TimePassed>
+            <TimePassed
+              height={this.barHeight}
+              width={this.state.timePassedWidth}
+              currentDayIsToday={(this.props.todayDate.month == this.props.currentDateTime.month
+                                  && this.props.todayDate.date == this.props.currentDateTime.date
+                                  && this.props.todayDate.year == this.props.currentDateTime.year)
+                                 ? true : false}
+            ></TimePassed>
         </TimeContainer>
         {/* NOTE: top to bottom appears in order right to left */}
         <TasksContainer height={this.barheight}>
@@ -325,8 +334,13 @@ class TaskBar extends Component{
                 <Button>{this.state.relaxationHour}:{this.state.relaxationMin} {this.state.relaxationClockMode}</Button>
               </div>
             </RelaxationTime>
-            <BufferTime width={this.getBufferWidth()}>
-            </BufferTime>
+            <BufferTime
+            width={this.getBufferWidth()}
+            currentDayIsToday={(this.props.todayDate.month == this.props.currentDateTime.month
+                                && this.props.todayDate.date == this.props.currentDateTime.date
+                                && this.props.todayDate.year == this.props.currentDateTime.year)
+                               ? true : false}
+            ></BufferTime>
             {/* unfinished tasks come before finished tasks */}
             {/* oldest added tasks show up on left, hence slice and reverse */}
             {this.state.tasks.slice(0).reverse().map((task, index) =>

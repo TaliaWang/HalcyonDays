@@ -562,14 +562,14 @@ class Dashboard extends Component{
     // determine whether to set today as current day
     if (this.state.todayDate.month == this.state.currentDateTime.month
         && this.state.todayDate.date == this.state.currentDateTime.date
-        && this.state.todayDate.day == this.state.currentDateTime.day){
+        && this.state.todayDate.year == this.state.currentDateTime.year){
           tempTodayDate.isCurrent = true;
           tempTmrwDate.isCurrent = false;
     }
     // if today is not current day, then tomorrow MIGHT be current day
     else if (this.state.tmrwDate.month == this.state.currentDateTime.month
         && this.state.tmrwDate.date == this.state.currentDateTime.date
-        && this.state.tmrwDate.day == this.state.currentDateTime.day){
+        && this.state.tmrwDate.year == this.state.currentDateTime.year){
           tempTodayDate.isCurrent = false;
           tempTmrwDate.isCurrent = true;
     }
@@ -633,19 +633,20 @@ class Dashboard extends Component{
           });
         }).then(result=>{
             this.calculateTimePassedWidth();
+            this.updateTodayTomorrowDates();
 
             // update current time and time passed every minute
             setInterval(result=>{
               this.calculateTimePassedWidth();
-              this.calculateCurrentDateTime();
             }, 60000);
 
             // check whether today/tomorrow should up dated every 15 seconds
             // note: checking every minute might not be frequent enough,
             // since case to reset today/tomorrow occurs when current time == wakeup time
             setInterval(result=>{
+              this.calculateCurrentDateTime();
               this.updateTodayTomorrowDates();
-            }, 15000);
+            }, 1000);
         }).then(result=>{
             // listen for changes in this user (ie. if they add subcollection notes)
             userRef.onSnapshot(userDoc=> {
@@ -729,7 +730,7 @@ class Dashboard extends Component{
 
     this.setState({
       currentDateTime:{
-        currentDayeObject: d,
+        currentDayObject: d,
         day: currentDay,
         date: currentDate,
         month: currentMonth,
@@ -832,10 +833,44 @@ class Dashboard extends Component{
   setTodayTomorrowDates(){
     // get today's date and time (today being the date for which user wants to edit/view tasks)
     var today = new Date();
-    var todayDay = this.days[today.getDay()];
-    var todayDate = today.getDate();
-    var todayMonth = this.months[today.getMonth()];
-    var todayYear = today.getFullYear();
+    var todayDay;
+    var todayDate;
+    var todayMonth;
+    var todayYear;
+
+    // adjust the day that shows as "today"
+    // if the current time is before 12 AM, then today matches current day
+    // but if the current time is after 12 AM and before wake-up time, "tomorrow" should actually match the current day, so we set "today" 1 day back
+    // set currentTimeInMins as highest value by default, so that if today matches current day, it stays that way
+        // but if tomorrow matches current day, setting today as current day is fine because updateTodayTomorrowDates() function will call this function again to correct it
+    var currentTimeInMins = (this.state.currentDateTime.currentDayObject == null ? 0 : this.state.currentDateTime.currentDayObject.getHours() * 60)
+                            + (this.state.currentDateTime.currentDayObject == null ? this.minsInDay : this.state.currentDateTime.currentDayObject.getMinutes());
+    var wakeupTimeInMins = 0;
+    if (this.state.wakeupClockMode == 'PM' && this.state.wakeupHour != 12){
+      wakeupTimeInMins = (this.state.wakeupHour + 12)*60 + parseInt(this.state.wakeupMin);
+    }
+    else if (this.state.wakeupClockMode == 'AM' && this.state.wakeupHour == 12){
+      wakeupTimeInMins = 0 + parseInt(this.state.wakeupMin);
+    }
+    else{
+      wakeupTimeInMins = this.state.wakeupHour*60 + parseInt(this.state.wakeupMin);
+    }
+
+    if (currentTimeInMins < wakeupTimeInMins){
+      // set today back 1 day
+      today.setDate(today.getDate() - 1);
+      todayDay = this.days[today.getDay()];
+      todayDate = today.getDate();
+      todayMonth = this.months[today.getMonth()];
+      todayYear = today.getFullYear();
+    }
+    else{
+      // keep today same as current day
+      todayDay = this.days[today.getDay()];
+      todayDate = today.getDate();
+      todayMonth = this.months[today.getMonth()];
+      todayYear = today.getFullYear();
+    }
 
     // get tomorrow's date and time
     var tmrw = new Date(today);
@@ -1071,13 +1106,26 @@ class Dashboard extends Component{
     // this guards against time after 12 AM before wake-up, to update current day as "tomorrow"
     this.compareTodayTomorrowWithCurrentDate();
 
-    // compare current time with wake-up time, then change to next day if they match
-    if (this.state.wakeupHour == this.state.currentDateTime.hour
-        && this.state.wakeupMin == this.state.currentDateTime.min
-        && this.state.wakeupClockMode== this.state.currentDateTime.am_pm){
-        // reset today/tomorrow to the next day
+    // if neither today/tomorrow match current date, the user is navigating to past/future date, so today/tomorrow shouldn't be updated
+    if (this.state.todayDate.month == this.state.currentDateTime.month
+        && this.state.todayDate.date == this.state.currentDateTime.date
+        && this.state.todayDate.year == this.state.currentDateTime.year){
+        //if current day is "today", wait until current day becomes "tomorrow"
+        // so we have to keep checking by calling the method below
         this.setTodayTomorrowDates();
     }
+    else if (this.state.tmrwDate.month == this.state.currentDateTime.month
+         && this.state.tmrwDate.date == this.state.currentDateTime.date
+         && this.state.tmrwDate.year == this.state.currentDateTime.year){
+
+        // only update if current time is wake up time
+        if (this.state.wakeupHour == this.state.currentDateTime.hour
+           && this.state.wakeupMin == this.state.currentDateTime.min
+           && this.state.wakeupClockMode == this.state.currentDateTime.am_pm){
+           this.setTodayTomorrowDates();
+        }
+    }
+    // else, don't update today/tomorrow because user is navigating
   }
 
   render(){
@@ -1189,6 +1237,8 @@ class Dashboard extends Component{
               wakeupHour={this.state.wakeupHour}
               wakeupMin={this.state.wakeupMin}
               wakeupClockMode={this.state.wakeupClockMode}
+              todayDate={this.state.todayDate}
+              currentDateTime={this.state.currentDateTime}
             ></TaskBar>
             {/* start and end times of the day */}
             <TodayTomorrow>
