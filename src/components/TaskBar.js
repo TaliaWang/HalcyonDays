@@ -8,7 +8,7 @@ const BufferTime = styled.div`
   width: ${props=>props.width}%;
   float: right;
   height: 40px;
-  display: ${props=>props.currentDayOnLeftSideOfBar ? 'auto' : 'none'}
+  display: ${props=>props.showTickerAndBuffer ? 'auto' : 'none'}
 `
 
 const Button = styled.button`
@@ -89,7 +89,7 @@ const TimePassed = styled.div`
   background-color: white;
   z-index: 12;
   pointer-events: none;
-  opacity: ${props=>props.currentDayOnLeftSideOfBar? 1 : 0}
+  opacity: ${props=>props.showTickerAndBuffer? 1 : 0}
 `
 
 const Task = styled.button`
@@ -315,7 +315,7 @@ class TaskBar extends Component{
             <TimePassed
               height={this.barHeight}
               width={this.state.timePassedWidth}
-              currentDayOnLeftSideOfBar={this.props.currentDayOnLeftSideOfBar}
+              showTickerAndBuffer={this.props.showTickerAndBuffer}
             ></TimePassed>
         </TimeContainer>
         {/* NOTE: top to bottom appears in order right to left */}
@@ -333,7 +333,7 @@ class TaskBar extends Component{
             </RelaxationTime>
             <BufferTime
             width={this.getBufferWidth()}
-            currentDayOnLeftSideOfBar={this.props.currentDayOnLeftSideOfBar}
+            showTickerAndBuffer={this.props.showTickerAndBuffer}
             ></BufferTime>
             {/* unfinished tasks come before finished tasks */}
             {/* oldest added tasks show up on left, hence slice and reverse */}

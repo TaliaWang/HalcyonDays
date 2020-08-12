@@ -376,7 +376,8 @@ class Dashboard extends Component{
       selectedTask: "",
       notesLoaded: false,
       tasksLoaded: false,
-      showCalendar: false
+      showCalendar: false,
+      showTickerAndBuffer: true
     }
   }
 
@@ -438,9 +439,6 @@ class Dashboard extends Component{
       var todayDate = today.getDate();
       var todayMonth = this.months[today.getMonth()];
       var todayYear = today.getFullYear();
-
-      this.rightClickedAlready = false;
-      this.leftClickedAlready = true;
 
       this.setState({
         todayDate: {
@@ -570,15 +568,51 @@ class Dashboard extends Component{
     this.setState({
       todayDate: tempTodayDate,
       tmrwDate: tempTmrwDate
+    }, ()=>{
+       // determine whether task bar should show ticker and buffer (should only show for current day's today/tomorrow)
+       // if it's after 12 AM and before wake up time, and current date shows in place of tomorrow, show the ticker/buffer
+       // if it's any other time, and the current date shows in place of today, show the ticker/buffer
+       var tempCurrentDateTime = new Date();
+       var currentTimeInMins = (tempCurrentDateTime.getHours() * 60 + tempCurrentDateTime.getMinutes());
+       var wakeupTimeInMins = 0;
+
+       if (this.state.wakeupClockMode == 'PM' && this.state.wakeupHour != 12){
+         wakeupTimeInMins = (this.state.wakeupHour + 12)*60 + parseInt(this.state.wakeupMin);
+       }
+       else if (this.state.wakeupClockMode == 'AM' && this.state.wakeupHour == 12){
+         wakeupTimeInMins = 0 + parseInt(this.state.wakeupMin);
+       }
+       else{
+         wakeupTimeInMins = this.state.wakeupHour*60 + parseInt(this.state.wakeupMin);
+       }
+
+       // it's after 12 AM and before wake up time
+       if (currentTimeInMins < wakeupTimeInMins && this.state.tmrwDate.isCurrent){
+         this.setState({
+           showTickerAndBuffer: true
+         });
+       }
+       else if (currentTimeInMins >= wakeupTimeInMins && this.state.todayDate.isCurrent){
+         this.setState({
+           showTickerAndBuffer: true
+         });
+       }
+       else{
+         this.setState({
+           showTickerAndBuffer: false
+         });
+       }
+
     });
+
   }
 
   componentDidMount(){
     // Add new user to database if they are verified
     if (this.props.user != null && this.props.user.emailVerified){
       // set the dates for today/tomorrow early here so that today/tomorrow can be created in the database
-      this.setTodayTomorrowDates();
       this.calculateCurrentDateTime();
+      this.setTodayTomorrowDates();
 
       var db = firebase.firestore();
       const userRef = db.collection('users').doc(this.props.user.uid);
@@ -619,10 +653,9 @@ class Dashboard extends Component{
             sleepHour: userDoc.data().sleepHour,
             sleepMin: userDoc.data().sleepMin,
             sleepClockMode: userDoc.data().sleepClockMode,
-          });
-        }).then(result=>{
+          }, ()=>{
             this.calculateTimePassedWidth();
-            this.updateTodayTomorrowDates();
+            this.setTodayTomorrowDates();
 
             // update current time and time passed every minute
             setInterval(result=>{
@@ -636,6 +669,7 @@ class Dashboard extends Component{
               this.calculateCurrentDateTime();
               this.updateTodayTomorrowDates();
             }, 1000);
+          });
         }).then(result=>{
             // listen for changes in this user (ie. if they add subcollection notes)
             userRef.onSnapshot(userDoc=> {
@@ -650,6 +684,8 @@ class Dashboard extends Component{
                   sleepHour: userDoc.data().sleepHour,
                   sleepMin: userDoc.data().sleepMin,
                   sleepClockMode: userDoc.data().sleepClockMode,
+                }, ()=>{
+                  this.setTodayTomorrowDates();
                 });
 
                 //listen for changes in this user's general notes
@@ -657,33 +693,6 @@ class Dashboard extends Component{
 
                 // listen for changes in this user's tasks for this date
                 this.switchDate();
-
-                // listen for changes in this user's tasks for this date
-                /*userRef
-                .collection('tasks')
-                .onSnapshot(querySnapshot=>{
-                  var tempTasks = [];
-                  var tempUnfinishedTasks = [];
-                  var tempMinsNeeded = 0;
-                  var tempHoursNeeded = 0;
-                  querySnapshot.forEach(doc=> {
-                    tempTasks.push(doc.data());
-                    if (!doc.data().finished){
-                      tempUnfinishedTasks.push(doc.data());
-                      tempMinsNeeded = tempMinsNeeded + doc.data().hours*60 + doc.data().mins;
-                    }
-                  });
-                  // calculate hours and mins needed to finish remaining tasks
-                  tempHoursNeeded = parseInt(tempMinsNeeded / 60);
-                  tempMinsNeeded = tempMinsNeeded % 60;
-                  this.setState({
-                    tasks: tempTasks,
-                    unfinishedTasks: tempUnfinishedTasks,
-                    hoursNeededForTasks: tempHoursNeeded,
-                    minsNeededForTasks: tempMinsNeeded
-                });
-              });*/
-
             });
         });
       });
@@ -830,11 +839,12 @@ class Dashboard extends Component{
     // adjust the day that shows as "today"
     // if the current time is before 12 AM, then today matches current day
     // but if the current time is after 12 AM and before wake-up time, "tomorrow" should actually match the current day, so we set "today" 1 day back
-    // set currentTimeInMins as highest value by default, so that if today matches current day, it stays that way
-        // but if tomorrow matches current day, setting today as current day is fine because updateTodayTomorrowDates() function will call this function again to correct it
-    var currentTimeInMins = (this.state.currentDateTime.currentDayObject == null ? 0 : this.state.currentDateTime.currentDayObject.getHours() * 60)
-                            + (this.state.currentDateTime.currentDayObject == null ? this.minsInDay : this.state.currentDateTime.currentDayObject.getMinutes());
+
+    //here we get the current time again instead of using the state object, to guard against initially when state object is null
+    var tempCurrentDateTime = new Date();
+    var currentTimeInMins = (tempCurrentDateTime.getHours() * 60 + tempCurrentDateTime.getMinutes());
     var wakeupTimeInMins = 0;
+
     if (this.state.wakeupClockMode == 'PM' && this.state.wakeupHour != 12){
       wakeupTimeInMins = (this.state.wakeupHour + 12)*60 + parseInt(this.state.wakeupMin);
     }
@@ -1091,21 +1101,12 @@ class Dashboard extends Component{
   }
 
   updateTodayTomorrowDates(){
-    // need to compare this constantly to update today/tomorrow bar accordingly
-    // this guards against time after 12 AM before wake-up, to update current day as "tomorrow"
-    this.compareTodayTomorrowWithCurrentDate();
-
-    // if neither today/tomorrow match current date, the user is navigating to past/future date, so today/tomorrow shouldn't be updated
     if (this.state.todayDate.isCurrent){
-        // make sure the day showing up in the "today" slot actually marks the beginning/left of the time bar (ie. the user hasn't just navigated forward 1 day after 12 AM)
-        var dayAfterCurrentDay = new Date(this.state.currentDateTime.currentDayObject);
-        dayAfterCurrentDay.setDate(dayAfterCurrentDay.getDate() + 1);
-
-        if (this.state.tmrwDate.tmrwObject.getMonth() == dayAfterCurrentDay.getMonth()
-            && this.state.tmrwDate.tmrwObject.getDate() == dayAfterCurrentDay.getDate()
-            && this.state.tmrwDate.tmrwObject.getFullYear() == dayAfterCurrentDay.getFullYear()){
-            // we have to keep checking by calling the method below
-            this.setTodayTomorrowDates();
+        // only update today/tomorrow when current time is wake up time or when it's 12 AM
+        if ((this.state.wakeupHour == this.state.currentDateTime.hour && this.state.wakeupMin == this.state.currentDateTime.min && this.state.wakeupClockMode == this.state.currentDateTime.am_pm)
+           ||
+            (this.state.currentDateTime.hour == 12 && this.state.currentDateTime.min == '00' && this.state.currentDateTime.am_pm == 'AM')){
+           this.setTodayTomorrowDates();
         }
     }
     else if (this.state.tmrwDate.isCurrent){
@@ -1229,7 +1230,7 @@ class Dashboard extends Component{
               wakeupHour={this.state.wakeupHour}
               wakeupMin={this.state.wakeupMin}
               wakeupClockMode={this.state.wakeupClockMode}
-              currentDayOnLeftSideOfBar={this.state.todayDate.isCurrent}
+              showTickerAndBuffer={this.state.showTickerAndBuffer}
             ></TaskBar>
             {/* start and end times of the day */}
             <TodayTomorrow>
