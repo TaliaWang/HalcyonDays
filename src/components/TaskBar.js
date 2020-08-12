@@ -8,7 +8,7 @@ const BufferTime = styled.div`
   width: ${props=>props.width}%;
   float: right;
   height: 40px;
-  display: ${props=>props.currentDayIsToday ? 'auto' : 'none'}
+  display: ${props=>props.currentDayOnLeftSideOfBar ? 'auto' : 'none'}
 `
 
 const Button = styled.button`
@@ -89,7 +89,7 @@ const TimePassed = styled.div`
   background-color: white;
   z-index: 12;
   pointer-events: none;
-  opacity: ${props=>props.currentDayIsToday ? 1 : 0}
+  opacity: ${props=>props.currentDayOnLeftSideOfBar? 1 : 0}
 `
 
 const Task = styled.button`
@@ -315,10 +315,7 @@ class TaskBar extends Component{
             <TimePassed
               height={this.barHeight}
               width={this.state.timePassedWidth}
-              currentDayIsToday={(this.props.todayDate.month == this.props.currentDateTime.month
-                                  && this.props.todayDate.date == this.props.currentDateTime.date
-                                  && this.props.todayDate.year == this.props.currentDateTime.year)
-                                 ? true : false}
+              currentDayOnLeftSideOfBar={this.props.currentDayOnLeftSideOfBar}
             ></TimePassed>
         </TimeContainer>
         {/* NOTE: top to bottom appears in order right to left */}
@@ -336,10 +333,7 @@ class TaskBar extends Component{
             </RelaxationTime>
             <BufferTime
             width={this.getBufferWidth()}
-            currentDayIsToday={(this.props.todayDate.month == this.props.currentDateTime.month
-                                && this.props.todayDate.date == this.props.currentDateTime.date
-                                && this.props.todayDate.year == this.props.currentDateTime.year)
-                               ? true : false}
+            currentDayOnLeftSideOfBar={this.props.currentDayOnLeftSideOfBar}
             ></BufferTime>
             {/* unfinished tasks come before finished tasks */}
             {/* oldest added tasks show up on left, hence slice and reverse */}

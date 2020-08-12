@@ -316,11 +316,9 @@ class Dashboard extends Component{
     this.minsInDay = 60*24;
     this.months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     this.days = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
-    this.leftClickedAlready = true; // starts as true because first click shifts dates as expected
-    this.rightClickedAlready = true; // starts as true because first click shifts dates as expected
     this.state = {
       currentDateTime: {
-        currentDayObject: null,
+        currentDayObject: new Date(),
         day: "",
         date: 0,
         month: "",
@@ -426,11 +424,8 @@ class Dashboard extends Component{
   changeTodayTmrw(e){
     if (e.target.id == 'backward' || e.target.id == 'backwardImg'){
       // set tmrw as current today
-      var tmrw = this.state.todayDate.todayObject;
-      if (!this.leftClickedAlready){
-        // account for strange bug that only shifts dates back after 2 clicks (exluding first click)
-        tmrw.setDate(tmrw.getDate() - 1);
-      }
+      var tmrw = this.state.tmrwDate.tmrwObject;
+      tmrw.setDate(tmrw.getDate() - 1);
       var tmrwDay = this.days[tmrw.getDay()];
       var tmrwDate = tmrw.getDate();
       var tmrwMonth = this.months[tmrw.getMonth()];
@@ -471,11 +466,8 @@ class Dashboard extends Component{
     }
     else if (e.target.id == 'forward' || e.target.id == 'forwardImg'){
       // set today as current tmrw
-      var today = this.state.tmrwDate.tmrwObject;
-      if (!this.rightClickedAlready){
-        // account for strange bug that only shifts dates forward after 2 clicks (excluding first click)
-        today.setDate(today.getDate() + 1);
-      }
+      var today = this.state.todayDate.todayObject;
+      today.setDate(today.getDate() + 1);
       var todayDay = this.days[today.getDay()];
       var todayDate = today.getDate();
       var todayMonth = this.months[today.getMonth()];
@@ -488,9 +480,6 @@ class Dashboard extends Component{
       var tmrwDate = tmrw.getDate();
       var tmrwMonth = this.months[tmrw.getMonth()];
       var tmrwYear = tmrw.getFullYear();
-
-      this.leftClickedAlready = false;
-      this.rightClickedAlready = true;
 
       this.setState({
         todayDate: {
@@ -1107,17 +1096,20 @@ class Dashboard extends Component{
     this.compareTodayTomorrowWithCurrentDate();
 
     // if neither today/tomorrow match current date, the user is navigating to past/future date, so today/tomorrow shouldn't be updated
-    if (this.state.todayDate.month == this.state.currentDateTime.month
-        && this.state.todayDate.date == this.state.currentDateTime.date
-        && this.state.todayDate.year == this.state.currentDateTime.year){
-        //if current day is "today", wait until current day becomes "tomorrow"
-        // so we have to keep checking by calling the method below
-        this.setTodayTomorrowDates();
-    }
-    else if (this.state.tmrwDate.month == this.state.currentDateTime.month
-         && this.state.tmrwDate.date == this.state.currentDateTime.date
-         && this.state.tmrwDate.year == this.state.currentDateTime.year){
+    if (this.state.todayDate.isCurrent){
+        // make sure the day showing up in the "today" slot actually marks the beginning/left of the time bar (ie. the user hasn't just navigated forward 1 day after 12 AM)
+        var dayAfterCurrentDay = new Date(this.state.currentDateTime.currentDayObject);
+        dayAfterCurrentDay.setDate(dayAfterCurrentDay.getDate() + 1);
 
+        if (this.state.tmrwDate.tmrwObject.getMonth() == dayAfterCurrentDay.getMonth()
+            && this.state.tmrwDate.tmrwObject.getDate() == dayAfterCurrentDay.getDate()
+            && this.state.tmrwDate.tmrwObject.getFullYear() == dayAfterCurrentDay.getFullYear()){
+            // we have to keep checking by calling the method below
+            this.setTodayTomorrowDates();
+        }
+    }
+    else if (this.state.tmrwDate.isCurrent){
+        // here, we DON'T need to make sure if the user has just navigated to show tomorrow on the right, because even if this is the case, the dates still won't update
         // only update if current time is wake up time
         if (this.state.wakeupHour == this.state.currentDateTime.hour
            && this.state.wakeupMin == this.state.currentDateTime.min
@@ -1237,8 +1229,7 @@ class Dashboard extends Component{
               wakeupHour={this.state.wakeupHour}
               wakeupMin={this.state.wakeupMin}
               wakeupClockMode={this.state.wakeupClockMode}
-              todayDate={this.state.todayDate}
-              currentDateTime={this.state.currentDateTime}
+              currentDayOnLeftSideOfBar={this.state.todayDate.isCurrent}
             ></TaskBar>
             {/* start and end times of the day */}
             <TodayTomorrow>
