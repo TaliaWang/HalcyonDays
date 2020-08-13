@@ -6,6 +6,7 @@ import '../additionalCSS/calendar.css';
 import firebase from '../firebase';
 import styled from 'styled-components'
 import Footer from "./Footer.js"
+import Header from "./Header.js"
 import NewNote from "./NewNote.js"
 import NewTask from "./NewTask.js"
 import NotesMenu from "./NotesMenu.js"
@@ -31,10 +32,6 @@ const CalendarBtn = styled.button`
   padding: 5px;
   font-size: 120%;
   transform: translate(-50%, 0);
-
-  webkitBoxShadow: -1px 2px 5px 0px rgba(134,134,134,1);
-  mozBoxShadow: -1px 2px 5px 0px rgba(134,134,134,1);
-  box-shadow: -1px 2px 5px 0px rgba(134,134,134,1);
 `
 
 const CalendarContainer = styled.div`
@@ -63,24 +60,23 @@ const CurrentDateTime = styled.div`
 `
 
 const DateCarousel = styled.div`
+  box-shadow: -1px 2px 5px 0px #B7C6FB;
   height: 35px;
   width: 450px;
   text-align: left;
   left: 50%;
   transform: translate(-50%, 0);
-  padding-left: 15px;
-  padding-right: 15px;
+  padding-left: 20px;
+  padding-right: 20px;
   position: absolute;
 
-  webkitBoxShadow: -1px 2px 5px 0px rgba(134,134,134,1);
-  mozBoxShadow: -1px 2px 5px 0px rgba(134,134,134,1);
-  box-shadow: -1px 2px 5px 0px rgba(134,134,134,1);
-
   @media (max-width: 600px) {
-    width: 350px;
+    width: 375px;
+    padding-left: 15px;
+    padding-right: 15px;
   }
   @media (max-width: 400px) {
-    width: 275px;
+    width: 290px;
     height: 25px;
     padding-left: 7px;
     padding-right: 7px;
@@ -126,8 +122,7 @@ const LeftRightBtn = styled.button`
   background: none;
   padding: 0;
   font-size: 150%;
-  color: #868686;
-  text-shadow: -1px 3px 3px #868686;
+  color: black;
 `
 
 const LeftRightBtnImg = styled.img`
@@ -209,18 +204,14 @@ const NewTaskBtn = styled.button`
 
 const NotesMenuBtn = styled.button`
   background-color: ${props=>props.backgroundColor};
-  color: #868686;
+  color: #95ABFB;
   font-size: 120%;
   border: none;
   float: left;
-  top: 1vh;
+  top: 60px;
   left: 1vh;
   z-index: 15;
   position: fixed;
-  margin: 0;
-  -webkit-box-shadow: ${props=>props.webkitBoxShadow};
-  -moz-box-shadow: ${props=>props.mozBoxShadow};
-  box-shadow: ${props=>props.boxShadow};
 
   @media (max-width: 600px) {
       font-size: 100%;
@@ -228,6 +219,7 @@ const NotesMenuBtn = styled.button`
 `
 
 const P = styled.p`
+  color: #95ABFB;
   width: 70px;
   font-size: 15px;
   float: ${props=>props.float};
@@ -237,8 +229,7 @@ const P = styled.p`
 const P_carousel = styled.p`
   font-size: 15px;
   margin-top: 5px;
-  color: #868686;
-  font-weight: ${props=>props.isToday ? 'bold' : 'normal'};
+  color: ${props=>props.isToday ? 'black' : '#B7C6FB'};
   float: ${props=>props.float};
 
   @media (max-width: 600px) {
@@ -271,25 +262,19 @@ const StatsContainer = styled.div`
 const StatsImg = styled.img`
   position: relative;
   padding: 5px;
-  webkitBoxShadow: -1px 2px 5px 0px rgba(134,134,134,1);
-  mozBoxShadow: -1px 2px 5px 0px rgba(134,134,134,1);
-  box-shadow: -1px 2px 5px 0px rgba(134,134,134,1);
 `
 
 const TasksMenuBtn = styled.button`
   background-color: ${props=>props.backgroundColor};
-  color: #868686;
+  color: #95ABFB;
   border: none;
   font-size: 120%;
   margin: 0;
-  top: 1vh;
+  top: 60px;
   right: 1vh;
   float: right;
   z-index: 15;
   position: fixed;
-  -webkit-box-shadow: ${props=>props.webkitBoxShadow};
-  -moz-box-shadow: ${props=>props.mozBoxShadow};
-  box-shadow: ${props=>props.boxShadow};
 
   @media (max-width: 600px) {
       font-size: 100%;
@@ -299,14 +284,14 @@ const TasksMenuBtn = styled.button`
 const TasksMenuImg = styled.img`
 `
 
-const TodayTomorrow =styled.div`
-  margin: 2% 25% 0 25%;
+const WakeupTimes =styled.div`
+  margin: 20px 25% 0 25%;
 
   @media (max-width: 1200px) {
-    margin: 2% 20% 0 20%;
+    margin: 20px 20% 0 20%;
   }
   @media (max-width: 800px) {
-    margin: 2% 15% 0 15%;
+    margin: 20px 15% 0 15%;
   }
 `
 
@@ -1124,6 +1109,9 @@ class Dashboard extends Component{
   render(){
     return(
       <div>
+        {/* top components in header */}
+        <Header>
+        </Header>
         {/* notes menu side bar */}
         {
           this.state.showNotesMenu
@@ -1133,12 +1121,11 @@ class Dashboard extends Component{
             </NotesMenuBtn>
           :
             <NotesMenuBtn
+              className="icon"
               backgroundColor={'white'}
-              webkitBoxShadow={'-1px 2px 5px 0px rgba(134,134,134,1)'}
-              mozBoxShadow={'-1px 2px 5px 0px rgba(134,134,134,1)'}
-              box-shadow={'-1px 2px 5px 0px rgba(134,134,134,1)'}
               onMouseOver={this.handleNotesMouseOver.bind(this)}>
-              My Notes
+              <img style={{transform: 'translate(0, 10%)'}} height='20px' width='20px' src={notesMenuImg}/>
+              &nbsp;My Notes
             </NotesMenuBtn>
         }
         <div style={{float: 'left', zIndex: '13', position: 'fixed', opacity: this.state.showNotesMenu?1:0, transition: 'opacity 0.3s'}}>
@@ -1165,12 +1152,14 @@ class Dashboard extends Component{
             )
           :
             <TasksMenuBtn
+              className="icon"
               backgroundColor={'white'}
               webkitBoxShadow={'-1px 2px 5px 0px rgba(134,134,134,1)'}
               mozBoxShadow={'-1px 2px 5px 0px rgba(134,134,134,1)'}
               box-shadow={'-1px 2px 5px 0px rgba(134,134,134,1)'}
               onMouseOver={this.handleTasksMouseOver.bind(this)}>
-              My Tasks
+              <img style={{transform: 'translate(0, 10%)'}} height='20px' width='22px' src={tasksMenuImg}/>
+              &nbsp;My Tasks
             </TasksMenuBtn>
         }
         <div style={{float: 'right', zIndex: '13', position: 'fixed', opacity: this.state.showTasksMenu?1:0, transition: 'opacity 0.3s'}}>
@@ -1201,7 +1190,7 @@ class Dashboard extends Component{
             </div>
           </DateCarousel>
           <div style={{width: '100%'}}>
-            <CalendarBtn onClick={this.toggleShowCalendar.bind(this)}>
+            <CalendarBtn className='icon' onClick={this.toggleShowCalendar.bind(this)}>
               🗓️
             </CalendarBtn>
           </div>
@@ -1233,12 +1222,12 @@ class Dashboard extends Component{
               showTickerAndBuffer={this.state.showTickerAndBuffer}
             ></TaskBar>
             {/* start and end times of the day */}
-            <TodayTomorrow>
+            <WakeupTimes>
                <P float='left'>{this.state.wakeupHour}:{this.state.wakeupMin} {this.state.wakeupClockMode}</P>
                <P float='right'>{this.state.wakeupHour}:{this.state.wakeupMin} {this.state.wakeupClockMode}</P>
-            </TodayTomorrow>
+            </WakeupTimes>
             <StatsContainer>
-              <StatsImg onMouseOver={this.showStatistics.bind(this)} onMouseLeave={this.hideStatistics.bind(this)} src={statisticsImg}/>
+              <StatsImg className='icon' onMouseOver={this.showStatistics.bind(this)} onMouseLeave={this.hideStatistics.bind(this)} src={statisticsImg}/>
               {this.state.showStatistics
                 ?
                 <Statistics

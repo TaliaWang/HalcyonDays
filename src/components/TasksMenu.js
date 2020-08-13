@@ -24,10 +24,11 @@ const Checkbox = styled.button`
 `
 
 const Container = styled.div`
-  background-color: #606060;
+  background-image: linear-gradient(#FF68B8, #FFAA90);
   width: 20%;
   margin: -5% 0 0 80%;
   height: 110vh;
+  padding-top: 40px;
   position: fixed;
 
   @media (max-width: 800px) {

@@ -9,7 +9,7 @@ import loginImg from "../images/login.png";
 const ArrowImg = styled.img`
   height: 30px;
   width: 30px;
-  background-color: ${props=>props.backgroundColor};
+  background-color: transparent;
   position: relative;
 
   @media (max-width: 600px) {
@@ -26,7 +26,7 @@ const ChangeLoginSignUpBtn = styled.button`
   font-size: 120%;
 
   &:hover{
-    color: grey;
+    color: #95ABFB;
   }
 `
 
@@ -40,14 +40,14 @@ const CreateAccountButton = styled.button`
   transform: translate(-50%, 0);
 
   &:hover{
-    color: grey;
+    color: #95ABFB;
   }
 `
 
 const Button = styled.button`
   margin: 1% 0 0 0;
   padding: none;
-  background-color: black;
+  background-color: transparent;
   border: none;
   outline: none;
 `
@@ -61,18 +61,19 @@ const ForgotPasswordBtn = styled.button`
   width: 100%;
 
   &:hover{
-    color: grey;
+    color: #95ABFB;
   }
 `
 
 const FormContainer = styled.div`
   text-align: center;
-  background-color: black;
-  border: 1px solid black;
+  background-image: linear-gradient(#FF68B8, #FFAA90);
+  border: none;
   border-radius: 10px;
   margin-top: 15%;
   margin-left: 30%;
   margin-right: 30%;
+
 
   @media (max-width: 1000px) {
     margin-top: 30%;
@@ -99,7 +100,7 @@ const Img = styled.img`
 `
 
 const Input = styled.input`
-  border: 1px solid black;
+  border: none;
   border-radius: 3px;
   display: block;
   font-family: openSansRegular;
@@ -114,6 +115,7 @@ const Input = styled.input`
 
 const IntroButton = styled.button`
   background-color: transparent;
+  padding: 15px;
   border: none;
   position: fixed;
   transform: translate(-50%, 0);
@@ -148,8 +150,7 @@ class Login extends Component{
       isLogin: true,
       text: "Log In",
       email: "",
-      password: "",
-      showForgotPassword: false
+      password: ""
     }
   }
 
@@ -187,11 +188,6 @@ class Login extends Component{
         var errorCode = error.code;
         var errorMessage = error.message;
         alert(errorCode + ": " + errorMessage);
-        if (errorCode == "auth/wrong-password"){
-          this.setState({
-            showForgotPassword: true
-          });
-        }
       });
     }
     else{
@@ -250,7 +246,7 @@ class Login extends Component{
           /* intro page */
           <IntroContainer>
             {/* redirects to login */}
-            <IntroButton id='login' onClick={this.toggleShowIntroPage.bind(this)}>
+            <IntroButton className="icon" id='login' onClick={this.toggleShowIntroPage.bind(this)}>
               <Img src={loginImg} backgroundColor='none'/>
             </IntroButton>
             <br/>
@@ -265,20 +261,16 @@ class Login extends Component{
                 <Input value={this.state.email} onChange={this.emailChange.bind(this)} placeholder="email"/>
                 <Input value = {this.state.password} onChange={this.passwordChange.bind(this)} placeholder="password"/>
                 <div style={{textAlign: 'right', padding: '1%'}}>
-                  <Button type="submit"><ArrowImg src={arrow} backgroundColor='black'/></Button>
+                  <Button type="submit"><ArrowImg src={arrow}/></Button>
                 </div>
               </form>
             </FormContainer>
             <ChangeLoginSignUpBtn onClick={this.changeLogInSignUp.bind(this)}>
               {this.state.isLogin? 'Create an account' : 'Aready have an account? Log In'}
             </ChangeLoginSignUpBtn>
-            {this.state.isLogin && this.state.showForgotPassword
-              ?
-              <ForgotPasswordBtn onClick={this.props.showPasswordResetScreen.bind(this)}>
-                Psst...forgot your password?
-              </ForgotPasswordBtn>
-              : null
-            }
+            <ForgotPasswordBtn onClick={this.props.showPasswordResetScreen.bind(this)}>
+              Forgot your password?
+            </ForgotPasswordBtn>
           </div>
         }
     </div>

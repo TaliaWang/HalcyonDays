@@ -11,7 +11,7 @@ const BackToGeneralBtn = styled.button`
   border-right: none;
   border-left: none;
   border-bottom: none;
-  background-color: #606060;
+  background-color: transparent;
   font-size: 100%;
   width: 20%;
   text-align: center;
@@ -34,10 +34,11 @@ const BackToGeneralBtn = styled.button`
 `
 
 const Container = styled.div`
-  background-color: #606060;
+  background-image: linear-gradient(#FF68B8, #FFAA90);
   width: 20%;
   margin: -5% 0 0 0;
   height: 100vh;
+  padding-top: 40px;
   position: fixed;
 
   @media (max-width: 1200px) {

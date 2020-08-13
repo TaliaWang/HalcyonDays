@@ -13,7 +13,7 @@ const ArrowImg = styled.img`
 
 const Button = styled.button`
   color: white;
-  background-color: black;
+  background-image: linear-gradient(to right, #FF68B8, #FFAA90);
   border: none;
   border-radius: 5px;
   padding: 15px;
@@ -41,7 +41,7 @@ const Container = styled.div`
 
 const EmailInput = styled.input`
   background-color: white;
-  border: 1px solid black;
+  border: none;
   border-radius: 1px;
   padding: 5px;
   width: 80%;
@@ -60,7 +60,7 @@ const EmailInput = styled.input`
 const Form = styled.form`
   border-radius: 5px;
   padding: 10px;
-  background-color: black;
+  background-image: linear-gradient(to right, #FF68B8, #FFAA90);
   width: 70%;
   @media (max-width: 1200px) {
     width: 80%;

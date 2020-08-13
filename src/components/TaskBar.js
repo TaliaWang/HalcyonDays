@@ -15,6 +15,7 @@ const Button = styled.button`
   transform: translate(-50%, 0);
   background-color: transparent;
   border: none;
+  color: #95ABFB;
 `
 
 const P = styled.p`
@@ -31,7 +32,7 @@ const TimeContainer = styled.div`
     margin: 15% 20% 0 20%;
   }
   @media (max-width: 1000px) {
-    margin: 20% 15% 0 15%;
+    margin: 20% 20% 0 20%;
   }
   @media (max-width: 800px) {
     margin: 25% 15% 0 15%;
@@ -45,7 +46,8 @@ const TimeContainer = styled.div`
 `
 
 const TasksContainer = styled.div`
-  border: 1px solid rgba(112,112,112,1);
+  border: 1px solid #95ABFB;
+  box-shadow: -1px 2px 5px 0px #B7C6FB;
   margin: -43px 25% 0 25%;
   height: ${props => props.height}px;
   display: flex;
