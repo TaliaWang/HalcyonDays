@@ -1,16 +1,31 @@
 /* calendar div */
 .react-calendar{
   font-family: openSansRegular;
-  -webkit-box-shadow: 21px 13px 44px 0px rgb(152,152,152);
-  -moz-box-shadow: 21px 13px 44px 0px rgb(152,152,152);
-  box-shadow: 21px 13px 44px 0px rgb(152,152,152);
   border-radius: 5px;
+  border: none;
+  width: 90%;
+  margin-left: 5%;
+  margin-right: 5%;
+  height: 80%;
+  margin-top: 12%;
 }
 /* buttons for any day */
 .react-calendar__tile{
   font-family: openSansRegular;
   border-radius: 40px;
-  height: 50px;
+  min-height: 15px;
+  min-width: 15px;
+  padding-top: 3px;
+}
+/* day label buttons */
+.react-calendar__month-view__weekdays__weekday{
+  color: black;
+  font-size: 120%;
+  margin-top: -20px;
+}
+/* day label button text */
+abbr{
+  text-decoration: none;
 }
 /*current day button */
 .react-calendar__tile.react-calendar__tile--now.react-calendar__month-view__days__day.react-calendar__month-view__days__day--weekend{
@@ -34,6 +49,21 @@
 .react-calendar__tile.react-calendar__tile--hasActive:hover{
   background-color: #95ABFB;
 }
+/* month buttons */
+.react-calendar__tile.react-calendar__year-view__months__month{
+  padding-top: 15.5px;
+  padding-bottom: 15.5px;
+}
+/* year buttons */
+.react-calendar__tile.react-calendar__decade-view__years__year{
+  padding-top: 15.5px;
+  padding-bottom: 15.5px;
+}
+/* decade buttons */
+.react-calendar__tile.react-calendar__century-view__decades__decade{
+  padding-top: 15.5px;
+  padding-bottom: 15.5px;
+}
 /* header */
 .react-calendar__navigation__label{
   font-family: openSansRegular;
@@ -41,15 +71,4 @@
 
 
 @media (max-width: 400px) {
-  /* calendar div */
-  .react-calendar{
-    width: 320px;
-    height: 370px;
-  }
-  /* buttons for any day */
-  .react-calendar__tile{
-    font-family: openSansRegular;
-    border-radius: 40px;
-    height: 45px;
-  }
 }

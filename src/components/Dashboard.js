@@ -1,8 +1,5 @@
 /*global chrome*/
 import React, { Component } from 'react';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
-import '../additionalCSS/calendar.css';
 import firebase from '../firebase';
 import styled from 'styled-components'
 import Footer from "./Footer.js"
@@ -20,41 +17,6 @@ import notesMenuImg from "../images/notesMenu.png"
 import statisticsImg from "../images/statistics.png"
 import tasksMenuImg from "../images/tasksMenu.png"
 import unlocked from "../images/unlocked.png"
-
-const CalendarBtn = styled.button`
-  background-color: white;
-  outline: none;
-  border: none;
-  z-index: 30;
-  position: absolute;
-  margin-top: 45px;
-  margin-left: 0;
-  padding: 5px;
-  font-size: 120%;
-  transform: translate(-50%, 0);
-`
-
-const CalendarContainer = styled.div`
-  margin-left: 50%;
-  margin-top: 10%;
-  transform: translate(-50%, 0);
-  position: absolute;
-  z-index: 50;
-
-  @media (max-width: 1200px) {
-    margin-top: 17%;
-  }
-  @media (max-width: 800px) {
-    margin-top: 30%;
-  }
-  @media (max-width: 600px) {
-    margin-top: 40%;
-  }
-  @media (max-width: 400px) {
-    margin-top: 45%;
-  }
-
-`
 
 const CurrentDateTime = styled.div`
 `
@@ -361,7 +323,6 @@ class Dashboard extends Component{
       selectedTask: "",
       notesLoaded: false,
       tasksLoaded: false,
-      showCalendar: false,
       showTickerAndBuffer: true
     }
   }
@@ -989,13 +950,6 @@ class Dashboard extends Component{
     });
   }
 
-  toggleShowCalendar(){
-    var newState = !this.state.showCalendar;
-    this.setState({
-      showCalendar: newState
-    });
-  }
-
   toggleShowNewNote(){
     this.setState(prevState => ({
       showNewNote: !prevState.showNewNote,
@@ -1110,8 +1064,9 @@ class Dashboard extends Component{
     return(
       <div>
         {/* top components in header */}
-        <Header>
-        </Header>
+        <Header
+          changeTodayTmrwFromCalendar={this.changeTodayTmrwFromCalendar.bind(this)}
+        ></Header>
         {/* notes menu side bar */}
         {
           this.state.showNotesMenu
@@ -1189,18 +1144,7 @@ class Dashboard extends Component{
               </LeftRightBtn>
             </div>
           </DateCarousel>
-          <div style={{width: '100%'}}>
-            <CalendarBtn className='icon' onClick={this.toggleShowCalendar.bind(this)}>
-              🗓️
-            </CalendarBtn>
-          </div>
-          {this.state.showCalendar
-            ?
-            <CalendarContainer>
-              <Calendar onChange={this.changeTodayTmrwFromCalendar.bind(this)}/>
-            </CalendarContainer>
-            : null
-          }
+
           <div>
             <TaskBar
               changeSelectedTaskFromTaskBar={this.changeSelectedTaskFromTaskBar.bind(this)}
