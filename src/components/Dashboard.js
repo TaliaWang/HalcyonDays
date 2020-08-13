@@ -1065,6 +1065,8 @@ class Dashboard extends Component{
       <div>
         {/* top components in header */}
         <Header
+          user={this.props.user}
+          /* calendar props */
           changeTodayTmrwFromCalendar={this.changeTodayTmrwFromCalendar.bind(this)}
         ></Header>
         {/* notes menu side bar */}

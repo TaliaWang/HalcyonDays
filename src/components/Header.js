@@ -26,12 +26,19 @@ const CloseBtn = styled.button`
   position: absolute;
 `
 
+const LogoutBtn = styled.button`
+  color: white;
+  border: none;
+  background-color: transparent;
+  font-size: 100%;
+`
+
 const PopupContainer = styled.div`
   height: 310px;
   width: 340px;
   margin-left: calc(50% - 170px);
   margin-top: 10%;
-  background-color: rgba(255,104,184, 0.9); /*#FF68B8 but faded*/
+  background-color: rgba(255,104,184, 0.95); /*#FF68B8 but faded*/
   position: absolute;
   border: none;
   border-radius: 10px;
@@ -89,10 +96,22 @@ class Header extends Component{
     });
   }
 
+  logout(){
+    firebase.auth().signOut();
+  }
+
   switchHeaderOption(e){
-    this.setState({
-      headerOption: e.target.id
-    });
+    // if user clicked on image with empty id instead of button, get option from image's button
+    if (e.target.id == ""){
+      this.setState({
+        headerOption: e.target.parentElement.id
+      });
+    }
+    else{
+      this.setState({
+        headerOption: e.target.id
+      });
+    }
   }
 
   render(){
@@ -115,7 +134,43 @@ class Header extends Component{
                     </CalendarContainer>
                   </div>
                 </PopupContainer>
+             </Draggable>,
+           'settingsOption' :
+             <Draggable>
+               <PopupContainer>
+                 <PopupLabel>
+                   <img style={{transform: 'translate(0, 10%)'}} src={settingsImg}/>
+                   &nbsp;&nbsp;My Settings
+                 </PopupLabel>
+                 <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
+               </PopupContainer>
             </Draggable>,
+           'accountOption' :
+             <Draggable>
+               <PopupContainer>
+                 <PopupLabel>
+                   <img style={{transform: 'translate(0, 10%)'}} src={accountImg}/>
+                   &nbsp;&nbsp;My Account
+                 </PopupLabel>
+                 <div style={{textAlign: 'center'}}>
+                   <br/><br/>
+                   <p style={{fontWeight: 'bold'}}>{this.props.user == null ? null : this.props.user.email}</p>
+                   <br/>
+                  <LogoutBtn onClick={this.logout.bind(this)}><img style={{transform: 'translate(0, 20%)'}} height='20px' width = '20px' src={accountImg}/>&nbsp;&nbsp;Log out</LogoutBtn>
+                 </div>
+                 <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
+               </PopupContainer>
+            </Draggable>,
+          'moreOption' :
+            <Draggable>
+              <PopupContainer>
+                <PopupLabel>
+                  <img style={{transform: 'translate(0, 10%)'}} src={moreImg}/>
+                  &nbsp;&nbsp;More
+                </PopupLabel>
+                <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
+              </PopupContainer>
+           </Draggable>,
 
           }[this.state.headerOption]
         }
