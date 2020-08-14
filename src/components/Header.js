@@ -55,10 +55,12 @@ const PopupContainer = styled.div`
 
 const PopupLabel = styled.div`
   margin-bottom: 0;
-  padding-left: 5%;
+  left: 5%;
+  position: relative;
   padding-top: 10px;
   width: 80%;
   float: left;
+  text-align: left;
 
   &:hover{
     cursor: move;
