@@ -1203,7 +1203,7 @@ class Dashboard extends Component{
                <P float='right'>{this.state.wakeupHour}:{this.state.wakeupMin} {this.state.wakeupClockMode}</P>
             </WakeupTimes>
             <StatsContainer>
-              <StatsBtn onMouseOver={this.showStatistics.bind(this)} className='icon'>
+              <StatsBtn onClick={this.showStatistics.bind(this)} className='icon'>
                 <img src={statisticsImg}/>
                 &nbsp;My Stats
               </StatsBtn>

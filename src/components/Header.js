@@ -49,7 +49,7 @@ const PopupContainer = styled.div`
   border: none;
   border-radius: 10px;
   color: white;
-  z-index: 100;
+  z-index: 150;
   text-align: center;
 `
 
@@ -57,7 +57,12 @@ const PopupLabel = styled.div`
   margin-bottom: 0;
   padding-left: 5%;
   padding-top: 10px;
+  width: 80%;
   float: left;
+
+  &:hover{
+    cursor: move;
+  }
 `
 
 const OptionsContainer = styled.div`
@@ -92,7 +97,7 @@ class Header extends Component{
   constructor(props){
     super(props);
     this.state = {
-      headerOption: ""
+      headerOption: "",
     }
   }
 
@@ -127,27 +132,31 @@ class Header extends Component{
           {
             '' : null,
             'calendarOption' :
-              <Draggable>
+              <Draggable handle='strong'>
                 <PopupContainer>
-                  <PopupLabel>
-                    <img style={{transform: 'translate(0, 10%)'}} src={calendarImg}/>
-                    &nbsp;&nbsp;My Calendar
-                  </PopupLabel>
+                  <strong>
+                    <PopupLabel>
+                      <img style={{transform: 'translate(0, 10%)'}} src={calendarImg}/>
+                      &nbsp;&nbsp;My Calendar
+                    </PopupLabel>
+                  </strong>
                   <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
                   <div style={{textAlign: 'center'}}>
-                    <CalendarContainer>
-                        <Calendar onChange={this.props.changeTodayTmrwFromCalendar}/>
-                    </CalendarContainer>
+                  <CalendarContainer>
+                      <Calendar onChange={this.props.changeTodayTmrwFromCalendar}/>
+                  </CalendarContainer>
                   </div>
                 </PopupContainer>
              </Draggable>,
            'settingsOption' :
-             <Draggable>
+             <Draggable handle='strong'>
                <PopupContainer>
-                 <PopupLabel>
-                   <img style={{transform: 'translate(0, 10%)'}} src={settingsImg}/>
-                   &nbsp;&nbsp;My Settings
-                 </PopupLabel>
+                 <strong>
+                   <PopupLabel>
+                     <img style={{transform: 'translate(0, 10%)'}} src={settingsImg}/>
+                     &nbsp;&nbsp;My Settings
+                   </PopupLabel>
+                 </strong>
                  <TimeBarSettings
                    user={this.props.user}
                    setRelaxationTime={this.props.setRelaxationTime}
@@ -166,12 +175,14 @@ class Header extends Component{
                </PopupContainer>
             </Draggable>,
            'accountOption' :
-             <Draggable>
+             <Draggable handle='strong'>
                <PopupContainer>
-                 <PopupLabel>
-                   <img style={{transform: 'translate(0, 10%)'}} src={accountImg}/>
-                   &nbsp;&nbsp;My Account
-                 </PopupLabel>
+                 <strong>
+                   <PopupLabel>
+                     <img style={{transform: 'translate(0, 10%)'}} src={accountImg}/>
+                     &nbsp;&nbsp;My Account
+                   </PopupLabel>
+                 </strong>
                  <div style={{textAlign: 'center'}}>
                    <br/><br/>
                    <p style={{fontWeight: 'bold'}}>{this.props.user == null ? null : this.props.user.email}</p>
@@ -182,12 +193,14 @@ class Header extends Component{
                </PopupContainer>
             </Draggable>,
           'moreOption' :
-            <Draggable>
+            <Draggable handle='strong'>
               <PopupContainer>
-                <PopupLabel>
-                  <img style={{transform: 'translate(0, 10%)'}} src={moreImg}/>
-                  &nbsp;&nbsp;More
-                </PopupLabel>
+                <strong>
+                  <PopupLabel>
+                    <img style={{transform: 'translate(0, 10%)'}} src={moreImg}/>
+                    &nbsp;&nbsp;More
+                  </PopupLabel>
+                </strong>
                 <MoreOptions>
                 </MoreOptions>
                 <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
