@@ -15,6 +15,7 @@
 
 button{
     cursor: pointer;
+    font-family: Futura,Trebuchet MS,Arial,sans-serif; 
 }
 
 button:focus{
@@ -27,7 +28,8 @@ button:focus{
 }
 
 body{
-  font-family: openSansRegular;
+  /*font-family: openSansRegular;*/
+  font-family: Futura,Trebuchet MS,Arial,sans-serif;
 }
 
 ::placeholder{

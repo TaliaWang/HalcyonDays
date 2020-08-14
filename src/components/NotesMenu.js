@@ -36,9 +36,9 @@ const BackToGeneralBtn = styled.button`
 const Container = styled.div`
   background-image: linear-gradient(#FF68B8, #FFAA90);
   width: 20%;
-  margin: -5% 0 0 0;
+  margin: calc(-100px - 5%) 0 0 0;
   height: 100vh;
-  padding-top: 40px;
+  padding-top: 50px;
   position: fixed;
 
   @media (max-width: 1200px) {

@@ -23,6 +23,7 @@ const CurrentDateTime = styled.div`
 
 const DateCarousel = styled.div`
   box-shadow: -1px 2px 5px 0px #B7C6FB;
+  border-radius: 3px;
   height: 35px;
   width: 450px;
   text-align: left;
@@ -46,8 +47,8 @@ const DateCarousel = styled.div`
 `
 
 const H1 = styled.h1`
-  margin-top: 5%;
-  font-family: openSansRegular;
+  margin-top: calc(100px + 5%);
+  font-weight: normal;
   font-size: 80px;
 
   @media (max-width: 1200px) {
@@ -167,17 +168,15 @@ const NewTaskBtn = styled.button`
 const NotesMenuBtn = styled.button`
   background-color: ${props=>props.backgroundColor};
   color: #95ABFB;
-  font-size: 120%;
+  font-size: 100%;
   border: none;
+  border-radius: 3px;
   float: left;
-  top: 60px;
+  top: 65px;
   left: 1vh;
   z-index: 15;
+  padding: 5px 7px 5px 7px;
   position: fixed;
-
-  @media (max-width: 600px) {
-      font-size: 100%;
-  }
 `
 
 const P = styled.p`
@@ -202,45 +201,54 @@ const P_carousel = styled.p`
   }
 `
 
+const StatsBtn = styled.button`
+  background-color: white;
+  border: none;
+  outline: none;
+  border-radius: 3px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  margin-left: 50%;
+  transform: translate(-50%, 0);
+  color: #95ABFB;
+  font-size: 100%;
+  padding: 5px 7px 5px 7px;
+  z-index: 15;
+`
+
 const StatsContainer = styled.div`
   position: relative;
-  margin-left: 55%;
+  margin-left: 50%;
   margin-top: calc(-2% - 40px);
+  position: fixed;
+  bottom: 3vh;
+  height: 30%;
+  width: 30%;
+  z-index: 100;
 
-  @media (max-width: 1200px) {
-        margin-left: 67%;
-  }
   @media (max-width: 800px) {
-      margin-left: 80%;
-  }
-  @media (max-width: 600px) {
-      margin-left: 82%;
-  }
-  @media (max-width: 400px) {
-      margin-left: 85%;
+    width: 20%;
   }
 `
 
 const StatsImg = styled.img`
   position: relative;
-  padding: 5px;
 `
 
 const TasksMenuBtn = styled.button`
   background-color: ${props=>props.backgroundColor};
   color: #95ABFB;
   border: none;
-  font-size: 120%;
+  border-radius: 3px;
+  font-size: 100%;
   margin: 0;
-  top: 60px;
+  top: 65px;
   right: 1vh;
   float: right;
   z-index: 15;
+  padding: 5px 7px 5px 7px;
   position: fixed;
-
-  @media (max-width: 600px) {
-      font-size: 100%;
-  }
 `
 
 const TasksMenuImg = styled.img`
@@ -323,7 +331,9 @@ class Dashboard extends Component{
       selectedTask: "",
       notesLoaded: false,
       tasksLoaded: false,
-      showTickerAndBuffer: true
+      showTickerAndBuffer: true,
+      statisticsLocked: false,
+      countdownsLocked: false
     }
   }
 
@@ -751,9 +761,17 @@ class Dashboard extends Component{
   }
 
   hideStatistics(){
-    this.setState({
-      showStatistics: false
-    });
+    if (!this.state.statisticsLocked){
+      this.setState({
+        showStatistics: false
+      });
+    }
+  }
+
+  toggleStatisticsLocked(){
+    this.setState(prevState=>({
+      statisticsLocked: !prevState.statisticsLocked
+    }));
   }
 
   setSleepTime(timeInMins){
@@ -1185,7 +1203,10 @@ class Dashboard extends Component{
                <P float='right'>{this.state.wakeupHour}:{this.state.wakeupMin} {this.state.wakeupClockMode}</P>
             </WakeupTimes>
             <StatsContainer>
-              <StatsImg className='icon' onMouseOver={this.showStatistics.bind(this)} onMouseLeave={this.hideStatistics.bind(this)} src={statisticsImg}/>
+              <StatsBtn onMouseOver={this.showStatistics.bind(this)} className='icon'>
+                <img src={statisticsImg}/>
+                &nbsp;My Stats
+              </StatsBtn>
               {this.state.showStatistics
                 ?
                 <Statistics
@@ -1197,6 +1218,9 @@ class Dashboard extends Component{
                   sleepTimeMins={this.state.sleepTimeMins}
                   hoursNeededForTasks={this.state.hoursNeededForTasks}
                   minsNeededForTasks={this.state.minsNeededForTasks}
+                  statisticsLocked={this.state.statisticsLocked}
+                  toggleStatisticsLocked={this.toggleStatisticsLocked.bind(this)}
+                  hideStatistics={this.hideStatistics.bind(this)}
                 ></Statistics>
                 : null
               }
