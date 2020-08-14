@@ -16,7 +16,7 @@ import moreImg from "../images/moreImg.svg";
 import logoutImg from "../images/logoutImg.svg";
 import feedbackImg from "../images/feedbackImg.svg";
 import aboutUsImg from "../images/aboutUsImg.svg";
-import helpImg from "../images/helpImg.svg"
+import helpImg from "../images/helpImg.svg";
 
 const CalendarContainer = styled.div`
   opacity: 1;
@@ -109,6 +109,12 @@ class Header extends Component{
     });
   }
 
+  goBackInMoreOption(){
+    this.setState({
+      headerOption: 'moreOption'
+    });
+  }
+
   logout(){
     firebase.auth().signOut();
   }
@@ -128,89 +134,117 @@ class Header extends Component{
   }
 
   render(){
+    let component = null;
+    switch(this.state.headerOption){
+      case '':
+        component = null;
+        break;
+      case 'calendarOption':
+        component =
+        <Draggable handle='strong'>
+          <PopupContainer>
+            <strong>
+              <PopupLabel>
+                <img style={{transform: 'translate(0, 10%)'}} src={calendarImg}/>
+                &nbsp;&nbsp;My Calendar
+              </PopupLabel>
+            </strong>
+            <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
+            <div style={{textAlign: 'center'}}>
+            <CalendarContainer>
+                <Calendar onChange={this.props.changeTodayTmrwFromCalendar}/>
+            </CalendarContainer>
+            </div>
+          </PopupContainer>
+       </Draggable>
+       break;
+      case 'settingsOption':
+        component =
+          <Draggable handle='strong'>
+            <PopupContainer>
+              <strong>
+                <PopupLabel>
+                  <img style={{transform: 'translate(0, 10%)'}} src={settingsImg}/>
+                  &nbsp;&nbsp;My Settings
+                </PopupLabel>
+              </strong>
+              <TimeBarSettings
+                user={this.props.user}
+                setRelaxationTime={this.props.setRelaxationTime}
+                sleepHour={this.props.sleepHour}
+                sleepMin={this.props.sleepMin}
+                sleepClockMode={this.props.sleepClockMode}
+                relaxationHour={this.props.relaxationHour}
+                relaxationMin={this.props.relaxationMin}
+                relaxationClockMode={this.props.relaxationClockMode}
+                wakeupHour={this.props.wakeupHour}
+                wakeupMin={this.props.wakeupMin}
+                wakeupClockMode={this.props.wakeupClockMode}
+                calculateTimePassedWidth={this.props.calculateTimePassedWidth}
+              ></TimeBarSettings>
+              <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
+            </PopupContainer>
+         </Draggable>
+        break;
+      case 'accountOption':
+        component =
+          <Draggable handle='strong'>
+            <PopupContainer>
+              <strong>
+                <PopupLabel>
+                  <img style={{transform: 'translate(0, 10%)'}} src={accountImg}/>
+                  &nbsp;&nbsp;My Account
+                </PopupLabel>
+              </strong>
+              <div style={{textAlign: 'center'}}>
+                <br/><br/>
+                <p style={{fontWeight: 'bold'}}>{this.props.user == null ? null : this.props.user.email}</p>
+                <br/>
+               <LogoutBtn onClick={this.logout.bind(this)}><img style={{transform: 'translate(0, 20%)'}} height='20px' width = '23px' src={logoutImg}/>&nbsp;&nbsp;Log out</LogoutBtn>
+              </div>
+              <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
+            </PopupContainer>
+         </Draggable>
+        break;
+      case 'moreOption' :
+      // next few are all suboptions of moreOption
+      case 'helpOption' :
+      case 'aboutUsOption' :
+      case 'feedbackOption':
+        component =
+          <Draggable handle='strong'>
+            <PopupContainer>
+              <strong>
+                <PopupLabel>
+                  <img width='20px' height='20px' style={{transform: 'translate(0, 10%)'}}
+                  src={{
+                      'moreOption': moreImg,
+                      'helpOption': helpImg,
+                      'aboutUsOption': aboutUsImg,
+                      'feedbackOption': feedbackImg
+                    }[this.state.headerOption]}/>
+                  &nbsp;&nbsp;
+                  {{
+                      'moreOption': "More",
+                      'helpOption': "Help",
+                      'aboutUsOption': "About us",
+                      'feedbackOption': "Give us feedback"
+                  }[this.state.headerOption]}
+                </PopupLabel>
+              </strong>
+              <MoreOptions
+                goBackInMoreOption={this.goBackInMoreOption.bind(this)}
+                switchHeaderOption={this.switchHeaderOption.bind(this)}
+                headerOption={this.state.headerOption}
+              ></MoreOptions>
+              <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
+            </PopupContainer>
+         </Draggable>
+       break;
+    }
     return(
       <div>
-        {
-          {
-            '' : null,
-            'calendarOption' :
-              <Draggable handle='strong'>
-                <PopupContainer>
-                  <strong>
-                    <PopupLabel>
-                      <img style={{transform: 'translate(0, 10%)'}} src={calendarImg}/>
-                      &nbsp;&nbsp;My Calendar
-                    </PopupLabel>
-                  </strong>
-                  <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
-                  <div style={{textAlign: 'center'}}>
-                  <CalendarContainer>
-                      <Calendar onChange={this.props.changeTodayTmrwFromCalendar}/>
-                  </CalendarContainer>
-                  </div>
-                </PopupContainer>
-             </Draggable>,
-           'settingsOption' :
-             <Draggable handle='strong'>
-               <PopupContainer>
-                 <strong>
-                   <PopupLabel>
-                     <img style={{transform: 'translate(0, 10%)'}} src={settingsImg}/>
-                     &nbsp;&nbsp;My Settings
-                   </PopupLabel>
-                 </strong>
-                 <TimeBarSettings
-                   user={this.props.user}
-                   setRelaxationTime={this.props.setRelaxationTime}
-                   sleepHour={this.props.sleepHour}
-                   sleepMin={this.props.sleepMin}
-                   sleepClockMode={this.props.sleepClockMode}
-                   relaxationHour={this.props.relaxationHour}
-                   relaxationMin={this.props.relaxationMin}
-                   relaxationClockMode={this.props.relaxationClockMode}
-                   wakeupHour={this.props.wakeupHour}
-                   wakeupMin={this.props.wakeupMin}
-                   wakeupClockMode={this.props.wakeupClockMode}
-                   calculateTimePassedWidth={this.props.calculateTimePassedWidth}
-                 ></TimeBarSettings>
-                 <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
-               </PopupContainer>
-            </Draggable>,
-           'accountOption' :
-             <Draggable handle='strong'>
-               <PopupContainer>
-                 <strong>
-                   <PopupLabel>
-                     <img style={{transform: 'translate(0, 10%)'}} src={accountImg}/>
-                     &nbsp;&nbsp;My Account
-                   </PopupLabel>
-                 </strong>
-                 <div style={{textAlign: 'center'}}>
-                   <br/><br/>
-                   <p style={{fontWeight: 'bold'}}>{this.props.user == null ? null : this.props.user.email}</p>
-                   <br/>
-                  <LogoutBtn onClick={this.logout.bind(this)}><img style={{transform: 'translate(0, 20%)'}} height='20px' width = '23px' src={logoutImg}/>&nbsp;&nbsp;Log out</LogoutBtn>
-                 </div>
-                 <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
-               </PopupContainer>
-            </Draggable>,
-          'moreOption' :
-            <Draggable handle='strong'>
-              <PopupContainer>
-                <strong>
-                  <PopupLabel>
-                    <img style={{transform: 'translate(0, 10%)'}} src={moreImg}/>
-                    &nbsp;&nbsp;More
-                  </PopupLabel>
-                </strong>
-                <MoreOptions>
-                </MoreOptions>
-                <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
-              </PopupContainer>
-           </Draggable>,
-
-          }[this.state.headerOption]
-        }
+        {component}
         <OptionsContainer>
           <OptionsBtn id='calendarOption' onClick={this.switchHeaderOption.bind(this)}>
             <img style={{transform: 'translate(0, 10%)'}} src={calendarImg}/>
