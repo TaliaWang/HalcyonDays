@@ -1,16 +1,22 @@
 /*global chrome*/
 import React, { Component } from 'react';
 import Draggable from "react-draggable";
+import MoreOptions from "./MoreOptions.js"
+import TimeBarSettings from "./TimeBarSettings.js"
 import firebase from '../firebase';
 import 'firebase/firestore'
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import '../additionalCSS/calendar.css';
 import styled from 'styled-components';
-import accountImg from "../images/accountImg.png";
-import calendarImg from "../images/calendarImg.png";
-import settingsImg from "../images/settingsImg.png";
-import moreImg from "../images/moreImg.png";
+import accountImg from "../images/accountImg.svg";
+import calendarImg from "../images/calendarImg.svg";
+import settingsImg from "../images/settingsImg.svg";
+import moreImg from "../images/moreImg.svg";
+import logoutImg from "../images/logoutImg.svg";
+import feedbackImg from "../images/feedbackImg.svg";
+import aboutUsImg from "../images/aboutUsImg.svg";
+import helpImg from "../images/helpImg.svg"
 
 const CalendarContainer = styled.div`
   opacity: 1;
@@ -36,8 +42,8 @@ const LogoutBtn = styled.button`
 const PopupContainer = styled.div`
   height: 310px;
   width: 340px;
-  margin-left: calc(50% - 170px);
-  margin-top: 10%;
+  margin-left: calc(50vw - 170px); /* center horizontally */
+  margin-top: 20vh;
   background-color: rgba(255,104,184, 0.95); /*#FF68B8 but faded*/
   position: absolute;
   border: none;
@@ -142,6 +148,20 @@ class Header extends Component{
                    <img style={{transform: 'translate(0, 10%)'}} src={settingsImg}/>
                    &nbsp;&nbsp;My Settings
                  </PopupLabel>
+                 <TimeBarSettings
+                   user={this.props.user}
+                   setRelaxationTime={this.props.setRelaxationTime}
+                   sleepHour={this.props.sleepHour}
+                   sleepMin={this.props.sleepMin}
+                   sleepClockMode={this.props.sleepClockMode}
+                   relaxationHour={this.props.relaxationHour}
+                   relaxationMin={this.props.relaxationMin}
+                   relaxationClockMode={this.props.relaxationClockMode}
+                   wakeupHour={this.props.wakeupHour}
+                   wakeupMin={this.props.wakeupMin}
+                   wakeupClockMode={this.props.wakeupClockMode}
+                   calculateTimePassedWidth={this.props.calculateTimePassedWidth}
+                 ></TimeBarSettings>
                  <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
                </PopupContainer>
             </Draggable>,
@@ -156,7 +176,7 @@ class Header extends Component{
                    <br/><br/>
                    <p style={{fontWeight: 'bold'}}>{this.props.user == null ? null : this.props.user.email}</p>
                    <br/>
-                  <LogoutBtn onClick={this.logout.bind(this)}><img style={{transform: 'translate(0, 20%)'}} height='20px' width = '20px' src={accountImg}/>&nbsp;&nbsp;Log out</LogoutBtn>
+                  <LogoutBtn onClick={this.logout.bind(this)}><img style={{transform: 'translate(0, 20%)'}} height='20px' width = '23px' src={logoutImg}/>&nbsp;&nbsp;Log out</LogoutBtn>
                  </div>
                  <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
                </PopupContainer>
@@ -168,6 +188,8 @@ class Header extends Component{
                   <img style={{transform: 'translate(0, 10%)'}} src={moreImg}/>
                   &nbsp;&nbsp;More
                 </PopupLabel>
+                <MoreOptions>
+                </MoreOptions>
                 <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
               </PopupContainer>
            </Draggable>,

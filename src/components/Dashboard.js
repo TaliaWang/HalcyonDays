@@ -13,9 +13,9 @@ import TasksMenu from "./TasksMenu.js"
 import leftRightBtnImg from "../images/leftRightBtn.png"
 import locked from "../images/locked.png"
 import newNoteButton from "../images/newNoteButton.png"
-import notesMenuImg from "../images/notesMenu.png"
-import statisticsImg from "../images/statistics.png"
-import tasksMenuImg from "../images/tasksMenu.png"
+import notesMenuImg from "../images/notesMenuImg.svg"
+import statisticsImg from "../images/statisticsImg.svg"
+import tasksMenuImg from "../images/tasksMenuImg.svg"
 import unlocked from "../images/unlocked.png"
 
 const CurrentDateTime = styled.div`
@@ -1068,6 +1068,18 @@ class Dashboard extends Component{
           user={this.props.user}
           /* calendar props */
           changeTodayTmrwFromCalendar={this.changeTodayTmrwFromCalendar.bind(this)}
+          /* settings props */
+          setRelaxationTime={this.setRelaxationTime.bind(this)}
+          sleepHour={this.state.sleepHour}
+          sleepMin={this.state.sleepMin}
+          sleepClockMode={this.state.sleepClockMode}
+          relaxationHour={this.state.relaxationHour}
+          relaxationMin={this.state.relaxationMin}
+          relaxationClockMode={this.state.relaxationClockMode}
+          wakeupHour={this.state.wakeupHour}
+          wakeupMin={this.state.wakeupMin}
+          wakeupClockMode={this.state.wakeupClockMode}
+          calculateTimePassedWidth={this.calculateTimePassedWidth.bind(this)}
         ></Header>
         {/* notes menu side bar */}
         {
@@ -1207,40 +1219,7 @@ class Dashboard extends Component{
               ></NewTask> : null}
           </NewNoteAndTaskContainer>
         </div>
-        {/*<div style={{display: 'block', margin: '0 10% 0 10%'}}>
-          <div style={{float: 'left', textAlign: 'left', marginLeft: '15%'}}>
-            <P>Total tasks: {this.state.tasks.length}</P>
-            <P>Finished tasks: {this.state.tasks.length - this.state.unfinishedTasks.length}</P>
-            <P>Unfinished tasks: {this.state.unfinishedTasks.length}</P>
-          </div>
-          <div style={{float: 'right', textAlign: 'right', marginRight: '15%'}}>
-            <P>Time left in the day: {this.state.hoursLeft}h {this.state.minsLeft}m</P>
-            <P>Time needed for tasks: {this.state.hoursNeededForTasks}h {this.state.minsNeededForTasks}m</P>
-            <P>Free time left:&nbsp;
-              {parseInt(((this.state.hoursLeft*60 + this.state.minsLeft)-(this.state.hoursNeededForTasks*60 + this.state.minsNeededForTasks))/60)}h&nbsp;
-              {((this.state.hoursLeft*60 + this.state.minsLeft)-(this.state.hoursNeededForTasks*60 + this.state.minsNeededForTasks)) % 60}m
-            </P>
-          </div>
-        </div>*/}
-        <br/>
-        {/* footer with options */}
-        <Footer
-          allowFooterPopup={this.allowFooterPopup.bind(this)}
-          setRelaxationTime={this.setRelaxationTime.bind(this)}
-          user={this.props.user}
-          sleepHour={this.state.sleepHour}
-          sleepMin={this.state.sleepMin}
-          sleepClockMode={this.state.sleepClockMode}
-          relaxationHour={this.state.relaxationHour}
-          relaxationMin={this.state.relaxationMin}
-          relaxationClockMode={this.state.relaxationClockMode}
-          wakeupHour={this.state.wakeupHour}
-          wakeupMin={this.state.wakeupMin}
-          wakeupClockMode={this.state.wakeupClockMode}
-          calculateTimePassedWidth={this.calculateTimePassedWidth.bind(this)}
-          hideNoteTaskPopups={this.hideNoteTaskPopups.bind(this)}
-          footerPopupsAllowed={this.state.footerPopupsAllowed}
-        ></Footer>
+
       </div>
     );
   }
