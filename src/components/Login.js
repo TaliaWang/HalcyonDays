@@ -6,7 +6,9 @@ import firebase from '../firebase';
 import 'firebase/firestore'
 import styled from 'styled-components';
 import arrow from '../images/arrow.png'
-import loginImg from "../images/login.png";
+import loginImg from "../images/loginImg.svg";
+import emailImg from "../images/emailImg.svg";
+import passwordImg from "../images/passwordImg.svg";
 
 const ArrowImg = styled.img`
   height: 30px;
@@ -31,12 +33,11 @@ const Button = styled.button`
 const ChangeLoginSignUpBtn = styled.button`
   border: none;
   background-color: white;
-  font-family: openSansRegular;
   padding: 2%;
-  font-size: 120%;
+  font-size: calc(0.8vh + 0.6vw);
 
   &:hover{
-    color: #95ABFB;
+    color: #FF68B8;
   }
 `
 
@@ -51,38 +52,40 @@ const CreateAccountButton = styled.button`
   z-index: 100;
 `
 
+const ColourSideContainer = styled.div`
+  width: 50%;
+  height: 100%;
+  float: left;
+  background-image: linear-gradient(#FF68B8, #FFAA90);
+`
+
 const ForgotPasswordBtn = styled.button`
   border: none;
   background-color: white;
   margin: 0;
-  font-size: 120%;
+  font-size: calc(0.8vh + 0.6vw);
+  font-weight: normal;
   width: 100%;
 
   &:hover{
-    color: #95ABFB;
+    color: #FF68B8;
   }
 `
 
 const FormContainer = styled.div`
   text-align: center;
-  background-image: linear-gradient(#FF68B8, #FFAA90);
+  background-color: white;
+  color: black;
   border: none;
-  border-radius: 10px;
-  margin-top: 15%;
-  margin-left: 30%;
-  margin-right: 30%;
-
-
-  @media (max-width: 1000px) {
-    margin-top: 30%;
-    margin-left: 20%;
-    margin-right: 20%;
-  }
+  top: 35vh;
+  transform: translate(0, -50%);
+  position: relative;
+  margin-left: 10%;
+  margin-right: 10%;
 
   @media (max-width: 600px) {
-    margin-top: 50%;
-    margin-left: 10%;
-    margin-right: 10%;
+    top: 50vh;
+    transform: translate(0, -50%);
   }
 `
 
@@ -102,28 +105,39 @@ const Img = styled.img`
 `
 
 const Input = styled.input`
-  border: none;
-  border-radius: 3px;
-  display: block;
-  font-family: openSansRegular;
-  font-size: 100%;
-  margin-left: auto;
-  margin-right: auto;
+  border: transparent;
+  color: #B7C6FB;
+  display: flex;
+  font-size: calc(1vh + 0.75vw);
   margin-top: 3%;
+  transform: translate(0, calc(-0.1vw - 0.1vh));
   outline: none;
   position: relative;
-  width: 75%;
+  width: calc(100% - 2.5vh - 2.5vw);
+
+  ::placeholder{
+    color: #B7C6FB;
+  }
 `
 
-const LoginBtn = styled.button`
-  background-color: white;
-  padding: 10px;
-  border: 1px solid white;
-  border-radius: 5px;
-  color: #95ABFB;
-  font-size: calc(1vh + 0.75vw);
+const InputContainer = styled.div`
+  border: 1px solid #B7C6FB;
+  width: 80%;
+  text-align: center;
+  margin-left: 10%;
   margin-right: 10%;
-  box-shadow: -1px 2px 5px 0px #FF68B8;
+  margin-bottom: 2vh;
+  padding: calc(0.1vw + 0.1vh);
+`
+
+const InputImg = styled.img`
+  float: left;
+  position: relative;
+  height: calc(1vh + 0.75vw);
+  width: calc(1vh + 1vw);
+  margin-right: 0.5vw;
+  margin-left: 0.5vw;
+  transform: translate(0, calc(0.25vw + 0.25vh));
 `
 
 const IntroContainer = styled.div`
@@ -144,11 +158,54 @@ const IntroText = styled.p`
   margin-top: 0;
 `
 
+const LoginBtn = styled.button`
+  background-color: white;
+  padding: 10px;
+  border: 1px solid white;
+  border-radius: 5px;
+  color: #95ABFB;
+  font-size: calc(1vh + 0.75vw);
+  margin-right: 10%;
+  box-shadow: -1px 2px 5px 0px #FF68B8;
+`
+
+const LoginImg = styled.img`
+  top: 50%;
+  transform: translate(0, -50%);
+  position: relative;
+  height: 25vh;
+  width: 25vw;
+`
+
+const LoginSignupContainer=styled.div`
+  box-shadow: -1px 2px 5px 0px #B7C6FB;
+  position: absolute;
+  height: 70vh;
+  width: 60vw;
+  top: 15vh;
+  bottom: 15vh;
+  left: 20vw;
+  right: 20vw;
+
+  @media (max-width: 600px) {
+    height: 100vh;
+    width: 100vw;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+`
+
 const P = styled.p`
   margin: '2% 0 0 0';
-  font-size: 120%;
-  font-family: openSansRegular;
-  color : ${props =>props.color};
+  font-size: calc(1vh + 0.75vw);
+  color : black;
+`
+
+const TextSideContainer = styled.div`
+  width: 50%;
+  float: right;
 `
 
 const Title = styled.h1`
@@ -275,24 +332,37 @@ class Login extends Component{
           </IntroContainer>
           :
           /* login/signup */
-          <div>
-            <FormContainer>
-              <form onSubmit={this.handleLogin.bind(this)}>
-                {this.state.isLogin ? <P color='white'>Welcome back! Log in below:</P> : <P color='white'>Welcome! Sign up below:</P>}
-                <Input value={this.state.email} onChange={this.emailChange.bind(this)} placeholder="email"/>
-                <Input value = {this.state.password} onChange={this.passwordChange.bind(this)} placeholder="password"/>
-                <div style={{textAlign: 'right', padding: '1%'}}>
-                  <Button type="submit"><ArrowImg src={arrow}/></Button>
-                </div>
-              </form>
-            </FormContainer>
-            <ChangeLoginSignUpBtn onClick={this.changeLogInSignUp.bind(this)}>
-              {this.state.isLogin? 'Create an account' : 'Aready have an account? Log In'}
-            </ChangeLoginSignUpBtn>
-            <ForgotPasswordBtn onClick={this.props.showPasswordResetScreen.bind(this)}>
-              Forgot your password?
-            </ForgotPasswordBtn>
-          </div>
+          <LoginSignupContainer>
+            <ColourSideContainer>
+              <LoginImg src={loginImg}/>
+            </ColourSideContainer>
+            <TextSideContainer>
+              <FormContainer>
+                <form onSubmit={this.handleLogin.bind(this)}>
+                  {this.state.isLogin ? <P>Welcome back! Please log in below :)</P> : <P>Welcome! Please sign up below :)</P>}
+                  <br/>
+                  <InputContainer>
+                    <InputImg src={emailImg}/>
+                    <Input value={this.state.email} onChange={this.emailChange.bind(this)} placeholder="Email"/>
+                  </InputContainer>
+                  <InputContainer>
+                    <InputImg src={passwordImg}/>
+                    <Input value = {this.state.password} onChange={this.passwordChange.bind(this)} placeholder="Password"/>
+                  </InputContainer>
+                  <div style={{textAlign: 'right', padding: '1%'}}>
+                    <button style={{display: 'none'}} type="submit"/>
+                  </div>
+                </form>
+                <br/>
+                <ChangeLoginSignUpBtn onClick={this.changeLogInSignUp.bind(this)}>
+                  {this.state.isLogin? 'Create an account' : 'Aready have an account?'}
+                </ChangeLoginSignUpBtn>
+                <ForgotPasswordBtn onClick={this.props.showPasswordResetScreen.bind(this)}>
+                  Forgot password
+                </ForgotPasswordBtn>
+              </FormContainer>
+            </TextSideContainer>
+          </LoginSignupContainer>
         }
     </div>
     );
