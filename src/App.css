@@ -15,7 +15,8 @@
 
 button{
     cursor: pointer;
-    font-family: Futura,Trebuchet MS,Arial,sans-serif; 
+    /*font-family: openSansRegular;*/
+    font-family: Futura,Trebuchet MS,Arial,sans-serif;
 }
 
 button:focus{

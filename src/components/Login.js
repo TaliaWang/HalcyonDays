@@ -1,5 +1,7 @@
 /*global chrome*/
 import React, { Component } from 'react';
+import {PuffLoader} from "react-spinners";
+import spinnerCSS from "../additionalCSS/spinnerCSS.css"
 import firebase from '../firebase';
 import 'firebase/firestore'
 import styled from 'styled-components';
@@ -18,6 +20,14 @@ const ArrowImg = styled.img`
   }
 `
 
+const Button = styled.button`
+  margin: 1% 0 0 0;
+  padding: none;
+  background-color: transparent;
+  border: none;
+  outline: none;
+`
+
 const ChangeLoginSignUpBtn = styled.button`
   border: none;
   background-color: white;
@@ -31,31 +41,19 @@ const ChangeLoginSignUpBtn = styled.button`
 `
 
 const CreateAccountButton = styled.button`
-  background-color: transparent;
-  border: none;
-  font-family: openSansRegular;
-  font-size: 120%;
-  position: fixed;
-  margin-top: 200px;
-  transform: translate(-50%, 0);
-
-  &:hover{
-    color: #95ABFB;
-  }
-`
-
-const Button = styled.button`
-  margin: 1% 0 0 0;
-  padding: none;
-  background-color: transparent;
-  border: none;
-  outline: none;
+  background-color: white;
+  border: 1px solid white;
+  border-radius: 5px;
+  color: #95ABFB;
+  padding: 10px;
+  font-size: calc(1vh + 0.75vw);
+  box-shadow: -1px 2px 5px 0px #FF68B8;
+  z-index: 100;
 `
 
 const ForgotPasswordBtn = styled.button`
   border: none;
   background-color: white;
-  font-family: openSansRegular;
   margin: 0;
   font-size: 120%;
   width: 100%;
@@ -88,6 +86,10 @@ const FormContainer = styled.div`
   }
 `
 
+const H1 = styled.h1`
+  color: white;
+`
+
 const Img = styled.img`
   height: 150px;
   width: 175px;
@@ -113,26 +115,33 @@ const Input = styled.input`
   width: 75%;
 `
 
-const IntroButton = styled.button`
-  background-color: transparent;
-  padding: 15px;
-  border: none;
-  position: fixed;
-  transform: translate(-50%, 0);
+const LoginBtn = styled.button`
+  background-color: white;
+  padding: 10px;
+  border: 1px solid white;
+  border-radius: 5px;
+  color: #95ABFB;
+  font-size: calc(1vh + 0.75vw);
+  margin-right: 10%;
+  box-shadow: -1px 2px 5px 0px #FF68B8;
 `
 
 const IntroContainer = styled.div`
-  text-align: center;
+  text-align: left;
   display: block;
-  margin-top: 15%;
+  background-image: linear-gradient(#FF68B8, #FFAA90);
+  position: absolute;
+  height: 100vh;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+`
 
-  @media (max-width: 1000px) {
-    margin-top: 30%;
-  }
-
-  @media (max-width: 600px) {
-    margin-top: 40%;
-  }
+const IntroText = styled.p`
+  color: white;
+  font-size: calc(1.5vh + 1.5vw);
+  margin-top: 0;
 `
 
 const P = styled.p`
@@ -140,6 +149,12 @@ const P = styled.p`
   font-size: 120%;
   font-family: openSansRegular;
   color : ${props =>props.color};
+`
+
+const Title = styled.h1`
+  color: white;
+  font-size: calc(3vh + 3vw);
+  line-height: 75%;
 `
 
 class Login extends Component{
@@ -223,7 +238,7 @@ class Login extends Component{
   }
 
   toggleShowIntroPage(e){
-    if (e.target.parentElement.id == 'login'){ // clicking image but its parent button links to this function
+    if (e.target.id == 'login'){
       this.setState({
         showIntroPage: false
       });
@@ -239,18 +254,24 @@ class Login extends Component{
 
   render(){
     return(
-      <div style={{textAlign: 'center'}}>
+      <div style={{textAlign: 'center', position: 'relative'}}>
 
         {this.state.showIntroPage
           ?
           /* intro page */
           <IntroContainer>
-            {/* redirects to login */}
-            <IntroButton className="icon" id='login' onClick={this.toggleShowIntroPage.bind(this)}>
-              <Img src={loginImg} backgroundColor='none'/>
-            </IntroButton>
-            <br/>
-            <CreateAccountButton id='createAccount' onClick={this.toggleShowIntroPage.bind(this)}>Create an account</CreateAccountButton>
+            <div style={{float: 'left', margin: '50vh 0% 0 10%', transform: 'translate(0, -50%)', width: '40%'}}>
+              <IntroText>Welcome to</IntroText>
+              <Title>HalcyonDays!</Title>
+              <IntroText>A new way to visualize your day inspired by Parkinson's Law</IntroText>
+              <LoginBtn id='login' onClick={this.toggleShowIntroPage.bind(this)}>
+                Log in
+              </LoginBtn>
+              <CreateAccountButton id='createAccount' onClick={this.toggleShowIntroPage.bind(this)}>Get started</CreateAccountButton>
+            </div>
+            <div style={{width: '50px', margin: 'calc(15vh + 8vw) 0% 0 10%'}}>
+              <PuffLoader color='white'/>
+            </div>
           </IntroContainer>
           :
           /* login/signup */
