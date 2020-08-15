@@ -1,7 +1,7 @@
 /*global chrome*/
 import React, { Component } from 'react';
 import {PuffLoader} from "react-spinners";
-import spinnerCSS from "../additionalCSS/spinnerCSS.css"
+import spinnercss from "../additionalCSS/spinner.css"
 import firebase from '../firebase';
 import 'firebase/firestore'
 import styled from 'styled-components';
@@ -50,6 +50,10 @@ const CreateAccountButton = styled.button`
   font-size: calc(1vh + 0.75vw);
   box-shadow: -1px 2px 5px 0px #FF68B8;
   z-index: 100;
+
+  &:hover{
+    color: #FF68B8;
+  }
 `
 
 const ColourSideContainer = styled.div`
@@ -146,6 +150,7 @@ const IntroContainer = styled.div`
   background-image: linear-gradient(#FF68B8, #FFAA90);
   position: absolute;
   height: 100vh;
+  width: 100vw;
   top: 0;
   bottom: 0;
   right: 0;
@@ -167,6 +172,10 @@ const LoginBtn = styled.button`
   font-size: calc(1vh + 0.75vw);
   margin-right: 10%;
   box-shadow: -1px 2px 5px 0px #FF68B8;
+
+  &:hover{
+    color: #FF68B8;
+  }
 `
 
 const LoginImg = styled.img`
@@ -317,7 +326,7 @@ class Login extends Component{
           ?
           /* intro page */
           <IntroContainer>
-            <div style={{float: 'left', margin: '50vh 0% 0 10%', transform: 'translate(0, -50%)', width: '40%'}}>
+            <div style={{float: 'left', margin: '50vh 0% 0 10vw', transform: 'translate(0, -50%)', width: '40%'}}>
               <IntroText>Welcome to</IntroText>
               <Title>HalcyonDays!</Title>
               <IntroText>A new way to visualize your day inspired by Parkinson's Law</IntroText>
@@ -326,9 +335,7 @@ class Login extends Component{
               </LoginBtn>
               <CreateAccountButton id='createAccount' onClick={this.toggleShowIntroPage.bind(this)}>Get started</CreateAccountButton>
             </div>
-            <div style={{width: '50px', margin: 'calc(15vh + 8vw) 0% 0 10%'}}>
-              <PuffLoader color='white'/>
-            </div>
+            <PuffLoader color='white'/>
           </IntroContainer>
           :
           /* login/signup */

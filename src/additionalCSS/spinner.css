@@ -1,0 +1,25 @@
+div.css-3fvcat{
+  display: block;
+  height: 0;
+  width: 0;
+  pointer-events: none;
+  width: 50vw;
+  height: 50vh;
+  margin-top: 50vh;
+  transform: translate(0, -50%);
+}
+div.css-1sjrgpt{
+  position: absolute;
+  height: 50vh;
+  width: 50vh;
+  left: 20vw;
+  pointer-events: none;
+}
+div.css-4c8ub5{
+  height: 20vh;
+  width: 20vh;
+  left: 10vw;
+  top: -5vh;
+  position: absolute;
+  pointer-events: none;
+}
