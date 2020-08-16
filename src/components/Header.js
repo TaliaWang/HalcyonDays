@@ -17,6 +17,7 @@ import logoutImg from "../images/logoutImg.svg";
 import feedbackImg from "../images/feedbackImg.svg";
 import aboutUsImg from "../images/aboutUsImg.svg";
 import helpImg from "../images/helpImg.svg";
+import xImg from "../images/xImg.svg";
 
 const CalendarContainer = styled.div`
   opacity: 1;
@@ -28,7 +29,7 @@ const CloseBtn = styled.button`
   border: none;
   background-color: transparent;
   right: 10px;
-  top: 10px;
+  top: 13px;
   position: absolute;
 `
 
@@ -149,7 +150,7 @@ class Header extends Component{
                 &nbsp;&nbsp;My Calendar
               </PopupLabel>
             </strong>
-            <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
+            <CloseBtn onClick={this.closePopup.bind(this)}><img height='15px' width='15px' src={xImg}/></CloseBtn>
             <div style={{textAlign: 'center'}}>
             <CalendarContainer>
                 <Calendar onChange={this.props.changeTodayTmrwFromCalendar}/>
@@ -182,7 +183,7 @@ class Header extends Component{
                 wakeupClockMode={this.props.wakeupClockMode}
                 calculateTimePassedWidth={this.props.calculateTimePassedWidth}
               ></TimeBarSettings>
-              <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
+              <CloseBtn onClick={this.closePopup.bind(this)}><img height='15px' width='15px' src={xImg}/></CloseBtn>
             </PopupContainer>
          </Draggable>
         break;
@@ -202,7 +203,7 @@ class Header extends Component{
                 <br/>
                <LogoutBtn onClick={this.logout.bind(this)}><img style={{transform: 'translate(0, 20%)'}} height='20px' width = '23px' src={logoutImg}/>&nbsp;&nbsp;Log out</LogoutBtn>
               </div>
-              <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
+              <CloseBtn onClick={this.closePopup.bind(this)}><img height='15px' width='15px' src={xImg}/></CloseBtn>
             </PopupContainer>
          </Draggable>
         break;
@@ -237,7 +238,7 @@ class Header extends Component{
                 switchHeaderOption={this.switchHeaderOption.bind(this)}
                 headerOption={this.state.headerOption}
               ></MoreOptions>
-              <CloseBtn onClick={this.closePopup.bind(this)}><img src={moreImg} style={{transform: 'rotate(45deg)'}}/></CloseBtn>
+              <CloseBtn onClick={this.closePopup.bind(this)}><img height='15px' width='15px' src={xImg}/></CloseBtn>
             </PopupContainer>
          </Draggable>
        break;

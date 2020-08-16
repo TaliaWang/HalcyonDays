@@ -27,6 +27,7 @@ const TimeContainer = styled.div`
   margin: 10% 25% 0 25%;
   height: ${props => props.height}px;
   display: flex;
+  z-index: 1;
 
 
   @media (max-width: 1200px) {
@@ -52,7 +53,7 @@ const TasksContainer = styled.div`
   margin: -43px 25% 0 25%;
   height: ${props => props.height}px;
   display: flex;
-  z-index: 5;
+  z-index: 1;
   width: 50%;
 
   @media (max-width: 1200px) {
@@ -79,6 +80,7 @@ const SleepTime = styled.div`
   width: ${props=>props.width}%;
   float: right;
   background-color: #95ABFB;
+  z-index: 1;
 `
 
 const TimePassed = styled.div`

@@ -2,8 +2,8 @@
 import React, { Component } from 'react';
 import {BeatLoader} from "react-spinners"
 import firebase from '../firebase';
-import styled from 'styled-components'
-import checkmark from "../images/checkmark.jpg";
+import styled from 'styled-components';
+import xImg from "../images/xImg.svg";
 
 const BackToGeneralBtn = styled.button`
   color: white;
@@ -33,17 +33,33 @@ const BackToGeneralBtn = styled.button`
   }
 `
 
+const CloseBtn = styled.button`
+  background-color: transparent;
+  border: none;
+  outline: none;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translate(0, -75%);
+  right: 1vw;
+`
+
+const CloseImg = styled.img`
+  height: calc(1vh + 0.75vw);
+  width: calc(1vh + 0.75vw);
+  position: relative;
+`
+
 const Container = styled.div`
   background-image: linear-gradient(#FF68B8, #FFAA90);
   width: 20%;
   margin: calc(-100px - 5%) 0 0 0;
   height: 100vh;
-  padding-top: 50px;
+  padding-top: 70px;
   position: fixed;
+  float: left;
+  z-index: 50;
 
-  @media (max-width: 1200px) {
-    width: 20%;
-  }
   @media (max-width: 800px) {
     width: 30%;
   }
@@ -72,15 +88,18 @@ const Form = styled.form`
   padding: 5% 0% 5% 0%;
 `
 
-const H3 = styled.h3`
-  text-align: center;
-  color: white;
-  margin: 0 5% 0% 5%;
+const Title = styled.div`
+  background-color: transparent;
   border-bottom: 1px solid white;
-  padding: 3%;
+  color: white;
+  font-size: calc(1vh + 0.75vw);
+  padding-bottom: 5px;
+  width: 15vw;
+  margin-left: 5%;
+  margin-right: 5%;
 
-  @media (max-width: 600px) {
-      font-size: 100%;
+  @media (max-width: 800px) {
+    width: 22vw;
   }
 `
 
@@ -96,7 +115,7 @@ const Label = styled.label`
 `
 
 const P = styled.p`
-  font-size: 120%;
+  font-size: calc(0.8vh + 0.6vw);
   color: white;
   margin-top: 0.5%;
 `
@@ -132,6 +151,7 @@ const Textarea = styled.div`
 `
 
 const Ul = styled.ul`
+  font-size: calc(0.8vh + 0.6vw);
   margin-top: 2%;
   margin-right: 3%;
   color: white;
@@ -143,10 +163,6 @@ const Ul = styled.ul`
   ::-webkit-scrollbar {
     width: 0px;
     background: transparent; /* make scrollbar transparent */
-  }
-
-  @media (max-width: 600px) {
-    font-size: 80%;
   }
 `
 
@@ -295,8 +311,11 @@ class NotesMenu extends Component{
     return(
       <div onMouseLeave={this.props.toggleShowNotesMenu} style={{textAlign: 'left'}}>
         <Container>
+          <div style={{position: 'absolute', width: '100%'}}>
+            {this.props.selectedTask == "" ? <Title>General Notes</Title> : <Title>Notes for: {this.props.selectedTask}</Title>}
+            <CloseBtn><CloseImg src={xImg} onClick={this.props.hideNotesMenu}/></CloseBtn>
+          </div>
           <br/><br/>
-          {this.props.selectedTask == "" ? <H3>General Notes</H3> : <H3>Notes for: {this.props.selectedTask}</H3>}
           {this.props.notesLoaded
             ?
             <Ul>

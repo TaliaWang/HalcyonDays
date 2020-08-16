@@ -4,9 +4,8 @@ import {BeatLoader} from 'react-spinners';
 import firebase from '../firebase';
 import styled from 'styled-components'
 import checkmark from "../images/checkmark.jpg";
+import xImg from "../images/xImg.svg";
 
-const LockButton = styled.button`
-`
 const Checkbox = styled.button`
   margin-right: 2%;
   transform: translate(0, 20%);
@@ -23,23 +22,44 @@ const Checkbox = styled.button`
   }
 `
 
+const CloseBtn = styled.button`
+  background-color: transparent;
+  border: none;
+  outline: none;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translate(0, -75%);
+  right: 1vw;
+`
+
+const CloseImg = styled.img`
+  height: calc(1vh + 0.75vw);
+  width: calc(1vh + 0.75vw);
+  position: relative;
+`
+
 const Container = styled.div`
   background-image: linear-gradient(#FF68B8, #FFAA90);
   width: 20%;
   margin: calc(-100px - 5%) 0 0 80%;
   height: 110vh;
-  padding-top: 50px;
+  padding-top: 70px;
   position: fixed;
+  float: right;
+  z-index: 50;
 
   @media (max-width: 800px) {
     margin: calc(-100px - 5%) 0 0 70%;
     width: 30%;
   }
-  @media (max-width: 600px) {
-      margin: calc(-100px - 5%) 0 0 70%;
-      width: 30%;
-      font-size: 80%;
-  }
+`
+
+const DateText = styled.p`
+  text-align: left;
+  font-size: calc(0.6vh + 0.45vw);
+  color: white;
+  margin: 5% 5% 0 5%;
 `
 
 const EditBtn = styled.button`
@@ -54,23 +74,10 @@ const EditBtn = styled.button`
   }
 `
 
-
 const Form = styled.form`
   margin: 0 15% 0 15%;
   text-align: center;
   padding: 5% 0% 5% 0%;
-`
-
-const H3 = styled.h3`
-  text-align: center;
-  color: white;
-  margin: 0 5% 5% 5%;
-  border-bottom: 1px solid white;
-  padding: 3%;
-
-  @media (max-width: 600px) {
-      font-size: 100%;
-  }
 `
 
 const Img = styled.img`
@@ -108,17 +115,12 @@ const TasksContainer = styled.div`
   overflow-y: scroll;
   overflow-x: scroll;
   height: 80vh;
+  z-index: 50;
+  font-size: calc(0.8vh + 0.6vw);
 
   ::-webkit-scrollbar {
     width: 0px;
     background: transparent; /* make scrollbar transparent */
-  }
-
-  @media (max-width: 800px) {
-    height: 75vh;
-  }
-  @media (max-width: 400px) {
-    height: 70vh;
   }
 `
 
@@ -175,6 +177,20 @@ const TextareaTime = styled.div`
   }
 `
 
+const Title = styled.div`
+  background-color: transparent;
+  border-bottom: 1px solid white;
+  color: white;
+  font-size: calc(1vh + 0.75vw);
+  padding-bottom: 5px;
+  width: 15vw;
+  margin-left: 5%;
+  margin-right: 5%;
+
+  @media (max-width: 800px) {
+    width: 22vw;
+  }
+`
 
 const XBtn = styled.button`
   background: none;
@@ -428,12 +444,17 @@ class TasksMenu extends Component{
 
   render(){
     return(
-      <div onMouseLeave={this.props.toggleShowTasksMenu} style={{textAlign: 'left'}}>
+      <div style={{textAlign: 'left'}}>
         <Container>
-          <br/><br/>
-          <H3>{this.props.todayDate.day}, {this.props.todayDate.month} {this.props.todayDate.date}, {this.props.todayDate.year}
+          <div style={{position: 'absolute', width: '100%'}}>
+            <Title>My Tasks</Title>
+            <CloseBtn><CloseImg src={xImg} onClick={this.props.hideTasksMenu}/></CloseBtn>
+          </div>
+          <br/>
+          <DateText>{this.props.todayDate.day}, {this.props.todayDate.month} {this.props.todayDate.date}, {this.props.todayDate.year}
              &nbsp;-<br/>{this.props.tmrwDate.day}, {this.props.tmrwDate.month} {this.props.tmrwDate.date}, {this.props.tmrwDate.year}
-          </H3>
+          </DateText>
+          <br/>
           {this.props.tasksLoaded
             ?
             <TasksContainer>

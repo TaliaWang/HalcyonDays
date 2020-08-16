@@ -174,7 +174,7 @@ const NotesMenuBtn = styled.button`
   float: left;
   top: 65px;
   left: 1vh;
-  z-index: 15;
+  z-index: 10;
   padding: 5px 7px 5px 7px;
   position: fixed;
 `
@@ -223,7 +223,7 @@ const StatsContainer = styled.div`
   margin-top: calc(-2% - 40px);
   position: fixed;
   bottom: 3vh;
-  height: 30%;
+  height: 30vh;
   width: 30%;
   z-index: 100;
 
@@ -246,7 +246,7 @@ const TasksMenuBtn = styled.button`
   top: 65px;
   right: 1vh;
   float: right;
-  z-index: 15;
+  z-index: 10;
   padding: 5px 7px 5px 7px;
   position: fixed;
 `
@@ -300,7 +300,6 @@ class Dashboard extends Component{
       },
       showNewNote: false,
       showNotesMenu: false,
-      notesMenuLocked: false,
       showNewTask: false,
       showStatistics: false,
       showTasksMenu: false,
@@ -332,7 +331,6 @@ class Dashboard extends Component{
       notesLoaded: false,
       tasksLoaded: false,
       showTickerAndBuffer: true,
-      statisticsLocked: false,
       countdownsLocked: false
     }
   }
@@ -357,8 +355,7 @@ class Dashboard extends Component{
     var taskName = taskId.substring(taskId.indexOf('taskChunk_')+10, taskId.length);
     this.setState({
       selectedTask: taskName,
-      showNotesMenu: true,
-      notesMenuLocked: true
+      showNotesMenu: true
     }, () =>{
        this.switchNotes(); // change notes displayed in notes menu
     });
@@ -371,8 +368,7 @@ class Dashboard extends Component{
     var taskName = textarea.textContent;
     this.setState({
       selectedTask: taskName,
-      showNotesMenu: true,
-      notesMenuLocked: true
+      showNotesMenu: true
     }, ()=>{
         this.switchNotes(); // change notes displayed in notes menu
     });
@@ -741,13 +737,13 @@ class Dashboard extends Component{
     });
   }
 
-  handleNotesMouseOver(){
+  showNotesMenu(){
     this.setState({
       showNotesMenu: true
     })
   }
 
-  handleTasksMouseOver(){
+  showTasks(){
     this.setState({
       showTasksMenu: true
     });
@@ -761,17 +757,9 @@ class Dashboard extends Component{
   }
 
   hideStatistics(){
-    if (!this.state.statisticsLocked){
-      this.setState({
-        showStatistics: false
-      });
-    }
-  }
-
-  toggleStatisticsLocked(){
-    this.setState(prevState=>({
-      statisticsLocked: !prevState.statisticsLocked
-    }));
+    this.setState({
+      showStatistics: false
+    });
   }
 
   setSleepTime(timeInMins){
@@ -961,13 +949,6 @@ class Dashboard extends Component{
     });
   }
 
-  toggleNotesMenuLocked(){
-    var newLocked = !this.state.notesMenuLocked;
-    this.setState({
-      notesMenuLocked: newLocked
-    });
-  }
-
   toggleShowNewNote(){
     this.setState(prevState => ({
       showNewNote: !prevState.showNewNote,
@@ -1006,20 +987,16 @@ class Dashboard extends Component{
     });
   }
 
-  toggleShowNotesMenu(){
-    if (!this.state.notesMenuLocked && this.state.showNotesMenu){
-      this.setState({
-        showNotesMenu: false
-      })
-    }
+  hideNotesMenu(){
+    this.setState({
+      showNotesMenu: false
+    });
   }
 
-  toggleShowTasksMenu(){
-    if (!this.state.tasksMenuLocked && this.state.showTasksMenu){
-      this.setState({
-        showTasksMenu: false
-      })
-    }
+  hideTasksMenu(){
+    this.setState({
+      showTasksMenu: false
+    });
   }
 
   toggleTaskChecked(e){
@@ -1100,61 +1077,48 @@ class Dashboard extends Component{
           calculateTimePassedWidth={this.calculateTimePassedWidth.bind(this)}
         ></Header>
         {/* notes menu side bar */}
-        {
-          this.state.showNotesMenu
-          ?
-            <NotesMenuBtn backgroundColor={'transparent'} webkitBoxShadow={'none'} mozBoxShadow={'none'} box-shadow={'none'} onClick={this.toggleNotesMenuLocked.bind(this)}>
-              <img width='80%' height= '80%' src={this.state.notesMenuLocked? locked : unlocked}/>
-            </NotesMenuBtn>
-          :
-            <NotesMenuBtn
-              className="icon"
-              backgroundColor={'white'}
-              onMouseOver={this.handleNotesMouseOver.bind(this)}>
-              <img style={{transform: 'translate(0, 10%)'}} height='20px' width='20px' src={notesMenuImg}/>
-              &nbsp;My Notes
-            </NotesMenuBtn>
-        }
-        <div style={{float: 'left', zIndex: '13', position: 'fixed', opacity: this.state.showNotesMenu?1:0, transition: 'opacity 0.3s'}}>
-          {this.state.showNotesMenu? <NotesMenu user={this.props.user} selectedTask={this.state.selectedTask} notes={this.state.notes}
-                                      notesLoaded={this.state.notesLoaded} todayDate={this.state.todayDate}
-                                      backToGeneralNotes={this.backToGeneralNotes.bind(this)} toggleShowNotesMenu={this.toggleShowNotesMenu.bind(this)}>
-                                      </NotesMenu> : null}
+        <div style={{opacity: this.state.showNotesMenu?0:1, transition: 'opacity 0.3s'}}>
+          <NotesMenuBtn
+            className="icon"
+            backgroundColor={'white'}
+            onClick={this.showNotesMenu.bind(this)}>
+            <img style={{transform: 'translate(0, 10%)'}} height='20px' width='20px' src={notesMenuImg}/>
+            &nbsp;My Notes
+          </NotesMenuBtn>
+        </div>
+        <div style={{zIndex: 1, position: 'fixed', opacity: this.state.showNotesMenu?1:0, transition: 'opacity 0.3s'}}>
+          <NotesMenu
+          user={this.props.user}
+          selectedTask={this.state.selectedTask}
+          notes={this.state.notes}
+          notesLoaded={this.state.notesLoaded}
+          todayDate={this.state.todayDate}
+          backToGeneralNotes={this.backToGeneralNotes.bind(this)}
+          hideNotesMenu={this.hideNotesMenu.bind(this)}
+          ></NotesMenu>
         </div>
 
         {/* tasks menu side bar*/}
-        {
-          this.state.showTasksMenu
-          ?
-            (
-              this.state.tasksMenuLocked
-              ?
-                <TasksMenuBtn backgroundColor={'transparent'} webkitBoxShadow={'none'} mozBoxShadow={'none'} box-shadow={'none'} onClick={this.toggleTasksMenuLocked.bind(this)}>
-                  <img width='80%' height= '80%' src={locked}/>
-                </TasksMenuBtn>
-              :
-                <TasksMenuBtn backgroundColor={'transparent'} webkitBoxShadow={'none'} mozBoxShadow={'none'} box-shadow={'none'} onClick={this.toggleTasksMenuLocked.bind(this)}>
-                  <img width='80%' height= '80%' src={unlocked}/>
-                </TasksMenuBtn>
-            )
-          :
-            <TasksMenuBtn
-              className="icon"
-              backgroundColor={'white'}
-              webkitBoxShadow={'-1px 2px 5px 0px rgba(134,134,134,1)'}
-              mozBoxShadow={'-1px 2px 5px 0px rgba(134,134,134,1)'}
-              box-shadow={'-1px 2px 5px 0px rgba(134,134,134,1)'}
-              onMouseOver={this.handleTasksMouseOver.bind(this)}>
-              <img style={{transform: 'translate(0, 10%)'}} height='20px' width='22px' src={tasksMenuImg}/>
-              &nbsp;My Tasks
-            </TasksMenuBtn>
-        }
-        <div style={{float: 'right', zIndex: '13', position: 'fixed', opacity: this.state.showTasksMenu?1:0, transition: 'opacity 0.3s'}}>
-          {this.state.showTasksMenu? <TasksMenu user={this.props.user} tasks={this.state.tasks} todayDate={this.state.todayDate} tmrwDate={this.state.tmrwDate} tasksLoaded={this.state.tasksLoaded}
-                                      changeSelectedTaskFromTaskMenu={this.changeSelectedTaskFromTaskMenu.bind(this)} toggleShowTasksMenu={this.toggleShowTasksMenu.bind(this)}
-                                      backToGeneralNotes={this.backToGeneralNotes.bind(this)} switchNotes={this.switchNotes.bind(this)}
-                                      toggleTaskChecked={this.toggleTaskChecked.bind(this)}>
-                                      </TasksMenu> : null}
+        <div style={{opacity: this.state.showTasksMenu?0:1, transition: 'opacity 0.3s'}}>
+          <TasksMenuBtn
+            className="icon"
+            backgroundColor={'white'}
+            onClick={this.showTasks.bind(this)}>
+            <img style={{transform: 'translate(0, 10%)'}} height='20px' width='22px' src={tasksMenuImg}/>
+            &nbsp;My Tasks
+          </TasksMenuBtn>
+          </div>
+        <div style={{zIndex: 1, position: 'fixed', opacity: this.state.showTasksMenu?1:0, transition: 'opacity 0.3s'}}>
+          <TasksMenu user={this.props.user}
+            tasks={this.state.tasks}
+            todayDate={this.state.todayDate}
+            tmrwDate={this.state.tmrwDate}
+            tasksLoaded={this.state.tasksLoaded}
+            changeSelectedTaskFromTaskMenu={this.changeSelectedTaskFromTaskMenu.bind(this)}
+            hideTasksMenu={this.hideTasksMenu.bind(this)}
+            backToGeneralNotes={this.backToGeneralNotes.bind(this)} switchNotes={this.switchNotes.bind(this)}
+            toggleTaskChecked={this.toggleTaskChecked.bind(this)}>
+          </TasksMenu>
         </div>
 
         {/* main center components */}
@@ -1203,12 +1167,13 @@ class Dashboard extends Component{
                <P float='right'>{this.state.wakeupHour}:{this.state.wakeupMin} {this.state.wakeupClockMode}</P>
             </WakeupTimes>
             <StatsContainer>
+              <div style={{opacity: this.state.showStatistics?0:1, transition: 'opacity 0.3s'}}>
               <StatsBtn onClick={this.showStatistics.bind(this)} className='icon'>
                 <img src={statisticsImg}/>
                 &nbsp;My Stats
               </StatsBtn>
-              {this.state.showStatistics
-                ?
+              </div>
+              <div style={{opacity: this.state.showStatistics?1:0, transition: 'opacity 0.3s'}}>
                 <Statistics
                   numTasks={this.state.tasks.length}
                   numFinishedTasks={this.state.tasks.length - this.state.unfinishedTasks.length}
@@ -1218,12 +1183,9 @@ class Dashboard extends Component{
                   sleepTimeMins={this.state.sleepTimeMins}
                   hoursNeededForTasks={this.state.hoursNeededForTasks}
                   minsNeededForTasks={this.state.minsNeededForTasks}
-                  statisticsLocked={this.state.statisticsLocked}
-                  toggleStatisticsLocked={this.toggleStatisticsLocked.bind(this)}
                   hideStatistics={this.hideStatistics.bind(this)}
                 ></Statistics>
-                : null
-              }
+              </div>
             </StatsContainer>
           </div>
           <NewNoteAndTaskContainer>
