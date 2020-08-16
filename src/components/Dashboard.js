@@ -25,17 +25,18 @@ const CountdownsBtn = styled.button`
   border: none;
   outline: none;
   border-radius: 3px;
-  position: absolute;
-  left: 0;
-  bottom: 0;
+  position: fixed;
+  left: 20%;
+  bottom: 3vh;
   color: #95ABFB;
   font-size: 100%;
   padding: 5px 7px 5px 7px;
   z-index: 45;
 
   @media (max-width: 800px) {
-    width: 100%;
-    bottom: 8vh;
+    width: 40%;
+    bottom: 10vh;
+    left: 30%;
   }
 `
 
@@ -43,7 +44,7 @@ const CountdownsContainer = styled.div`
   text-align: center;
   margin-left: 20%;
   margin-top: calc(-2% - 40px);
-  position: absolute;
+  position: fixed;
   bottom: 3vh;
   width: 30%;
   z-index: 55;
@@ -241,7 +242,7 @@ const StatsBtn = styled.button`
   border: none;
   outline: none;
   border-radius: 3px;
-  position: absolute;
+  position: fixed;
   right: 0;
   bottom: 0;
   color: #95ABFB;
@@ -257,7 +258,7 @@ const StatsBtn = styled.button`
 const StatsContainer = styled.div`
   text-align: center;
   margin-top: calc(-2% - 40px);
-  position: absolute;
+  position: fixed;
   margin-left: 80%;
   bottom: 3vh;
   width: 30%;
