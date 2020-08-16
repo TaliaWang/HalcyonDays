@@ -72,6 +72,7 @@ const RelaxationTime = styled.div`
   width: ${props=>props.width}%;
   float: right;
   background-color: #B7C6FB;
+  z-index: 1;
 `
 
 const SleepTime = styled.div`

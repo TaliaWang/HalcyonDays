@@ -174,7 +174,7 @@ const NotesMenuBtn = styled.button`
   float: left;
   top: 65px;
   left: 1vh;
-  z-index: 10;
+  z-index: 50;
   padding: 5px 7px 5px 7px;
   position: fixed;
 `
@@ -246,7 +246,7 @@ const TasksMenuBtn = styled.button`
   top: 65px;
   right: 1vh;
   float: right;
-  z-index: 10;
+  z-index: 50;
   padding: 5px 7px 5px 7px;
   position: fixed;
 `
@@ -1086,7 +1086,7 @@ class Dashboard extends Component{
             &nbsp;My Notes
           </NotesMenuBtn>
         </div>
-        <div style={{zIndex: 1, position: 'fixed', opacity: this.state.showNotesMenu?1:0, transition: 'opacity 0.3s'}}>
+        <div style={{zIndex: 40, position: 'fixed', opacity: this.state.showNotesMenu?1:0, transition: 'opacity 0.3s'}}>
           <NotesMenu
           user={this.props.user}
           selectedTask={this.state.selectedTask}
@@ -1108,7 +1108,7 @@ class Dashboard extends Component{
             &nbsp;My Tasks
           </TasksMenuBtn>
           </div>
-        <div style={{zIndex: 1, position: 'fixed', opacity: this.state.showTasksMenu?1:0, transition: 'opacity 0.3s'}}>
+        <div style={{zIndex: 40, position: 'fixed', opacity: this.state.showTasksMenu?1:0, transition: 'opacity 0.3s'}}>
           <TasksMenu user={this.props.user}
             tasks={this.state.tasks}
             todayDate={this.state.todayDate}

@@ -459,7 +459,7 @@ class TasksMenu extends Component{
             ?
             <TasksContainer>
               {this.state.tasks.map((task, index) =>
-                <div style={{margin: '5% 5% 1% 5%'}}>
+                <div style={{margin: '5% 5% 1% 5%', zIndex: 50}}>
                   <Checkbox id={`${task}${index}`} onClick={this.props.toggleTaskChecked.bind(this)}>
                     {task.finished ? <Img src={checkmark}/> : null}
                   </Checkbox>
