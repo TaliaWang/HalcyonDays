@@ -30,7 +30,7 @@ const Container = styled.div`
   width: 100%;
   min-height: 30vh;
   bottom: -3vh;
-  z-index: 60;
+  z-index: 50;
 `
 
 const LockBtn = styled.button`
@@ -73,7 +73,7 @@ const Title = styled.div`
   }
 `
 
-class Statistics extends Component{
+class Countdowns extends Component{
   constructor(props){
     super(props);
     this.state = {
@@ -84,20 +84,20 @@ class Statistics extends Component{
     return(
       <Container>
         <div style={{position: 'absolute', width: '100%', zIndex: '30'}}>
-          <Title>My Stats</Title>
-          <CloseBtn><CloseImg src={xImg} onClick={this.props.hideStatistics}/></CloseBtn>
+          <Title>My Countdowns</Title>
+          <CloseBtn><CloseImg src={xImg} onClick={this.props.hideCountdowns}/></CloseBtn>
         </div>
         <br/>
         <TextContainer>
-          <P><H4>{this.props.numFinishedTasks}/{this.props.numTasks}</H4> tasks completed</P>
-          <P><H4>{this.props.numTasks-this.props.numFinishedTasks}</H4> task(s) incomplete</P>
-          <P><H4>{this.props.hoursNeededForTasks}</H4>h <H4>{this.props.minsNeededForTasks}</H4>m needed for incomplete tasks</P>
-          <P>Relaxation time = <H4>{this.props.relaxationTimeHours}</H4>h <H4>{this.props.relaxationTimeMins}</H4>m</P>
-          <P>Sleep time = <H4>{this.props.sleepTimeHours}</H4>h <H4>{this.props.sleepTimeMins}</H4>m</P>
+          <P><H4>Coming soon!</H4></P>
+          <P><H4>This section is for:</H4></P>
+          <P><H4>- Deadlines</H4></P>
+          <P><H4>- Events</H4></P>
+          <P><H4>- Important dates</H4></P>
         </TextContainer>
       </Container>
     );
   }
 }
 
-export default Statistics;
+export default Countdowns;

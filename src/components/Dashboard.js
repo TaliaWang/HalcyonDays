@@ -1,7 +1,8 @@
 /*global chrome*/
 import React, { Component } from 'react';
 import firebase from '../firebase';
-import styled from 'styled-components'
+import styled from 'styled-components';
+import Countdowns from "./Countdowns.js"
 import Footer from "./Footer.js"
 import Header from "./Header.js"
 import NewNote from "./NewNote.js"
@@ -10,6 +11,7 @@ import NotesMenu from "./NotesMenu.js"
 import Statistics from "./Statistics.js"
 import TaskBar from "./TaskBar.js"
 import TasksMenu from "./TasksMenu.js"
+import countdownsImg from "../images/countdownsImg.svg"
 import leftRightBtnImg from "../images/leftRightBtn.png"
 import locked from "../images/locked.png"
 import newNoteButton from "../images/newNoteButton.png"
@@ -17,6 +19,40 @@ import notesMenuImg from "../images/notesMenuImg.svg"
 import statisticsImg from "../images/statisticsImg.svg"
 import tasksMenuImg from "../images/tasksMenuImg.svg"
 import unlocked from "../images/unlocked.png"
+
+const CountdownsBtn = styled.button`
+  background-color: white;
+  border: none;
+  outline: none;
+  border-radius: 3px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  color: #95ABFB;
+  font-size: 100%;
+  padding: 5px 7px 5px 7px;
+  z-index: 45;
+
+  @media (max-width: 800px) {
+    width: 100%;
+    bottom: 8vh;
+  }
+`
+
+const CountdownsContainer = styled.div`
+  text-align: center;
+  margin-left: 20%;
+  margin-top: calc(-2% - 40px);
+  position: absolute;
+  bottom: 3vh;
+  width: 30%;
+  z-index: 55;
+
+  @media (max-width: 800px) {
+    margin-left: 30%;
+    width: 40%;
+  }
+`
 
 const CurrentDateTime = styled.div`
 `
@@ -142,7 +178,6 @@ const NewNoteButtonImg = styled.img`
 const NewTaskBtn = styled.button`
   background-color: ${(props) => props.state ? "black" : "white"};
   border-radius:50%;
-  border: 1px solid;
   border-color: ${(props) => props.state ? "white" : "black"};
   color: ${(props) => props.state ? "white" : "black"};
   font-size: 50px;
@@ -207,28 +242,32 @@ const StatsBtn = styled.button`
   outline: none;
   border-radius: 3px;
   position: absolute;
-  left: 0;
+  right: 0;
   bottom: 0;
-  margin-left: 50%;
-  transform: translate(-50%, 0);
   color: #95ABFB;
   font-size: 100%;
   padding: 5px 7px 5px 7px;
-  z-index: 15;
+  z-index: 45;
+
+  @media (max-width: 800px) {
+    width: 100%;
+  }
 `
 
 const StatsContainer = styled.div`
-  position: relative;
-  margin-left: 50%;
+  text-align: center;
   margin-top: calc(-2% - 40px);
-  position: fixed;
+  position: absolute;
+  margin-left: 80%;
   bottom: 3vh;
-  height: 30vh;
   width: 30%;
-  z-index: 100;
+  z-index: 55;
+  transform: translate(-100%, 0);
 
   @media (max-width: 800px) {
-    width: 20%;
+    width: 40%;
+    margin-left: 70%;
+    text-align: center;
   }
 `
 
@@ -331,7 +370,7 @@ class Dashboard extends Component{
       notesLoaded: false,
       tasksLoaded: false,
       showTickerAndBuffer: true,
-      countdownsLocked: false
+      showCountdowns: false
     }
   }
 
@@ -737,15 +776,9 @@ class Dashboard extends Component{
     });
   }
 
-  showNotesMenu(){
+  hideCountdowns(){
     this.setState({
-      showNotesMenu: true
-    })
-  }
-
-  showTasks(){
-    this.setState({
-      showTasksMenu: true
+      showCountdowns: false
     });
   }
 
@@ -759,6 +792,24 @@ class Dashboard extends Component{
   hideStatistics(){
     this.setState({
       showStatistics: false
+    });
+  }
+
+  showCountdowns(){
+    this.setState({
+      showCountdowns: true
+    })
+  }
+
+  showNotesMenu(){
+    this.setState({
+      showNotesMenu: true
+    });
+  }
+
+  showTasks(){
+    this.setState({
+      showTasksMenu: true
     });
   }
 
@@ -1166,14 +1217,29 @@ class Dashboard extends Component{
                <P float='left'>{this.state.wakeupHour}:{this.state.wakeupMin} {this.state.wakeupClockMode}</P>
                <P float='right'>{this.state.wakeupHour}:{this.state.wakeupMin} {this.state.wakeupClockMode}</P>
             </WakeupTimes>
+            {/* countdowns box */}
+            <CountdownsContainer>
+              <div style={{opacity: this.state.showCountdowns?0:1, transition: 'opacity 0.3s'}}>
+                <CountdownsBtn className='icon' onClick={this.showCountdowns.bind(this)}>
+                  <img height='20px' width='20px' src={countdownsImg} style={{transform: 'translate(0, 10%)'}}/>
+                  &nbsp;My Countdowns
+                </CountdownsBtn>
+              </div>
+              <div style={{opacity: this.state.showCountdowns?1:0, visibility: this.state.showCountdowns? 'visible': 'hidden', transition: 'opacity 0.3s, visibility 0.3s'}}>
+                <Countdowns
+                  hideCountdowns={this.hideCountdowns.bind(this)}
+                ></Countdowns>
+              </div>
+            </CountdownsContainer>
+            {/* statistics box */}
             <StatsContainer>
               <div style={{opacity: this.state.showStatistics?0:1, transition: 'opacity 0.3s'}}>
-              <StatsBtn onClick={this.showStatistics.bind(this)} className='icon'>
-                <img src={statisticsImg}/>
-                &nbsp;My Stats
-              </StatsBtn>
+                <StatsBtn onClick={this.showStatistics.bind(this)} className='icon'>
+                  <img src={statisticsImg}/>
+                  &nbsp;My Stats
+                </StatsBtn>
               </div>
-              <div style={{opacity: this.state.showStatistics?1:0, transition: 'opacity 0.3s'}}>
+              <div style={{opacity: this.state.showStatistics?1:0, visibility: this.state.showStatistics? 'visible': 'hidden', transition: 'opacity 0.3s, visibility 0.3s'}}>
                 <Statistics
                   numTasks={this.state.tasks.length}
                   numFinishedTasks={this.state.tasks.length - this.state.unfinishedTasks.length}
