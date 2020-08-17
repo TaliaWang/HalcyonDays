@@ -145,6 +145,7 @@ class NewTask extends Component{
           hours: this.state.hours,
           mins: this.state.mins,
           finished: false,
+          comments: "",
           timestamp: firebase.firestore.Timestamp.fromDate(new Date())
         }).then(result =>{
           //alert("Task added!");

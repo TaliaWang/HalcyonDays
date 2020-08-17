@@ -10,6 +10,7 @@ import NewTask from "./NewTask.js"
 import NotesMenu from "./NotesMenu.js"
 import Statistics from "./Statistics.js"
 import TaskBar from "./TaskBar.js"
+import TaskComments from "./TaskComments.js"
 import TasksMenu from "./TasksMenu.js"
 import countdownsImg from "../images/countdownsImg.svg"
 import leftRightBtnImg from "../images/leftRightBtn.png"
@@ -343,6 +344,7 @@ class Dashboard extends Component{
       showNewTask: false,
       showStatistics: false,
       showTasksMenu: false,
+      showTaskComments: false,
       tasksMenuLocked: false,
       notes: [],
       tasks:[],
@@ -367,7 +369,7 @@ class Dashboard extends Component{
       sleepTimeHours: 0,
       sleepTimeMins: 0,
       footerPopupsAllowed: true,
-      selectedTask: "",
+      selectedTask: null,
       notesLoaded: false,
       tasksLoaded: false,
       showTickerAndBuffer: true,
@@ -381,36 +383,48 @@ class Dashboard extends Component{
     })
   }
 
-  backToGeneralNotes(){
-    this.setState({
-      selectedTask: ""
-    }, ()=>{
-      // display general notes
-      this.switchNotes();
-    })
-  }
-
   changeSelectedTaskFromTaskBar(e){
     var taskId = e.target.id;
     var taskName = taskId.substring(taskId.indexOf('taskChunk_')+10, taskId.length);
+
+    var db = firebase.firestore();
+    var tempSelectedTask = null;
+    var taskRef =  db.collection("users").doc(this.props.user.uid)
+    .collection("dates").doc(`${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`)
+    .collection('tasks').doc(taskName);
+    taskRef.get().then(doc=>{
+      tempSelectedTask = doc.data();
+    });
+
     this.setState({
-      selectedTask: taskName,
+      selectedTask: tempSelectedTask,
       showNotesMenu: true
-    }, () =>{
-       this.switchNotes(); // change notes displayed in notes menu
     });
   }
 
   changeSelectedTaskFromTaskMenu(e){
     var textarea = e.target.parentElement.getElementsByClassName('taskText')[0];
     textarea = (textarea == undefined? e.target.parentElement.parentElement.getElementsByClassName('taskText')[0] : textarea);
-
     var taskName = textarea.textContent;
-    this.setState({
-      selectedTask: taskName,
-      showNotesMenu: true
-    }, ()=>{
-        this.switchNotes(); // change notes displayed in notes menu
+
+    var db = firebase.firestore();
+    var tempSelectedTask = null;
+    var taskRef =  db.collection("users").doc(this.props.user.uid)
+    .collection("dates").doc(`${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`)
+    .collection('tasks').doc(taskName);
+    taskRef.get()
+    .then(doc=>{
+      tempSelectedTask = doc.data();
+    })
+    .then(()=>{
+      this.setState({
+        selectedTask: tempSelectedTask,
+        showNotesMenu: true
+      }, ()=>{
+          this.setState({
+            showTaskComments: true
+          });
+      });
     });
   }
 
@@ -680,9 +694,6 @@ class Dashboard extends Component{
                   this.setTodayTomorrowDates();
                 });
 
-                //listen for changes in this user's general notes
-                this.switchNotes();
-
                 // listen for changes in this user's tasks for this date
                 this.switchDate();
             });
@@ -793,6 +804,12 @@ class Dashboard extends Component{
   hideStatistics(){
     this.setState({
       showStatistics: false
+    });
+  }
+
+  hideTaskComments(){
+    this.setState({
+      showTaskComments: false
     });
   }
 
@@ -956,7 +973,7 @@ class Dashboard extends Component{
     });
   }
 
-  switchNotes(){
+  /*switchNotes(){
     var db = firebase.firestore();
     this.setState({
       notesLoaded: false
@@ -999,7 +1016,7 @@ class Dashboard extends Component{
         });
       }
     });
-  }
+  }*/
 
   toggleShowNewNote(){
     this.setState(prevState => ({
@@ -1141,11 +1158,9 @@ class Dashboard extends Component{
         <div style={{zIndex: 40, position: 'fixed', opacity: this.state.showNotesMenu?1:0, transition: 'opacity 0.3s'}}>
           <NotesMenu
           user={this.props.user}
-          selectedTask={this.state.selectedTask}
           notes={this.state.notes}
           notesLoaded={this.state.notesLoaded}
           todayDate={this.state.todayDate}
-          backToGeneralNotes={this.backToGeneralNotes.bind(this)}
           hideNotesMenu={this.hideNotesMenu.bind(this)}
           ></NotesMenu>
         </div>
@@ -1161,17 +1176,28 @@ class Dashboard extends Component{
           </TasksMenuBtn>
           </div>
         <div style={{zIndex: 40, position: 'fixed', opacity: this.state.showTasksMenu?1:0, transition: 'opacity 0.3s'}}>
-          <TasksMenu user={this.props.user}
+          <TasksMenu
+            user={this.props.user}
             tasks={this.state.tasks}
             todayDate={this.state.todayDate}
             tmrwDate={this.state.tmrwDate}
             tasksLoaded={this.state.tasksLoaded}
             changeSelectedTaskFromTaskMenu={this.changeSelectedTaskFromTaskMenu.bind(this)}
             hideTasksMenu={this.hideTasksMenu.bind(this)}
-            backToGeneralNotes={this.backToGeneralNotes.bind(this)} switchNotes={this.switchNotes.bind(this)}
-            toggleTaskChecked={this.toggleTaskChecked.bind(this)}>
-          </TasksMenu>
+            toggleTaskChecked={this.toggleTaskChecked.bind(this)}
+          ></TasksMenu>
         </div>
+        <div style={{zIndex: 45, position: 'fixed', opacity: this.state.showTaskComments?1:0, transition: 'opacity 0.3s'}}>
+          <TaskComments
+            user={this.props.user}
+            hideTaskComments={this.hideTaskComments.bind(this)}
+            todayDate={this.state.todayDate}
+            tmrwDate={this.state.tmrwDate}
+            tasksLoaded={this.state.tasksLoaded}
+            selectedTask={this.state.selectedTask}
+          ></TaskComments>
+        </div>
+
 
         {/* main center components */}
         <div style={{textAlign: 'center'}}>
@@ -1262,7 +1288,6 @@ class Dashboard extends Component{
               <NewNote
                 todayDate={this.state.todayDate}
                 user={this.props.user}
-                selectedTask={this.state.selectedTask}
               ></NewNote>
               : null}
             {this.state.showNewTask?

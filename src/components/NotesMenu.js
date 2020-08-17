@@ -45,8 +45,8 @@ const CloseBtn = styled.button`
 `
 
 const CloseImg = styled.img`
-  height: calc(1vh + 0.75vw);
-  width: calc(1vh + 0.75vw);
+  height: calc(0.8vh + 0.6vw);
+  width: calc(0.8vh + 0.6vw);
   position: relative;
 `
 
@@ -312,10 +312,10 @@ class NotesMenu extends Component{
       <div onMouseLeave={this.props.toggleShowNotesMenu} style={{textAlign: 'left'}}>
         <Container>
           <div style={{position: 'absolute', width: '100%'}}>
-            {this.props.selectedTask == "" ? <Title>General Notes</Title> : <Title>Notes for: {this.props.selectedTask}</Title>}
+            <Title>My Notes</Title>
             <CloseBtn><CloseImg src={xImg} onClick={this.props.hideNotesMenu}/></CloseBtn>
           </div>
-          <br/><br/>
+          {/*<br/><br/>
           {this.props.notesLoaded
             ?
             <Ul>
@@ -334,7 +334,7 @@ class NotesMenu extends Component{
               <BeatLoader color='white' size='10'/>
             </div>
           }
-          <BackToGeneralBtn onClick={this.props.backToGeneralNotes}>Back to General Notes</BackToGeneralBtn>
+          <BackToGeneralBtn onClick={this.props.backToGeneralNotes}>Back to General Notes</BackToGeneralBtn>*/}
         </Container>
       </div>
     );

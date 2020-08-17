@@ -34,8 +34,8 @@ const CloseBtn = styled.button`
 `
 
 const CloseImg = styled.img`
-  height: calc(1vh + 0.75vw);
-  width: calc(1vh + 0.75vw);
+  height: calc(0.8vh + 0.6vw);
+  width: calc(0.8vh + 0.6vw);
   position: relative;
 `
 
@@ -248,8 +248,6 @@ class TasksMenu extends Component{
       notes.forEach(note => {
         notesRef.doc(note.text).delete();
       });
-    }).then(()=>{
-      this.props.backToGeneralNotes();
     });
   }
 
@@ -268,8 +266,6 @@ class TasksMenu extends Component{
       db.collection("users").doc(this.props.user.uid)
       .collection('dates').doc(`${this.props.todayDate.month} ${this.props.todayDate.date}, ${this.props.todayDate.year}`)
       .collection("tasks").doc(task).delete();
-      // display general notes since this task and its notes have been deleted
-      this.props.backToGeneralNotes();
     }
   }
 

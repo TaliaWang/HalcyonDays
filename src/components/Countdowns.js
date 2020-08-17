@@ -18,8 +18,8 @@ const CloseBtn = styled.button`
 `
 
 const CloseImg = styled.img`
-  height: calc(1vh + 0.75vw);
-  width: calc(1vh + 0.75vw);
+  height: calc(0.8vh + 0.6vw);
+  width: calc(0.8vh + 0.6vw);
   position: relative;
 `
 
