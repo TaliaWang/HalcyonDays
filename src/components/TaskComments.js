@@ -126,6 +126,7 @@ const TaskInput = styled.div`
   margin-right: 5%;
   overflow-wrap: break-word;
   overflow-y: auto;
+  overflow-x: hidden;
 
   &:focus{
     outline: none;
