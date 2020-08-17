@@ -34,7 +34,7 @@ body{
 }
 
 ::-webkit-scrollbar {
-  width: calc(0.6vh + 0.45vw);
+  width: calc(0.4vh + 0.3vw);
   background: white;
 }
 ::-webkit-scrollbar-thumb {

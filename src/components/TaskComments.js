@@ -4,7 +4,10 @@ import {BeatLoader} from 'react-spinners';
 import firebase from '../firebase';
 import styled from 'styled-components'
 import checkmark from "../images/checkmark.jpg";
+import editingImg from "../images/editingImg.svg";
+import saveImg from "../images/saveImg.svg";
 import xImg from "../images/xImg.svg";
+
 
 const Border = styled.div`
   border: 1px solid white;
@@ -41,7 +44,7 @@ const CommentsInput = styled.div`
   color: white;
   font-size: calc(0.8vh + 0.6vw);
   font-weight: normal;
-  bottom: 0;
+  bottom: calc(1.2vh + 0.8vw); /*spacing above editing/saved button*/
   top: calc(3vh + 2.25vw); /*spacing accounts for task and time inputs */
   position: absolute;
   width: 85%;
@@ -73,13 +76,27 @@ const Container = styled.div`
   }
 `
 
+const EditingSavedBtn = styled.button`
+  position: absolute;
+  border: 1px solid black;
+  border: none;
+  background-color: transparent;
+  bottom: 0;
+  right: 0;
+`
+
+const EditingSavedImg = styled.img`
+  height: calc(1vh + 0.75vw);
+  width: calc(1vh + 0.75vw);
+`
+
 const Form = styled.form`
 `
 
 const HoursInput = styled.div`
   border: none;
   min-width: 0.5em;
-  height: calc(0.8vh + 0.6vw);
+  height: calc(0.6vh + 0.45vw);
 
   &:focus{
     outline: none;
@@ -89,7 +106,7 @@ const HoursInput = styled.div`
 const MinsInput = styled.div`
   border: none;
   min-width: 0.5em;
-  height: calc(0.8vh + 0.6vw);
+  height: calc(0.6vh + 0.45vw);
 
   &:focus{
     outline: none;
@@ -100,7 +117,7 @@ const TimeInputContainer = styled.div`
   border: none;
   display: flex;
   color: white;
-  font-size: calc(0.8vh + 0.6vw);
+  font-size: calc(0.6vh + 0.45vw);
   width: 85%;
   margin-left: 5%;
   margin-right: 5%;
@@ -138,46 +155,90 @@ class TaskComments extends Component{
   constructor(props){
     super(props);
     this.state = {
-      // NOTE: selectedTask is an OBJECT
-      newTaskObject: this.props.selectedTask, // set initial displayed task as selected task
-      newComments: ""
+      editsMade: false,
     }
   }
 
-  componentDidUpdate(prevProps){
-    if (this.props.selectedTask != this.state.newTaskObject){
+  componentDidMount(){
+
+  }
+
+  checkIfEditsMade(e){
+    var taskInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_task')[0];
+    var hoursInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_hours')[0];
+    var minsInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_mins')[0];
+    var commentsInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_comments')[0];
+
+    if (taskInput.textContent == this.props.selectedTask.name
+      && hoursInput.textContent == this.props.selectedTask.hours
+      && minsInput.textContent == this.props.selectedTask.mins
+      && commentsInput.textContent == this.props.selectedTask.comments){
+        this.setState({
+          editsMade: false
+        });
+    }
+    else{
       this.setState({
-        newTaskObject: this.props.selectedTask
+        editsMade: true
       });
     }
   }
 
-  handleNewCommentsChange(e){
+  discardChanges(e){
+    //reset this task to values before it was being edited
+    var taskInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_task')[0];
+    taskInput.textContent = this.props.selectedTask.name;
+
+    var hoursInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_hours')[0];
+    hoursInput.textContent = this.props.selectedTask.hours;
+
+    var minsInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_mins')[0];
+    minsInput.textContent = this.props.selectedTask.mins;
+
+    var commentsInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_comments')[0];
+    commentsInput.textContent = this.props.selectedTask.comments;
+
     this.setState({
-      newComments: e.target.value
+      editsMade: false
     });
+
+    this.props.hideTaskComments();
   }
 
-  handleNewTaskChange(e){
-    var tempNewTask = this.state.newTaskObject;
-    tempNewTask.name = e.target.value;
-    this.setState({
-      newTaskObject: tempNewTask
-    });
+  ensureValidTimeInput(e){
+    var timeInput = e.target;
+    timeInput.onkeypress = function(ev) {
+      // either a number or period for decimal inputs
+      if (String.fromCharCode(ev.which) != "." && isNaN(String.fromCharCode(ev.which))) {
+        ev.preventDefault();
+      }
+    }
+    // check that first character is not a period
+    if (timeInput.textContent.substring(0, 1) == "."){
+      timeInput.textContent = timeInput.textContent.substring(1, timeInput.textContent.length);
+    }
+    this.checkIfEditsMade(e);
+  }
+
+  saveTask(e){
+    var commentsInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_comments')[0];
+    alert(this.props.selectedTask.comments);
+    alert(commentsInput.textContent);
   }
 
   render(){
     return(
       <Container>
-        <CloseBtn><CloseImg src={xImg} onClick={this.props.hideTaskComments}/></CloseBtn>
+        <CloseBtn><CloseImg src={xImg} onClick={this.discardChanges.bind(this)}/></CloseBtn>
         <Border>
-          <TaskInput contentEditable={true} onChange={this.handleNewTaskChange.bind(this)}>{this.state.newTaskObject == null ? null : this.state.newTaskObject.name}</TaskInput>
+          <TaskInput className='taskComments_task' onInput={this.checkIfEditsMade.bind(this)} contentEditable={true}>{this.props.selectedTask == null ? null : this.props.selectedTask.name}</TaskInput>
           <TimeInputContainer>
-            <HoursInput contentEditable={true}>{this.state.newTaskObject == null ? 0 : this.state.newTaskObject.hours}</HoursInput>h
+            <HoursInput className='taskComments_hours' onClick={this.ensureValidTimeInput.bind(this)} onInput={this.ensureValidTimeInput.bind(this)} contentEditable={true}>{this.props.selectedTask == null ? null : this.props.selectedTask.hours}</HoursInput>h
             &nbsp;
-            <MinsInput contentEditable={true}>{this.state.newTaskObject == null ? 0 : this.state.newTaskObject.mins}</MinsInput>m
+            <MinsInput className = 'taskComments_mins' onClick={this.ensureValidTimeInput.bind(this)} onInput={this.ensureValidTimeInput.bind(this)} contentEditable={true}>{this.props.selectedTask == null ? 0 : this.props.selectedTask.mins}</MinsInput>m
           </TimeInputContainer>
-          <CommentsInput contentEditable={true} onChange={this.handleNewCommentsChange.bind(this)}>{this.state.newTaskObject == null ? null : this.state.newTaskObject.comments}</CommentsInput>
+          <CommentsInput className='taskComments_comments' onInput={this.checkIfEditsMade.bind(this)} contentEditable={true}>{this.props.selectedTask == null ? null : this.props.selectedTask.comments}</CommentsInput>
+          {this.state.editsMade?<EditingSavedBtn onClick={this.saveTask.bind(this)}><EditingSavedImg src={saveImg}/></EditingSavedBtn> : null}
         </Border>
       </Container>
     );
