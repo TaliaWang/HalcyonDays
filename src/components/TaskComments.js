@@ -9,9 +9,8 @@ import xImg from "../images/xImg.svg";
 const Border = styled.div`
   border: 1px solid white;
   position: fixed;
-  margin: calc(3.2vh + 2.4vw) 2% 0 2%;
-  height: calc(((100vh - 55px) / 100) * 50 - 3.2vh - 2.4vw);
-  bottom: 2vh;
+  margin: calc(2vh + 1.5vw) 2% calc(1.5vh + 1.125vw) 2%;
+  height: calc(((100vh - (0.6vh + 0.45vw) - (2vh + 1.5vw)) / 100) * 50 - (3.2vh + 2.4vw)); /*height of container - some for xImg */
   width: 16%;
 
   @media (max-width: 800px) {
@@ -24,7 +23,7 @@ const CloseBtn = styled.button`
   border: none;
   outline: none;
   position: absolute;
-  top: calc(1.5vh + 1.125vw);
+  top: calc((1.5vh + 1.125vw));
   right: 0;
   transform: translate(0, -75%);
   right: 1vw;
@@ -36,12 +35,32 @@ const CloseImg = styled.img`
   position: relative;
 `
 
+const CommentsInput = styled.div`
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-size: calc(0.8vh + 0.6vw);
+  font-weight: normal;
+  bottom: 0;
+  top: calc(3vh + 2.25vw); /*spacing accounts for task and time inputs */
+  position: absolute;
+  width: 85%;
+  margin-left: 5%;
+  margin-right: 5%;
+  overflow-wrap: break-word;
+  overflow-y: auto;
+
+  &:focus{
+    outline: none;
+  }
+`
+
 const Container = styled.div`
   background-image: linear-gradient(#FF68B8, #FFAA90);
   width: 20%;
   margin: 0 0 0 80%;
   bottom: 0;
-  height: calc(((100vh - 55px) / 100) * 50); /* 50% of view height excluding header which is 55 px high*/
+  height: calc(((100vh - (0.6vh + 0.45vw) - (2vh + 1.5vw)) / 100) * 50); /* 50% of view height excluding header and pink header strip */
   position: fixed;
   float: right;
   text-align: left;
@@ -57,6 +76,39 @@ const Container = styled.div`
 const Form = styled.form`
 `
 
+const HoursInput = styled.div`
+  border: none;
+  min-width: 0.5em;
+  height: calc(0.8vh + 0.6vw);
+
+  &:focus{
+    outline: none;
+  }
+`
+
+const MinsInput = styled.div`
+  border: none;
+  min-width: 0.5em;
+  height: calc(0.8vh + 0.6vw);
+
+  &:focus{
+    outline: none;
+  }
+`
+
+const TimeInputContainer = styled.div`
+  border: none;
+  display: flex;
+  color: white;
+  font-size: calc(0.8vh + 0.6vw);
+  width: 85%;
+  margin-left: 5%;
+  margin-right: 5%;
+  &:focus{
+    outline: none;
+  }
+`
+
 const TaskInput = styled.div`
   background-color: transparent;
   border-bottom: 1px solid white;
@@ -66,76 +118,17 @@ const TaskInput = styled.div`
   color: white;
   font-size: calc(1vh + 0.75vw);
   font-weight: bold;
-  padding-bottom: 5px;
-  padding-top: 5px;
-  width: 85%;
-  margin-left: 5%;
-  margin-right: 5%;
-  overflow-wrap: break-word;
-
-  &:focus{
-    outline: none;
-  }
-`
-
-const CommentsInput = styled.div`
-  background-color: transparent;
-  border: none;
-  color: white;
-  font-size: calc(0.8vh + 0.6vw);
-  font-weight: normal;
-  bottom: 1vh;
-  top: calc(2vh + 1.5vw);
-  position: absolute;
-  padding-bottom: 5px;
-  padding-top: 5px;
+  max-height: calc(1.4vh + 1.05vw); /* one line only with a little spacing to prevent scroll with 1 line */
+  padding-bottom: calc(0.4vh + 0.1vw);
+  padding-top: calc(0.4vh + 0.1vw);
   width: 85%;
   margin-left: 5%;
   margin-right: 5%;
   overflow-wrap: break-word;
   overflow-y: auto;
 
-  ::-webkit-scrollbar {
-    width: calc(0.6vh + 0.45vw);
-    background: white;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #FF68B8;
-  }
-
   &:focus{
     outline: none;
-  }
-`
-
-const Img = styled.img`
-  position: relative;
-  height: 100%;
-  width: 100%;
-`
-
-const P = styled.p`
-  font-size: 120%;
-  color: white;
-  margin-top: 1%;
-  margin-bottom: 0;
-  font-family: openSansRegular;
-  display: flex;
-
-  @media (max-width: 600px) {
-      font-size: 100%;
-  }
-`
-
-const XBtn = styled.button`
-  background: none;
-  border: none;
-  font-size: 120%;
-  color: white;
-  display: none;
-
-  &:hover{
-    font-size: 140%;
   }
 `
 
@@ -178,6 +171,11 @@ class TaskComments extends Component{
         <CloseBtn><CloseImg src={xImg} onClick={this.props.hideTaskComments}/></CloseBtn>
         <Border>
           <TaskInput contentEditable={true} onChange={this.handleNewTaskChange.bind(this)}>{this.state.newTaskObject == null ? null : this.state.newTaskObject.name}</TaskInput>
+          <TimeInputContainer>
+            <HoursInput contentEditable={true}>{this.state.newTaskObject == null ? 0 : this.state.newTaskObject.hours}</HoursInput>h
+            &nbsp;
+            <MinsInput contentEditable={true}>{this.state.newTaskObject == null ? 0 : this.state.newTaskObject.mins}</MinsInput>m
+          </TimeInputContainer>
           <CommentsInput contentEditable={true} onChange={this.handleNewCommentsChange.bind(this)}>{this.state.newTaskObject == null ? null : this.state.newTaskObject.comments}</CommentsInput>
         </Border>
       </Container>

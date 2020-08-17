@@ -42,15 +42,16 @@ const CloseImg = styled.img`
 const Container = styled.div`
   background-image: linear-gradient(#FF68B8, #FFAA90);
   width: 20%;
-  margin: calc(-100px - 5%) 0 0 80%;
-  height: 110vh;
-  padding-top: 70px;
+  margin: 0 0 0 80%;
+  height: 100vh;
+  top: 0;
+  padding-top: calc(3vh + 2.25vw);
   position: fixed;
   float: right;
   z-index: 50;
 
   @media (max-width: 800px) {
-    margin: calc(-100px - 5%) 0 0 70%;
+    margin: 0 0 0 70%;
     width: 30%;
   }
 `

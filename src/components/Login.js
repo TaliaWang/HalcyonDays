@@ -118,10 +118,6 @@ const Input = styled.input`
   outline: none;
   position: relative;
   width: calc(100% - 2.5vh - 2.5vw);
-
-  ::placeholder{
-    color: #B7C6FB;
-  }
 `
 
 const InputContainer = styled.div`

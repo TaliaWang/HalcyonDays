@@ -55,7 +55,7 @@ const Container = styled.div`
   width: 20%;
   margin: calc(-100px - 5%) 0 0 0;
   height: 100vh;
-  padding-top: 70px;
+  padding-top: calc(3vh + 2.25vw);
   position: fixed;
   float: left;
   z-index: 50;

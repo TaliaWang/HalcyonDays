@@ -209,7 +209,7 @@ const NotesMenuBtn = styled.button`
   border: none;
   border-radius: 3px;
   float: left;
-  top: 65px;
+  top: calc(3.2vh + 2.4vw);
   left: 1vh;
   z-index: 50;
   padding: 5px 7px 5px 7px;
@@ -284,7 +284,7 @@ const TasksMenuBtn = styled.button`
   border-radius: 3px;
   font-size: 100%;
   margin: 0;
-  top: 65px;
+  top: calc(3.2vh + 2.4vw);
   right: 1vh;
   float: right;
   z-index: 50;

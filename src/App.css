@@ -33,6 +33,14 @@ body{
   font-family: Futura,Trebuchet MS,Arial,sans-serif;
 }
 
+::-webkit-scrollbar {
+  width: calc(0.6vh + 0.45vw);
+  background: white;
+}
+::-webkit-scrollbar-thumb {
+  background: #FF68B8;
+}
+
 ::placeholder{
-  color: grey;
+  color: #B7C6FB;
 }

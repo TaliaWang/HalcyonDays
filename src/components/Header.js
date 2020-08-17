@@ -33,6 +33,13 @@ const CloseBtn = styled.button`
   position: absolute;
 `
 
+const HeaderImg = styled.img`
+  transform: translate(0, 10%);
+  height: calc(0.8vh + 0.6vw);
+  width: calc(0.8vh + 0.6vw);
+  position: relative;
+`
+
 const LogoutBtn = styled.button`
   color: white;
   border: none;
@@ -72,7 +79,7 @@ const OptionsContainer = styled.div`
   background-image: linear-gradient(to right, #FF68B8, #FFAA90);
   position: fixed;
   width: 100%;
-  height: 45px;
+  height: calc(2vh + 1.5vw);
   z-index: 50;
   top: 0;
 `
@@ -80,16 +87,13 @@ const OptionsContainer = styled.div`
 const OptionsBtn = styled.button`
   color: white;
   background-color: transparent;
-  font-size: 100%;
+  font-size: calc(0.8vh + 0.6vw);
   border: none;
   outline: none;
-  padding-top: 7px;
+  margin-top: calc(1vh + 0.75vw);
+  transform: translate(0, -50%);
   text-align: center;
   width: 25%;
-
-  @media (max-width: 600px) {
-    font-size: 80%;
-  }
 `
 
 const OptionsImg = styled.img`
@@ -248,26 +252,26 @@ class Header extends Component{
         {component}
         <OptionsContainer>
           <OptionsBtn id='calendarOption' onClick={this.switchHeaderOption.bind(this)}>
-            <img style={{transform: 'translate(0, 10%)'}} src={calendarImg}/>
+            <HeaderImg src={calendarImg}/>
             &nbsp;&nbsp;My Calendar
           </OptionsBtn>
 
           <OptionsBtn id='settingsOption' onClick={this.switchHeaderOption.bind(this)}>
-            <img style={{transform: 'translate(0, 20%)'}} height='20px' width = '20px' src={settingsImg}/>
+            <HeaderImg src={settingsImg}/>
             &nbsp;&nbsp;My Settings
           </OptionsBtn>
 
           <OptionsBtn id='accountOption' onClick={this.switchHeaderOption.bind(this)}>
-            <img style={{transform: 'translate(0, 20%)'}} height='20px' width = '20px' src={accountImg}/>
+            <HeaderImg src={accountImg}/>
             &nbsp;&nbsp;My Account
           </OptionsBtn>
 
           <OptionsBtn id='moreOption' onClick={this.switchHeaderOption.bind(this)}>
-            <img style={{transform: 'translate(0, 20%)'}} height='18px' width = '18px' src={moreImg}/>
+            <HeaderImg src={moreImg}/>
             &nbsp;&nbsp;More
           </OptionsBtn>
         </OptionsContainer>
-        <div style={{width: '100%', height: '10px', top: '45px', backgroundColor: '#FFACD8', position: 'fixed', zIndex: '50'}}></div>
+        <div style={{width: '100%', height: 'calc(0.6vh + 0.45vw)', top: 'calc(2vh + 1.5vw)', backgroundColor: '#FFACD8', position: 'fixed', zIndex: '50'}}></div>
       </div>
     );
   }
