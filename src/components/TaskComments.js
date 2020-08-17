@@ -52,6 +52,8 @@ const CommentsInput = styled.div`
   margin-right: 5%;
   overflow-wrap: break-word;
   overflow-y: auto;
+  overflow-x: hidden;
+  white-space: pre-wrap; /*preserves white space*/
 
   &:focus{
     outline: none;
@@ -96,7 +98,7 @@ const Form = styled.form`
 const HoursInput = styled.div`
   border: none;
   min-width: 0.5em;
-  height: calc(0.6vh + 0.45vw);
+  height: calc(0.8vh + 0.6vw);
 
   &:focus{
     outline: none;
@@ -106,7 +108,7 @@ const HoursInput = styled.div`
 const MinsInput = styled.div`
   border: none;
   min-width: 0.5em;
-  height: calc(0.6vh + 0.45vw);
+  height: calc(0.8vh + 0.6vw);
 
   &:focus{
     outline: none;
@@ -117,7 +119,7 @@ const TimeInputContainer = styled.div`
   border: none;
   display: flex;
   color: white;
-  font-size: calc(0.6vh + 0.45vw);
+  font-size: calc(0.8vh + 0.6vw);
   width: 85%;
   margin-left: 5%;
   margin-right: 5%;
@@ -159,8 +161,12 @@ class TaskComments extends Component{
     }
   }
 
-  componentDidMount(){
-
+  componentDidUpdate(prevProps){
+    if(this.props.selectedTask != prevProps.selectedTask){
+      this.setState({
+        editsMade: false
+      });
+    }
   }
 
   checkIfEditsMade(e){
@@ -169,10 +175,10 @@ class TaskComments extends Component{
     var minsInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_mins')[0];
     var commentsInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_comments')[0];
 
-    if (taskInput.textContent == this.props.selectedTask.name
-      && hoursInput.textContent == this.props.selectedTask.hours
-      && minsInput.textContent == this.props.selectedTask.mins
-      && commentsInput.textContent == this.props.selectedTask.comments){
+    if (taskInput.innerText == this.props.selectedTask.name
+      && hoursInput.innerText == this.props.selectedTask.hours
+      && minsInput.innerText == this.props.selectedTask.mins
+      && commentsInput.innerText == this.props.selectedTask.comments){
         this.setState({
           editsMade: false
         });
@@ -185,23 +191,9 @@ class TaskComments extends Component{
   }
 
   discardChanges(e){
-    //reset this task to values before it was being edited
-    var taskInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_task')[0];
-    taskInput.textContent = this.props.selectedTask.name;
-
-    var hoursInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_hours')[0];
-    hoursInput.textContent = this.props.selectedTask.hours;
-
-    var minsInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_mins')[0];
-    minsInput.textContent = this.props.selectedTask.mins;
-
-    var commentsInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_comments')[0];
-    commentsInput.textContent = this.props.selectedTask.comments;
-
-    this.setState({
-      editsMade: false
-    });
-
+    if (this.state.editsMade){
+        this.resetTask(e);
+    }
     this.props.hideTaskComments();
   }
 
@@ -214,16 +206,112 @@ class TaskComments extends Component{
       }
     }
     // check that first character is not a period
-    if (timeInput.textContent.substring(0, 1) == "."){
-      timeInput.textContent = timeInput.textContent.substring(1, timeInput.textContent.length);
+    if (timeInput.innerText.substring(0, 1) == "."){
+      timeInput.innerText = timeInput.innerText.substring(1, timeInput.innerText.length);
     }
     this.checkIfEditsMade(e);
   }
 
-  saveTask(e){
+  resetTask(e){
+    //reset this task to values before it was being edited
+    var taskInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_task')[0];
+    taskInput.innerText = this.props.selectedTask.name;
+
+    var hoursInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_hours')[0];
+    hoursInput.innerText = this.props.selectedTask.hours;
+
+    var minsInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_mins')[0];
+    minsInput.innerText = this.props.selectedTask.mins;
+
     var commentsInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_comments')[0];
+    commentsInput.innerText = this.props.selectedTask.comments;
+  }
+
+  saveTask(e){
+    var taskInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_task')[0];
+    var hoursInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_hours')[0];
+    var minsInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_mins')[0];
+    var commentsInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_comments')[0];
+
+    // calculate hours and minutes from potentially decimal input
+    var totalMins = Math.floor(parseFloat(hoursInput.innerText)*60 + parseFloat(minsInput.innerText));
+
+    var tempHours = Math.floor(totalMins / 60);
+    if (isNaN(tempHours)){
+      tempHours = 0;
+    }
+    var tempMins = totalMins % 60;
+    if (isNaN(tempMins)){
+      tempMins = 0;
+    }
+
+    var db = firebase.firestore();
+    var tasksRef = db.collection("users").doc(this.props.user.uid)
+    .collection('dates').doc(`${this.props.todayDate.month} ${this.props.todayDate.date}, ${this.props.todayDate.year}`)
+    .collection("tasks")
+
+    if (this.props.selectedTask.name == ""){
+      // add a new task
+      var date = new Date();
+      tasksRef.doc(taskInput.textContent)
+      .set({
+        name: taskInput.textContent,
+        hours: tempHours,
+        mins: tempMins,
+        finished: false,
+        comments: commentsInput.innerText,
+        timestamp: firebase.firestore.Timestamp.fromDate(date)
+      }).then(()=>{
+        this.props.changeSelectedTaskFromTaskComments(taskInput);
+      });
+    }
+    // rest of these cases deal with editing an existing task
+    else if (taskInput.innerText == ""){
+      alert("Please enter a task name to save this task.");
+    }
+    else if (taskInput.innerText == this.props.selectedTask.name){
+      // we can just update the fields of this task in the database
+      var db = firebase.firestore();
+      tasksRef.doc(taskInput.textContent)
+      .update({
+        hours: tempHours,
+        mins: tempMins,
+        comments: commentsInput.innerText
+      }).then(()=>{
+        this.props.changeSelectedTaskFromTaskComments(taskInput);
+      });
+    }
+    else if (taskInput.innerText != this.props.selectedTask.name){
+      // we have to delete this task and create a new one
+      var oldDate;
+      var oldFinished;
+      var db = firebase.firestore();
+
+      // store the old timestamp and finished state
+      tasksRef.doc(this.props.selectedTask.name).get()
+      .then(doc=>{
+        oldDate = doc.data().timestamp.toDate();
+        oldFinished = doc.data().finished;
+      }).then(()=>{
+        // delete old task
+        tasksRef.doc(this.props.selectedTask.name).delete();
+        // create a new task with the edited information and old timestamp
+        tasksRef.doc(taskInput.textContent).set({
+          name: taskInput.textContent,
+          hours: tempHours,
+          mins: tempMins,
+          finished: oldFinished,
+          comments: commentsInput.innerText,
+          timestamp: firebase.firestore.Timestamp.fromDate(oldDate)
+        }).then(()=>{
+          this.props.changeSelectedTaskFromTaskComments(taskInput);
+        });
+      });
+
+    }
+    /*var commentsInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_comments')[0];
     alert(this.props.selectedTask.comments);
-    alert(commentsInput.textContent);
+    alert(commentsInput.innerText);*/
   }
 
   render(){
@@ -231,13 +319,13 @@ class TaskComments extends Component{
       <Container>
         <CloseBtn><CloseImg src={xImg} onClick={this.discardChanges.bind(this)}/></CloseBtn>
         <Border>
-          <TaskInput className='taskComments_task' onInput={this.checkIfEditsMade.bind(this)} contentEditable={true}>{this.props.selectedTask == null ? null : this.props.selectedTask.name}</TaskInput>
+          <TaskInput className='taskComments_task' onInput={this.checkIfEditsMade.bind(this)} contentEditable={true}>{this.props.selectedTask.name}</TaskInput>
           <TimeInputContainer>
-            <HoursInput className='taskComments_hours' onClick={this.ensureValidTimeInput.bind(this)} onInput={this.ensureValidTimeInput.bind(this)} contentEditable={true}>{this.props.selectedTask == null ? null : this.props.selectedTask.hours}</HoursInput>h
+            <HoursInput className='taskComments_hours' onClick={this.ensureValidTimeInput.bind(this)} onInput={this.ensureValidTimeInput.bind(this)} contentEditable={true}>{this.props.selectedTask.hours}</HoursInput>h
             &nbsp;
-            <MinsInput className = 'taskComments_mins' onClick={this.ensureValidTimeInput.bind(this)} onInput={this.ensureValidTimeInput.bind(this)} contentEditable={true}>{this.props.selectedTask == null ? 0 : this.props.selectedTask.mins}</MinsInput>m
+            <MinsInput className = 'taskComments_mins' onClick={this.ensureValidTimeInput.bind(this)} onInput={this.ensureValidTimeInput.bind(this)} contentEditable={true}>{this.props.selectedTask.mins}</MinsInput>m
           </TimeInputContainer>
-          <CommentsInput className='taskComments_comments' onInput={this.checkIfEditsMade.bind(this)} contentEditable={true}>{this.props.selectedTask == null ? null : this.props.selectedTask.comments}</CommentsInput>
+          <CommentsInput className='taskComments_comments' onInput={this.checkIfEditsMade.bind(this)} contentEditable={true}>{this.props.selectedTask.comments}</CommentsInput>
           {this.state.editsMade?<EditingSavedBtn onClick={this.saveTask.bind(this)}><EditingSavedImg src={saveImg}/></EditingSavedBtn> : null}
         </Border>
       </Container>

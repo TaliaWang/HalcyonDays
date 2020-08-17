@@ -369,12 +369,29 @@ class Dashboard extends Component{
       sleepTimeHours: 0,
       sleepTimeMins: 0,
       footerPopupsAllowed: true,
-      selectedTask: null,
+      selectedTask: {
+        name: "",
+        hours: 0,
+        mins: 0,
+        comments: ""
+      },
       notesLoaded: false,
       tasksLoaded: false,
       showTickerAndBuffer: true,
       showCountdowns: false
     }
+  }
+
+  addNewTask(){
+    this.setState({
+      selectedTask: {
+        name: "",
+        hours: 0,
+        mins: 0,
+        comments: ""
+      },
+      showTaskComments: true
+    });
   }
 
   allowFooterPopup(){
@@ -394,11 +411,11 @@ class Dashboard extends Component{
     .collection('tasks').doc(taskName);
     taskRef.get().then(doc=>{
       tempSelectedTask = doc.data();
-    });
-
-    this.setState({
-      selectedTask: tempSelectedTask,
-      showNotesMenu: true
+    }).then(()=>{
+      this.setState({
+        selectedTask: tempSelectedTask,
+        showTaskComments: true
+      });
     });
   }
 
@@ -419,7 +436,28 @@ class Dashboard extends Component{
     .then(()=>{
       this.setState({
         selectedTask: tempSelectedTask,
-        showNotesMenu: true
+      }, ()=>{
+          this.setState({
+            showTaskComments: true
+          });
+      });
+    });
+  }
+
+  changeSelectedTaskFromTaskComments(taskInput){
+    var taskName = taskInput.textContent;
+    var tempSelectedTask;
+    var db = firebase.firestore();
+    var taskRef =  db.collection("users").doc(this.props.user.uid)
+    .collection("dates").doc(`${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`)
+    .collection('tasks').doc(taskName);
+    taskRef.get()
+    .then(doc=>{
+      tempSelectedTask = doc.data();
+    })
+    .then(()=>{
+      this.setState({
+        selectedTask: tempSelectedTask,
       }, ()=>{
           this.setState({
             showTaskComments: true
@@ -1155,7 +1193,7 @@ class Dashboard extends Component{
             &nbsp;My Notes
           </NotesMenuBtn>
         </div>
-        <div style={{zIndex: 40, position: 'fixed', opacity: this.state.showNotesMenu?1:0, transition: 'opacity 0.3s'}}>
+        <div style={{zIndex: 40, position: 'fixed', pointerEvents: this.state.showNotesMenu?'auto':'none', opacity: this.state.showNotesMenu?1:0, transition: 'opacity 0.3s'}}>
           <NotesMenu
           user={this.props.user}
           notes={this.state.notes}
@@ -1174,8 +1212,8 @@ class Dashboard extends Component{
             <img style={{transform: 'translate(0, 10%)'}} height='20px' width='22px' src={tasksMenuImg}/>
             &nbsp;My Tasks
           </TasksMenuBtn>
-          </div>
-        <div style={{zIndex: 40, position: 'fixed', opacity: this.state.showTasksMenu?1:0, transition: 'opacity 0.3s'}}>
+        </div>
+        <div style={{zIndex: 40, position: 'fixed', pointerEvents: this.state.showTasksMenu?'auto':'none', opacity: this.state.showTasksMenu?1:0, transition: 'opacity 0.3s'}}>
           <TasksMenu
             user={this.props.user}
             tasks={this.state.tasks}
@@ -1184,10 +1222,12 @@ class Dashboard extends Component{
             tasksLoaded={this.state.tasksLoaded}
             changeSelectedTaskFromTaskMenu={this.changeSelectedTaskFromTaskMenu.bind(this)}
             hideTasksMenu={this.hideTasksMenu.bind(this)}
+            showTaskComments={this.state.showTaskComments}
             toggleTaskChecked={this.toggleTaskChecked.bind(this)}
+            addNewTask={this.addNewTask.bind(this)}
           ></TasksMenu>
         </div>
-        <div style={{zIndex: 45, position: 'fixed', opacity: this.state.showTaskComments?1:0, transition: 'opacity 0.3s'}}>
+        <div style={{zIndex: 45, position: 'fixed', pointerEvents: this.state.showTaskComments?'auto':'none', opacity: this.state.showTaskComments?1:0, transition: 'opacity 0.3s'}}>
           <TaskComments
             user={this.props.user}
             hideTaskComments={this.hideTaskComments.bind(this)}
@@ -1195,6 +1235,7 @@ class Dashboard extends Component{
             tmrwDate={this.state.tmrwDate}
             tasksLoaded={this.state.tasksLoaded}
             selectedTask={this.state.selectedTask}
+            changeSelectedTaskFromTaskComments={this.changeSelectedTaskFromTaskComments.bind(this)}
           ></TaskComments>
         </div>
 
@@ -1252,7 +1293,7 @@ class Dashboard extends Component{
                   &nbsp;My Countdowns
                 </CountdownsBtn>
               </div>
-              <div style={{opacity: this.state.showCountdowns?1:0, visibility: this.state.showCountdowns? 'visible': 'hidden', transition: 'opacity 0.3s, visibility 0.3s'}}>
+              <div style={{opacity: this.state.showCountdowns?1:0, pointerEvents: this.state.showCountdowns?'auto':'none', transition: 'opacity 0.3s'}}>
                 <Countdowns
                   hideCountdowns={this.hideCountdowns.bind(this)}
                 ></Countdowns>
@@ -1266,7 +1307,7 @@ class Dashboard extends Component{
                   &nbsp;My Stats
                 </StatsBtn>
               </div>
-              <div style={{opacity: this.state.showStatistics?1:0, visibility: this.state.showStatistics? 'visible': 'hidden', transition: 'opacity 0.3s, visibility 0.3s'}}>
+              <div style={{opacity: this.state.showStatistics?1:0, pointerEvents: this.state.showStatistics?'auto':'none', transition: 'opacity 0.3s'}}>
                 <Statistics
                   numTasks={this.state.tasks.length}
                   numFinishedTasks={this.state.tasks.length - this.state.unfinishedTasks.length}

@@ -38,7 +38,7 @@ body{
   background: white;
 }
 ::-webkit-scrollbar-thumb {
-  background: #FF68B8;
+  background-color: #FF68B8;
 }
 
 ::placeholder{
