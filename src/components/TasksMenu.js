@@ -124,7 +124,7 @@ const NewTaskImg = styled.img`
 `
 
 const P = styled.p`
-  font-size: 120%;
+  font-size: calc(0.8vh + 0.6vw);
   color: white;
   margin-top: 1%;
   margin-bottom: 0;
@@ -146,59 +146,6 @@ const TasksContainer = styled.div`
   ::-webkit-scrollbar {
     width: 0px;
     background: transparent; /* make scrollbar transparent */
-  }
-`
-
-const TextareaTask = styled.div`
-  cursor: pointer;
-  font-size: 120%;
-  width: 100%;
-  min-height: 1em;
-  min-width: 50px;
-  overflow: scroll;
-  ::-webkit-scrollbar {
-    width: 0px;
-    background: transparent; /* make scrollbar transparent */
-  }
-  position: relative;
-  color: white;
-  background-color: transparent;
-  margin-top: 0;
-  margin-bottom: 0;
-  font-family: openSansRegular;
-  resize: none;
-  border: none;
-  border-radius: 5px;
-
-  &:focus{
-    outline: none;
-  }
-
-  @media (max-width: 600px) {
-      font-size: 100%;
-  }
-`
-
-const TextareaTime = styled.div`
-  cursor: default;
-  min-height: 1em;
-  overflow: scroll;
-  min-width: 10px;
-  ::-webkit-scrollbar {
-    width: 0px;
-    background: transparent; /* make scrollbar transparent */
-  }
-  position: relative;
-  color: white;
-  background-color: transparent;
-  margin-bottom: 0;
-  font-family: openSansRegular;
-  resize: none;
-  border: none;
-  border-radius: 5px;
-
-  &:focus{
-    outline: none;
   }
 `
 
@@ -235,7 +182,6 @@ class TasksMenu extends Component{
     super(props);
     this.state = {
       tasks: this.props.tasks,
-      noteSwitchesAllowed: true
     }
   }
 
@@ -248,12 +194,6 @@ class TasksMenu extends Component{
           tasks: this.props.tasks
         })
       })
-    }
-  }
-
-  decideWhetherToChangeSelectedTaskFromTaskMenu(e){
-    if (this.state.noteSwitchesAllowed){
-        this.props.changeSelectedTaskFromTaskMenu(e);
     }
   }
 
@@ -299,7 +239,6 @@ class TasksMenu extends Component{
           <DateText>{this.props.todayDate.day}, {this.props.todayDate.month} {this.props.todayDate.date}, {this.props.todayDate.year}
              &nbsp;-<br/>{this.props.tmrwDate.day}, {this.props.tmrwDate.month} {this.props.tmrwDate.date}, {this.props.tmrwDate.year}
           </DateText>
-          <br/>
           {this.props.tasksLoaded
             ?
             <TasksContainer>
@@ -310,10 +249,10 @@ class TasksMenu extends Component{
                   </Checkbox>
                   <div onMouseOver={this.displayBtns.bind(this)} onMouseLeave={this.hideBtns.bind(this)}>
                     <LabelBtn id={`${task}${index}_label`}>
-                      <TextareaTask className='taskText' onClick={this.decideWhetherToChangeSelectedTaskFromTaskMenu.bind(this)} contentEditable={false}>{task.name}</TextareaTask>
+                      <P className='taskText' onClick={this.props.changeSelectedTaskFromTaskMenu.bind(this)}>{task.name}</P>
                       <XBtn className="XBtn" onClick = {this.deleteTask.bind(this)}>✖</XBtn>
                     </LabelBtn>
-                    <P>(<TextareaTime className='taskHours' contentEditable={false}>{task.hours}</TextareaTime>h&nbsp;<TextareaTime className='taskMins' contentEditable={false}>{task.mins}</TextareaTime>m)</P>
+                    <P>({task.hours}h&nbsp;{task.mins}m)</P>
                   </div>
                 </div>
               )}

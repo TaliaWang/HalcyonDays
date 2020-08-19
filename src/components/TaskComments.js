@@ -311,9 +311,6 @@ class TaskComments extends Component{
       });
 
     }
-    /*var commentsInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_comments')[0];
-    alert(this.props.selectedTask.comments);
-    alert(commentsInput.innerText);*/
   }
 
   render(){

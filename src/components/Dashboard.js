@@ -6,8 +6,8 @@ import Countdowns from "./Countdowns.js"
 import Footer from "./Footer.js"
 import Header from "./Header.js"
 import NewNote from "./NewNote.js"
-import NewTask from "./NewTask.js"
 import NotesMenu from "./NotesMenu.js"
+import NoteComments from "./NoteComments.js"
 import Statistics from "./Statistics.js"
 import TaskBar from "./TaskBar.js"
 import TaskComments from "./TaskComments.js"
@@ -321,6 +321,7 @@ class Dashboard extends Component{
       },
       showNewNote: false,
       showNotesMenu: false,
+      showNoteComments: false,
       showNewTask: false,
       showStatistics: false,
       showTasksMenu: false,
@@ -353,6 +354,10 @@ class Dashboard extends Component{
         name: "",
         hours: 0,
         mins: 0,
+        comments: ""
+      },
+      selectedNote:{
+        name: "",
         comments: ""
       },
       notesLoaded: false,
@@ -419,6 +424,49 @@ class Dashboard extends Component{
       }, ()=>{
           this.setState({
             showTaskComments: true
+          });
+      });
+    });
+  }
+
+  changeSelectedNote(e){
+    var noteName = e.target.innerText;
+
+    var tempSelectedNote;
+    var db = firebase.firestore();
+    var noteRef =  db.collection("users").doc(this.props.user.uid)
+    .collection("notes").doc(noteName);
+    noteRef.get()
+    .then(doc=>{
+      tempSelectedNote = doc.data();
+    })
+    .then(()=>{
+      this.setState({
+        selectedNote: tempSelectedNote
+      }, ()=>{
+          this.setState({
+            showNoteComments: true
+          });
+      });
+    });
+  }
+
+  changeSelectedNoteFromNoteComments(noteInput){
+    var noteName = noteInput.textContent;
+    var tempSelectedNote;
+    var db = firebase.firestore();
+    var noteRef =  db.collection("users").doc(this.props.user.uid)
+    .collection("notes").doc(noteName);
+    noteRef.get()
+    .then(doc=>{
+      tempSelectedNote = doc.data();
+    })
+    .then(()=>{
+      this.setState({
+        selectedNote: tempSelectedNote
+      }, ()=>{
+          this.setState({
+            showNoteComments: true
           });
       });
     });
@@ -714,6 +762,9 @@ class Dashboard extends Component{
 
                 // listen for changes in this user's tasks for this date
                 this.switchDate();
+
+                // listen for changes in notes
+                this.getNotes();
             });
         });
       });
@@ -812,10 +863,9 @@ class Dashboard extends Component{
     });
   }
 
-  hideNoteTaskPopups(){
+  hideNoteComments(){
     this.setState({
-      showNewNote: false,
-      showNewTask: false,
+      showNoteComments: false
     });
   }
 
@@ -991,50 +1041,24 @@ class Dashboard extends Component{
     });
   }
 
-  /*switchNotes(){
+  getNotes(){
     var db = firebase.firestore();
     this.setState({
       notesLoaded: false
     }, ()=>{
-      if (this.state.selectedTask == ""){
-        // show general notes
-        const userRef = db.collection('users').doc(this.props.user.uid);
-        userRef
-        .collection('notes')
-        .orderBy('timestamp', 'asc').onSnapshot(querySnapshot=>{
-          var tempNotes = [];
-          querySnapshot.forEach(doc=>{
-            tempNotes.push(doc.data());
-          });
-          this.setState({
-            notes: tempNotes,
-            notesLoaded: true
-          });
+      const notesRef = db.collection('users').doc(this.props.user.uid).collection('notes');
+      notesRef.orderBy('timestamp', 'asc').onSnapshot(querySnapshot=>{
+        var tempNotes = [];
+        querySnapshot.forEach(doc=>{
+          tempNotes.push(doc.data());
         });
-      }
-      else{
-        // show notes specific to this task
-        const taskRef = db.collection('users').doc(this.props.user.uid)
-                        .collection("dates").doc(`${this.state.todayDate.month} ${this.state.todayDate.date}, ${this.state.todayDate.year}`)
-                        .collection('tasks').doc(this.state.selectedTask);
-
-        // the selected task will always already exist in the database, so no need to check and create the task
-        taskRef
-        .collection('notes')
-        .orderBy('timestamp', 'asc')
-        .onSnapshot(querySnapshot=>{
-          var tempNotes = [];
-          querySnapshot.forEach(doc=>{
-            tempNotes.push(doc.data());
-          });
-          this.setState({
-            notes: tempNotes,
-            notesLoaded: true
-          });
+        this.setState({
+          notes: tempNotes,
+          notesLoaded: true
         });
-      }
+      });
     });
-  }*/
+}
 
   toggleShowNewNote(){
     this.setState(prevState => ({
@@ -1180,7 +1204,17 @@ class Dashboard extends Component{
           notesLoaded={this.state.notesLoaded}
           todayDate={this.state.todayDate}
           hideNotesMenu={this.hideNotesMenu.bind(this)}
+          changeSelectedNote={this.changeSelectedNote.bind(this)}
           ></NotesMenu>
+        </div>
+        <div style={{zIndex: 45, position: 'fixed', pointerEvents: this.state.showNoteComments?'auto':'none', opacity: this.state.showNoteComments?1:0, transition: 'opacity 0.3s'}}>
+          <NoteComments
+            user={this.props.user}
+            hideNoteComments={this.hideNoteComments.bind(this)}
+            notesLoaded={this.state.notesLoaded}
+            selectedNote={this.state.selectedNote}
+            changeSelectedNoteFromNoteComments={this.changeSelectedNoteFromNoteComments.bind(this)}
+          ></NoteComments>
         </div>
 
         {/* tasks menu side bar*/}
@@ -1313,11 +1347,6 @@ class Dashboard extends Component{
                 user={this.props.user}
               ></NewNote>
               : null}
-            {this.state.showNewTask?
-              <NewTask
-                todayDate={this.state.todayDate}
-                user={this.props.user}
-              ></NewTask> : null}
           </NewNoteAndTaskContainer>
         </div>
 
