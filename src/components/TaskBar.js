@@ -24,26 +24,26 @@ const P = styled.p`
 `
 
 const TimeContainer = styled.div`
-  margin: 10% 25% 0 25%;
+  margin: calc(8vh + 6vw) 25% 0 25%;
   height: ${props => props.height}px;
   display: flex;
   z-index: 1;
 
 
   @media (max-width: 1200px) {
-    margin: 15% 20% 0 20%;
+    margin: calc(8vh + 6vw) 20% 0 20%;
   }
   @media (max-width: 1000px) {
-    margin: 20% 20% 0 20%;
+    margin: calc(8vh + 6vw) 20% 0 20%;
   }
   @media (max-width: 800px) {
-    margin: 25% 15% 0 15%;
+    margin: calc(8vh + 6vw) 15% 0 15%;
   }
   @media (max-width: 600px) {
-    margin: 25% 15% 0 15%;
+    margin: calc(8vh + 6vw) 15% 0 15%;
   }
   @media (max-width: 400px) {
-    margin: 35% 15% 0 15%;
+    margin: calc(8vh + 6vw) 15% 0 15%;
   }
 `
 

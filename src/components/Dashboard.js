@@ -62,46 +62,33 @@ const CurrentDateTime = styled.div`
 const DateCarousel = styled.div`
   box-shadow: -1px 2px 5px 0px #B7C6FB;
   border-radius: 3px;
-  height: 35px;
-  width: 450px;
+  padding-right: calc(1.2vh + 0.9vw);
+  padding-left: calc(1.2vh + 0.9vw);
+  padding-top: calc(0.4vh + 0.3vw);
+  padding-bottom: calc(0.2vh + 0.15vw);
+  width: 40vw;
   text-align: left;
   left: 50%;
   transform: translate(-50%, 0);
-  padding-left: 20px;
-  padding-right: 20px;
   position: absolute;
 
+  @media (max-width: 1000px) {
+    width: 60vw;
+  }
   @media (max-width: 600px) {
-    width: 375px;
-    padding-left: 15px;
-    padding-right: 15px;
+    width: 80vw;
   }
   @media (max-width: 400px) {
-    width: 290px;
-    height: 25px;
-    padding-left: 7px;
-    padding-right: 7px;
+    width: 90vw;
   }
 `
 
 const H1 = styled.h1`
-  margin-top: calc(100px + 5%);
+  margin-top: calc(6vh + 4.5vw);
   font-weight: normal;
-  font-size: 80px;
-
-  @media (max-width: 1200px) {
-    font-size: 70px;
-  }
-  @media (max-width: 800px) {
-    font-size: 40px;
-  }
-  @media (max-width: 600px) {
-    font-size: 30px;
-  }
-  @media (max-width: 400px) {
-    font-size: 20px;
-  }
+  font-size: calc(4vh + 3vw);
 `
+
 const H3 = styled.h3`
   font-family: ISOCT2;
   font-size: 30px;
@@ -122,7 +109,7 @@ const LeftRightBtn = styled.button`
   outline: none;
   background: none;
   padding: 0;
-  font-size: 150%;
+  font-size: calc(1vh + 0.75vw);
   color: black;
 `
 
@@ -225,17 +212,10 @@ const P = styled.p`
 `
 
 const P_carousel = styled.p`
-  font-size: 15px;
-  margin-top: 5px;
+  font-size: calc(0.8vh + 0.6vw);
   color: ${props=>props.isToday ? 'black' : '#B7C6FB'};
   float: ${props=>props.float};
-
-  @media (max-width: 600px) {
-     font-size: 12.25px;
-  }
-  @media (max-width: 400px) {
-     font-size: 9px;
-  }
+  margin: 0;
 `
 
 const StatsBtn = styled.button`
@@ -1225,6 +1205,8 @@ class Dashboard extends Component{
             showTaskComments={this.state.showTaskComments}
             toggleTaskChecked={this.toggleTaskChecked.bind(this)}
             addNewTask={this.addNewTask.bind(this)}
+            selectedTask={this.state.selectedTask}
+            hideTaskComments={this.hideTaskComments.bind(this)}
           ></TasksMenu>
         </div>
         <div style={{zIndex: 45, position: 'fixed', pointerEvents: this.state.showTaskComments?'auto':'none', opacity: this.state.showTaskComments?1:0, transition: 'opacity 0.3s'}}>
@@ -1324,7 +1306,7 @@ class Dashboard extends Component{
           </div>
           <NewNoteAndTaskContainer>
             <NewNoteButton onClick={this.toggleShowNewNote.bind(this)}><NewNoteButtonImg src={newNoteButton}/></NewNoteButton>
-            <NewTaskBtn state={this.state.showNewTask} onClick={this.toggleShowNewTask.bind(this)}>+</NewTaskBtn>
+            {/*<NewTaskBtn state={this.state.showNewTask} onClick={this.toggleShowNewTask.bind(this)}>+</NewTaskBtn>*/}
             {this.state.showNewNote?
               <NewNote
                 todayDate={this.state.todayDate}

@@ -201,7 +201,8 @@ class TaskComments extends Component{
     var timeInput = e.target;
     timeInput.onkeypress = function(ev) {
       // either a number or period for decimal inputs
-      if (String.fromCharCode(ev.which) != "." && isNaN(String.fromCharCode(ev.which))) {
+      var char = String.fromCharCode(ev.which)
+      if ((char != "." && isNaN(char)) || char.charCodeAt(0) == 13 || char == " ") { // 13 is new line
         ev.preventDefault();
       }
     }
@@ -234,16 +235,17 @@ class TaskComments extends Component{
     var commentsInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_comments')[0];
 
     // calculate hours and minutes from potentially decimal input
-    var totalMins = Math.floor(parseFloat(hoursInput.innerText)*60 + parseFloat(minsInput.innerText));
+    var tempHours;
+    var tempMins;
 
-    var tempHours = Math.floor(totalMins / 60);
-    if (isNaN(tempHours)){
-      tempHours = 0;
-    }
-    var tempMins = totalMins % 60;
-    if (isNaN(tempMins)){
-      tempMins = 0;
-    }
+    tempHours = (isNaN(parseFloat(hoursInput.innerText)) ? 0 : parseFloat(hoursInput.innerText));
+    tempMins = (isNaN(parseFloat(minsInput.innerText)) ? 0 : parseFloat(minsInput.innerText));
+    var totalMins = tempHours*60 + tempMins;
+    totalMins = Math.ceil(totalMins); // round total time up
+
+    tempHours = Math.floor(totalMins / 60);
+    tempMins = totalMins % 60;
+
 
     var db = firebase.firestore();
     var tasksRef = db.collection("users").doc(this.props.user.uid)

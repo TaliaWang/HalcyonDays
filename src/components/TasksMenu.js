@@ -265,13 +265,15 @@ class TasksMenu extends Component{
 
     if (confirmDelete){
       var db = firebase.firestore();
-      // delete all notes for task
-      this.deleteNotesForSelectedTask(task);
 
-      // delete task itself
       db.collection("users").doc(this.props.user.uid)
       .collection('dates').doc(`${this.props.todayDate.month} ${this.props.todayDate.date}, ${this.props.todayDate.year}`)
       .collection("tasks").doc(task).delete();
+
+      // close the task if it's currently open
+      if (this.props.selectedTask.name == task){
+         this.props.hideTaskComments();
+      }
     }
   }
 
