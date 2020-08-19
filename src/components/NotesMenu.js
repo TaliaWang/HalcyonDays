@@ -4,34 +4,7 @@ import {BeatLoader} from "react-spinners"
 import firebase from '../firebase';
 import styled from 'styled-components';
 import xImg from "../images/xImg.svg";
-
-const BackToGeneralBtn = styled.button`
-  color: white;
-  border-top: 1px solid white;
-  border-right: none;
-  border-left: none;
-  border-bottom: none;
-  background-color: transparent;
-  font-size: 100%;
-  width: 20%;
-  text-align: center;
-  bottom: 0vh;
-  height: 7vh;
-  padding: 1vh;
-  position: fixed;
-  overflow-y: scroll;
-  ::-webkit-scrollbar {
-    width: 0px;
-    background: transparent; /* make scrollbar transparent */
-  }
-
-  @media (max-width: 800px) {
-    width: 30%;
-  }
-  @media (max-width: 600px) {
-    font-size: 80%;
-  }
-`
+import newItemImg from "../images/newItemImg.svg";
 
 const CloseBtn = styled.button`
   background-color: transparent;
@@ -93,7 +66,7 @@ const Title = styled.div`
   border-bottom: 1px solid white;
   color: white;
   font-size: calc(1vh + 0.75vw);
-  padding-bottom: 5px;
+  padding-bottom: calc(0.4vh + 0.1vw);
   width: 15vw;
   margin-left: 5%;
   margin-right: 5%;
@@ -114,6 +87,29 @@ const Label = styled.label`
   font-size: 120%;
 `
 
+const NewNoteBtn = styled.button`
+  border: none;
+  outline: none;
+  background-color: transparent;
+  position: absolute;
+  bottom: ${props=>props.showNoteComments
+        // calculate button height above note comments box with some buffer
+    ?  'calc((((100vh - (0.6vh + 0.45vw) - (2vh + 1.5vw)) / 100) * 50) + (0.4vh + 0.1vw))'
+    : 'calc(0.4vh + 0.1vw)'
+  };
+  transition: bottom 0.3s;
+  right: 0;
+`
+
+const NewNoteImg = styled.img`
+  border: none;
+  outline: none;
+  background-color: transparent;
+  height: calc(2vh + 1.5vw);
+  width: calc(2vh + 1.5vw);
+  position: relative;
+`
+
 const P = styled.p`
   font-size: calc(0.8vh + 0.6vw);
   color: white;
@@ -123,17 +119,24 @@ const P = styled.p`
 
 const Ul = styled.ul`
   font-size: calc(0.8vh + 0.6vw);
-  margin-top: 2%;
-  margin-right: 3%;
   color: white;
-  height: 80vh;
-  overflow-y: scroll;
-  overflow-x: scroll;
+  right: calc(2.4vh + 1.8vw);
+  top: calc(4vh + 3vw);
+  bottom: ${props=>props.showNoteComments
+    ? 'calc(((100vh - (0.6vh + 0.45vw) - (2vh + 1.5vw)) / 100) * 50)' // account for note comments height - new item button height
+    : 'calc(2vh + 1.5vw)'
+  };
+  position: absolute;
+  overflow-y: auto;
+  overflow-x: hidden;
   z-index: 20;
 
   ::-webkit-scrollbar {
-    width: 0px;
-    background: transparent; /* make scrollbar transparent */
+    width: calc(0.4vh + 0.3vw);
+    background: white;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #FF68B8;
   }
 `
 
@@ -186,6 +189,11 @@ class NotesMenu extends Component{
       db.collection("users").doc(this.props.user.uid)
       .collection("notes").doc(note).delete();
     }
+
+    // close the note if it's currently open
+    if (this.props.selectedNote.name == note){
+       this.props.hideNoteComments();
+    }
   }
 
   displayBtns(e){
@@ -209,7 +217,7 @@ class NotesMenu extends Component{
           <br/><br/>
           {this.props.notesLoaded
             ?
-            <Ul>
+            <Ul showNoteComments={this.props.showNoteComments}>
               {this.state.notes.map((note, index) =>
                 <li className="note" onMouseOver={this.displayBtns.bind(this)} onMouseLeave={this.hideBtns.bind(this)} id={`${note}${index}_label`}>
                   <div style={{display: "flex"}}>
@@ -224,6 +232,7 @@ class NotesMenu extends Component{
               <BeatLoader color='white' size='10'/>
             </div>
           }
+          <NewNoteBtn onClick={this.props.addNewNote} showNoteComments={this.props.showNoteComments}><NewNoteImg src={newItemImg}/></NewNoteBtn>
         </Container>
       </div>
     );

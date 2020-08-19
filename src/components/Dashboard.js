@@ -128,67 +128,6 @@ const LeftRightBtnImg = styled.img`
   }
 `
 
-const NewNoteAndTaskContainer = styled.div`
-  margin-top: 1%;
-
-  @media (max-width: 800px) {
-    margin-top: 3%;
-  }
-  @media (max-width: 600px) {
-    margin-top: 10%;
-  }
-  @media (max-width: 400px) {
-    margin-top: 29%;
-  }
-`
-
-const NewNoteButton = styled.button`
-  transform: translate(-20%, 15%);
-  background: none;
-  border: none;
-  margin: 0 1% 0 0;
-  padding: 0;
-`
-
-const NewNoteButtonImg = styled.img`
-  width: 90%;
-  height: 90%;
-
-  @media (max-width: 1200px) {
-    width: 75%;
-    height: 75%;
-  }
-  @media (max-width: 600px) {
-    width: 60%;
-    height: 60%;
-  }
-`
-
-const NewTaskBtn = styled.button`
-  background-color: ${(props) => props.state ? "black" : "white"};
-  border-radius:50%;
-  border-color: ${(props) => props.state ? "white" : "black"};
-  color: ${(props) => props.state ? "white" : "black"};
-  font-size: 50px;
-  padding: 0 15px 0 15px;
-  margin: 3% 0 0 0;
-  transform: translate(30%, 0);
-
-  &:hover{
-    background-color: black;
-    color: white;
-  }
-
-  @media (max-width: 1200px) {
-    font-size: 40px;
-    padding: 0 12px 0 12px;
-  }
-  @media (max-width: 600px) {
-    font-size: 35px;
-    padding: 0 10px 0 10px;
-  }
-`
-
 const NotesMenuBtn = styled.button`
   background-color: ${props=>props.backgroundColor};
   color: #95ABFB;
@@ -365,6 +304,16 @@ class Dashboard extends Component{
       showTickerAndBuffer: true,
       showCountdowns: false
     }
+  }
+
+  addNewNote(){
+    this.setState({
+      selectedNote: {
+        name: "",
+        comments: ""
+      },
+      showNoteComments: true
+    });
   }
 
   addNewTask(){
@@ -1203,8 +1152,12 @@ class Dashboard extends Component{
           notes={this.state.notes}
           notesLoaded={this.state.notesLoaded}
           todayDate={this.state.todayDate}
+          selectedNote={this.state.selectedNote}
+          showNoteComments={this.state.showNoteComments}
+          hideNoteComments={this.hideNoteComments.bind(this)}
           hideNotesMenu={this.hideNotesMenu.bind(this)}
           changeSelectedNote={this.changeSelectedNote.bind(this)}
+          addNewNote={this.addNewNote.bind(this)}
           ></NotesMenu>
         </div>
         <div style={{zIndex: 45, position: 'fixed', pointerEvents: this.state.showNoteComments?'auto':'none', opacity: this.state.showNoteComments?1:0, transition: 'opacity 0.3s'}}>
@@ -1338,16 +1291,6 @@ class Dashboard extends Component{
               </div>
             </StatsContainer>
           </div>
-          <NewNoteAndTaskContainer>
-            <NewNoteButton onClick={this.toggleShowNewNote.bind(this)}><NewNoteButtonImg src={newNoteButton}/></NewNoteButton>
-            {/*<NewTaskBtn state={this.state.showNewTask} onClick={this.toggleShowNewTask.bind(this)}>+</NewTaskBtn>*/}
-            {this.state.showNewNote?
-              <NewNote
-                todayDate={this.state.todayDate}
-                user={this.props.user}
-              ></NewNote>
-              : null}
-          </NewNoteAndTaskContainer>
         </div>
 
       </div>

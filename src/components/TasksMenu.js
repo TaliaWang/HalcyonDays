@@ -154,7 +154,7 @@ const Title = styled.div`
   border-bottom: 1px solid white;
   color: white;
   font-size: calc(1vh + 0.75vw);
-  padding-bottom: 5px;
+  padding-bottom: calc(0.4vh + 0.1vw);
   width: 15vw;
   margin-left: 5%;
   margin-right: 5%;

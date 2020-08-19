@@ -218,7 +218,7 @@ class NoteComments extends Component{
         comments: commentsInput.innerText,
         timestamp: firebase.firestore.Timestamp.fromDate(date)
       }).then(()=>{
-        this.props.changeSelectedNoteFromTaskComments(noteInput);
+        this.props.changeSelectedNoteFromNoteComments(noteInput);
       });
     }
     // rest of these cases deal with editing an existing note
