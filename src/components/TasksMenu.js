@@ -4,18 +4,17 @@ import {BeatLoader} from 'react-spinners';
 import firebase from '../firebase';
 import styled from 'styled-components'
 import checkmark from "../images/checkmark.jpg";
+import checkedImg from "../images/checkedImg.svg";
+import uncheckedImg from "../images/uncheckedImg.svg";
 import xImg from "../images/xImg.svg";
 import newItemImg from "../images/newItemImg.svg";
 
 const Checkbox = styled.button`
-  margin-right: 2%;
+  margin-right: calc(0.1vh + 0.075vw);
   transform: translate(0, 20%);
-  border: 1px solid white;
-  border-radius: 3px;
+  border: none;
+  outline: none;
   background-color: transparent;
-  height: 22px;
-  width: 22px;
-  padding: 2px;
   float: left;
 
   @media (max-width: 600px) {
@@ -61,7 +60,7 @@ const DateText = styled.p`
   text-align: left;
   font-size: calc(0.6vh + 0.45vw);
   color: white;
-  margin: 5% 5% 0 5%;
+  margin: 0 5% 0 5%;
 `
 
 const EditBtn = styled.button`
@@ -84,8 +83,9 @@ const Form = styled.form`
 
 const Img = styled.img`
   position: relative;
-  height: 100%;
-  width: 100%;
+  height: calc(0.8vh + 0.6vw);
+  width: calc(0.8vh + 0.6vw);
+  transform: translate(0, 5%);
 `
 
 const LabelBtn = styled.button`
@@ -124,10 +124,11 @@ const NewTaskImg = styled.img`
 `
 
 const P = styled.p`
-  font-size: calc(0.8vh + 0.6vw);
+  font-size: ${props=>props.fontSize};
   color: white;
   margin-top: 1%;
   margin-bottom: 0;
+  margin-left: ${props=>props.marginLeft};
   font-family: openSansRegular;
   display: flex;
 
@@ -137,16 +138,22 @@ const P = styled.p`
 `
 
 const TasksContainer = styled.div`
-  overflow-y: scroll;
-  overflow-x: scroll;
-  height: 80vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  padding: 0;
+  left: 0;
+  right: calc(2.4vh + 1.8vw);
+  top: calc(7vh + 5.75vw);
+  bottom: ${props=>props.showTaskComments
+    ? 'calc(((100vh - (0.6vh + 0.45vw) - (2vh + 1.5vw)) / 100) * 52)' // account for task comments height
+    : 'calc(2vh + 1.5vw)'
+  };
+  position: absolute;
   z-index: 50;
   font-size: calc(0.8vh + 0.6vw);
-
-  ::-webkit-scrollbar {
-    width: 0px;
-    background: transparent; /* make scrollbar transparent */
-  }
 `
 
 const Title = styled.div`
@@ -158,6 +165,7 @@ const Title = styled.div`
   width: 15vw;
   margin-left: 5%;
   margin-right: 5%;
+  margin-bottom: calc(0.6vh + 0.45vw);
 
   @media (max-width: 800px) {
     width: 22vw;
@@ -167,13 +175,9 @@ const Title = styled.div`
 const XBtn = styled.button`
   background: none;
   border: none;
-  font-size: 120%;
+  font-size: calc(0.8vh + 0.6vw);
   color: white;
   display: none;
-
-  &:hover{
-    font-size: 140%;
-  }
 `
 
 
@@ -235,24 +239,28 @@ class TasksMenu extends Component{
             <Title>My Tasks</Title>
             <CloseBtn><CloseImg src={xImg} onClick={this.props.hideTasksMenu}/></CloseBtn>
           </div>
-          <br/>
-          <DateText>{this.props.todayDate.day}, {this.props.todayDate.month} {this.props.todayDate.date}, {this.props.todayDate.year}
-             &nbsp;-<br/>{this.props.tmrwDate.day}, {this.props.tmrwDate.month} {this.props.tmrwDate.date}, {this.props.tmrwDate.year}
-          </DateText>
+          <div style={{marginTop: 'calc(2vh + 1.5vw)'}}>
+            <DateText>
+              {this.props.todayDate.day}, {this.props.todayDate.month} {this.props.todayDate.date}, {this.props.todayDate.year}&nbsp;-
+            </DateText>
+            <DateText>
+              {this.props.tmrwDate.day}, {this.props.tmrwDate.month} {this.props.tmrwDate.date}, {this.props.tmrwDate.year}
+            </DateText>
+          </div>
           {this.props.tasksLoaded
             ?
-            <TasksContainer>
+            <TasksContainer showTaskComments={this.props.showTaskComments}>
               {this.state.tasks.map((task, index) =>
-                <div style={{margin: '5% 5% 1% 5%', zIndex: 50}}>
+                <div style={{margin: '0 5% calc(0.5vh + 0.375vw) 5%', zIndex: 50}}>
                   <Checkbox id={`${task}${index}`} onClick={this.props.toggleTaskChecked.bind(this)}>
-                    {task.finished ? <Img src={checkmark}/> : null}
+                    {task.finished ? <Img src={checkedImg}/> : <Img src={uncheckedImg}/>}
                   </Checkbox>
                   <div onMouseOver={this.displayBtns.bind(this)} onMouseLeave={this.hideBtns.bind(this)}>
                     <LabelBtn id={`${task}${index}_label`}>
-                      <P className='taskText' onClick={this.props.changeSelectedTaskFromTaskMenu.bind(this)}>{task.name}</P>
+                      <P fontSize='calc(0.8vh + 0.6vw)' className='taskText' onClick={this.props.changeSelectedTaskFromTaskMenu.bind(this)}>{task.name}</P>
                       <XBtn className="XBtn" onClick = {this.deleteTask.bind(this)}>✖</XBtn>
                     </LabelBtn>
-                    <P>({task.hours}h&nbsp;{task.mins}m)</P>
+                    <P fontSize='calc(0.6vh + 0.45vw)' marginLeft='calc(1.5vh + 1.125vw)'>({task.hours}h&nbsp;{task.mins}m)</P>
                   </div>
                 </div>
               )}

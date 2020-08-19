@@ -114,47 +114,36 @@ const P = styled.p`
   font-size: calc(0.8vh + 0.6vw);
   color: white;
   margin-top: 0.5%;
+  width: 100%;
   cursor: pointer;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
 `
 
 const Ul = styled.ul`
   font-size: calc(0.8vh + 0.6vw);
   color: white;
+  left: 0;
   right: calc(2.4vh + 1.8vw);
   top: calc(4vh + 3vw);
   bottom: ${props=>props.showNoteComments
-    ? 'calc(((100vh - (0.6vh + 0.45vw) - (2vh + 1.5vw)) / 100) * 50)' // account for note comments height - new item button height
+    ? 'calc(((100vh - (0.6vh + 0.45vw) - (2vh + 1.5vw)) / 100) * 50)' // account for note comments height
     : 'calc(2vh + 1.5vw)'
   };
   position: absolute;
   overflow-y: auto;
   overflow-x: hidden;
   z-index: 20;
-
-  ::-webkit-scrollbar {
-    width: calc(0.4vh + 0.3vw);
-    background: white;
-  }
-  ::-webkit-scrollbar-thumb {
-    background-color: #FF68B8;
-  }
 `
 
 const XBtn = styled.button`
   background: none;
   border: none;
-  font-size: 120%;
+  font-size: calc(0.8vh + 0.6vw);
   color: white;
   display: none;
   transform: translate(0, -25%);
-
-  &:hover{
-    font-size: 140%;
-  }
-
-  @media (max-width: 600px) {
-      transform: translate(0, -15%);
-  }
 `
 
 class NotesMenu extends Component{

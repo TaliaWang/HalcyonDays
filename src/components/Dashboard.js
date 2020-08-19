@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import Countdowns from "./Countdowns.js"
 import Footer from "./Footer.js"
 import Header from "./Header.js"
-import NewNote from "./NewNote.js"
 import NotesMenu from "./NotesMenu.js"
 import NoteComments from "./NoteComments.js"
 import Statistics from "./Statistics.js"
