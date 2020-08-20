@@ -40,13 +40,13 @@ const CloseImg = styled.img`
 
 const CommentsInput = styled.div`
   background-color: transparent;
-  border: none;
+  border: 1px solid black;
   color: white;
   font-size: calc(0.8vh + 0.6vw);
   font-weight: normal;
-  bottom: calc(1.2vh + 0.8vw); /*spacing above editing/saved button*/
-  top: calc(3vh + 2.25vw); /*spacing accounts for task and time inputs */
-  position: absolute;
+  margin-top: 0;
+  height: calc(((100vh - (0.6vh + 0.45vw) - (2vh + 1.5vw)) / 100) * 50 - (3.2vh + 2.4vw) - ${props=>props.noteInputHeight}px - (1vh + 0.75vw)); /*height of container - img height - max height of note input - buffer*/
+  position: relative;
   width: 85%;
   margin-left: 5%;
   margin-right: 5%;
@@ -114,19 +114,6 @@ const MinsInput = styled.div`
   }
 `
 
-const TimeInputContainer = styled.div`
-  border: none;
-  display: flex;
-  color: white;
-  font-size: calc(0.8vh + 0.6vw);
-  width: 85%;
-  margin-left: 5%;
-  margin-right: 5%;
-  &:focus{
-    outline: none;
-  }
-`
-
 const NoteInput = styled.div`
   background-color: transparent;
   border-bottom: 1px solid white;
@@ -136,7 +123,7 @@ const NoteInput = styled.div`
   color: white;
   font-size: calc(1vh + 0.75vw);
   font-weight: bold;
-  max-height: calc(1.4vh + 1.05vw); /* one line only with a little spacing to prevent scroll with 1 line */
+  max-height: calc(4vh + 3vw); /* a few lines only with a little spacing to prevent scroll with 1 line */
   padding-bottom: calc(0.4vh + 0.1vw);
   padding-top: calc(0.4vh + 0.1vw);
   width: 85%;
@@ -160,12 +147,28 @@ class NoteComments extends Component{
     }
   }
 
+  componentDidMount(){
+    // constantly resize commentsInput to respond to noteInput height changes
+    var noteInput = document.getElementsByClassName('noteComments_note')[0];
+    this.getNoteInputHeight(noteInput)
+      setInterval(()=>
+      {
+        this.getNoteInputHeight(noteInput);
+      }, 100);
+  }
+
   componentDidUpdate(prevProps){
     if(this.props.selectedNote != prevProps.selectedNote){
       this.setState({
-        editsMade: false
+        editsMade: false,
       });
     }
+  }
+
+  getNoteInputHeight(noteInput){
+    this.setState({
+      noteInputHeight: noteInput.offsetHeight
+    });
   }
 
   checkIfEditsMade(e){
@@ -183,6 +186,7 @@ class NoteComments extends Component{
         editsMade: true
       });
     }
+    this.getNoteInputHeight(noteInput);
   }
 
   discardChanges(e){
@@ -268,7 +272,7 @@ class NoteComments extends Component{
         <CloseBtn><CloseImg src={xImg} onClick={this.discardChanges.bind(this)}/></CloseBtn>
         <Border>
           <NoteInput className='noteComments_note' onInput={this.checkIfEditsMade.bind(this)} contentEditable={true}>{this.props.selectedNote.name}</NoteInput>
-          <CommentsInput className='noteComments_comments' onInput={this.checkIfEditsMade.bind(this)} contentEditable={true}>{this.props.selectedNote.comments}</CommentsInput>
+          <CommentsInput className='noteComments_comments' onInput={this.checkIfEditsMade.bind(this)} noteInputHeight={this.state.noteInputHeight} contentEditable={true}>{this.props.selectedNote.comments}</CommentsInput>
           {this.state.editsMade?<EditingSavedBtn onClick={this.saveNote.bind(this)}><EditingSavedImg src={saveImg}/></EditingSavedBtn> : null}
         </Border>
       </Container>
