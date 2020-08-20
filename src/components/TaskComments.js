@@ -44,9 +44,9 @@ const CommentsInput = styled.div`
   color: white;
   font-size: calc(0.8vh + 0.6vw);
   font-weight: normal;
-  bottom: calc(1.2vh + 0.8vw); /*spacing above editing/saved button*/
-  top: calc(3vh + 2.25vw); /*spacing accounts for task and time inputs */
-  position: absolute;
+  /*height of container - img height - max height of task input - height of time input - buffer*/
+  height: calc(((100vh - (0.6vh + 0.45vw) - (2vh + 1.5vw)) / 100) * 50 - (3.2vh + 2.4vw) - ${props=>props.taskInputHeight}px - (0.8vh + 0.6vw) - (1.8vh + 1.35vw));
+  position: relative;
   width: 85%;
   margin-left: 5%;
   margin-right: 5%;
@@ -137,7 +137,7 @@ const TaskInput = styled.div`
   color: white;
   font-size: calc(1vh + 0.75vw);
   font-weight: bold;
-  max-height: calc(1.4vh + 1.05vw); /* one line only with a little spacing to prevent scroll with 1 line */
+  max-height: calc(4vh + 3vw); /* a few lines only with a little spacing to prevent scroll with 1 line */
   padding-bottom: calc(0.4vh + 0.1vw);
   padding-top: calc(0.4vh + 0.1vw);
   width: 85%;
@@ -161,10 +161,21 @@ class TaskComments extends Component{
     }
   }
 
+  componentDidMount(){
+    // constantly resize commentsInput to respond to taskInput height changes
+    var taskInput = document.getElementsByClassName('taskComments_task')[0];
+    this.getTaskInputHeight(taskInput)
+      setInterval(()=>
+      {
+        this.getTaskInputHeight(taskInput);
+      }, 100);
+  }
+
   componentDidUpdate(prevProps){
     if(this.props.selectedTask != prevProps.selectedTask){
       this.setState({
-        editsMade: false
+        editsMade: false,
+        taskInputHeight: 0
       });
     }
   }
@@ -188,6 +199,7 @@ class TaskComments extends Component{
         editsMade: true
       });
     }
+    this.getTaskInputHeight(taskInput);
   }
 
   discardChanges(e){
@@ -195,6 +207,12 @@ class TaskComments extends Component{
         this.resetTask(e);
     }
     this.props.hideTaskComments();
+  }
+
+  getTaskInputHeight(taskInput){
+    this.setState({
+      taskInputHeight: taskInput.offsetHeight
+    });
   }
 
   ensureValidTimeInput(e){
@@ -329,7 +347,7 @@ class TaskComments extends Component{
             &nbsp;
             <MinsInput className = 'taskComments_mins' onClick={this.ensureValidTimeInput.bind(this)} onInput={this.ensureValidTimeInput.bind(this)} contentEditable={true}>{this.props.selectedTask.mins}</MinsInput>m
           </TimeInputContainer>
-          <CommentsInput className='taskComments_comments' onInput={this.checkIfEditsMade.bind(this)} contentEditable={true}>{this.props.selectedTask.comments}</CommentsInput>
+          <CommentsInput className='taskComments_comments' onInput={this.checkIfEditsMade.bind(this)} taskInputHeight={this.state.taskInputHeight} contentEditable={true}>{this.props.selectedTask.comments}</CommentsInput>
           {this.state.editsMade?<EditingSavedBtn onClick={this.saveTask.bind(this)}><EditingSavedImg src={saveImg}/></EditingSavedBtn> : null}
         </Border>
       </Container>

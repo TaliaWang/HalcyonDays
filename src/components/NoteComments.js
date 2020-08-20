@@ -45,7 +45,8 @@ const CommentsInput = styled.div`
   font-size: calc(0.8vh + 0.6vw);
   font-weight: normal;
   margin-top: 0;
-  height: calc(((100vh - (0.6vh + 0.45vw) - (2vh + 1.5vw)) / 100) * 50 - (3.2vh + 2.4vw) - ${props=>props.noteInputHeight}px - (1vh + 0.75vw)); /*height of container - img height - max height of note input - buffer*/
+  /*height of container - img height - max height of note input - buffer*/
+  height: calc(((100vh - (0.6vh + 0.45vw) - (2vh + 1.5vw)) / 100) * 50 - (3.2vh + 2.4vw) - ${props=>props.noteInputHeight}px - (1vh + 0.75vw));
   position: relative;
   width: 85%;
   margin-left: 5%;
@@ -144,6 +145,7 @@ class NoteComments extends Component{
     super(props);
     this.state = {
       editsMade: false,
+      noteInputHeight: 0
     }
   }
 
