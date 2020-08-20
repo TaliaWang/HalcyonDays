@@ -40,7 +40,7 @@ const CloseImg = styled.img`
 
 const CommentsInput = styled.div`
   background-color: transparent;
-  border: 1px solid black;
+  border: none;
   color: white;
   font-size: calc(0.8vh + 0.6vw);
   font-weight: normal;
@@ -214,19 +214,24 @@ class NoteComments extends Component{
     .collection('notes');
 
     if (this.props.selectedNote.name == ""){
-      // add a new note
-      var date = new Date();
-      notesRef.doc(noteInput.textContent)
-      .set({
-        name: noteInput.textContent,
-        comments: commentsInput.innerText,
-        timestamp: firebase.firestore.Timestamp.fromDate(date)
-      }).then(()=>{
-        this.props.changeSelectedNoteFromNoteComments(noteInput);
-      });
+      if (noteInput.textContent == ""){
+        alert("Please enter a note name to save this note.");
+      }
+      else{
+        // add a new note
+        var date = new Date();
+        notesRef.doc(noteInput.textContent)
+        .set({
+          name: noteInput.textContent,
+          comments: commentsInput.innerText,
+          timestamp: firebase.firestore.Timestamp.fromDate(date)
+        }).then(()=>{
+          this.props.changeSelectedNoteFromNoteComments(noteInput);
+        });
+      }
     }
     // rest of these cases deal with editing an existing note
-    else if (noteInput.innerText == ""){
+    else if (noteInput.textContent == ""){
       alert("Please enter a note name to save this note.");
     }
     else if (noteInput.innerText == this.props.selectedNote.name){

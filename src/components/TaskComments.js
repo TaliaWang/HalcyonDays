@@ -253,22 +253,27 @@ class TaskComments extends Component{
     .collection("tasks")
 
     if (this.props.selectedTask.name == ""){
-      // add a new task
-      var date = new Date();
-      tasksRef.doc(taskInput.textContent)
-      .set({
-        name: taskInput.textContent,
-        hours: tempHours,
-        mins: tempMins,
-        finished: false,
-        comments: commentsInput.innerText,
-        timestamp: firebase.firestore.Timestamp.fromDate(date)
-      }).then(()=>{
-        this.props.changeSelectedTaskFromTaskComments(taskInput);
-      });
+      if (taskInput.textContent == ""){
+        alert("Please enter a task name to save this task.");
+      }
+      else{
+        // add a new task
+        var date = new Date();
+        tasksRef.doc(taskInput.textContent)
+        .set({
+          name: taskInput.textContent,
+          hours: tempHours,
+          mins: tempMins,
+          finished: false,
+          comments: commentsInput.innerText,
+          timestamp: firebase.firestore.Timestamp.fromDate(date)
+        }).then(()=>{
+          this.props.changeSelectedTaskFromTaskComments(taskInput);
+        });
+      }
     }
     // rest of these cases deal with editing an existing task
-    else if (taskInput.innerText == ""){
+    else if (taskInput.textContent == ""){
       alert("Please enter a task name to save this task.");
     }
     else if (taskInput.innerText == this.props.selectedTask.name){
