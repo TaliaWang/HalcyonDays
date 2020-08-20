@@ -24,11 +24,11 @@ const CloseImg = styled.img`
 `
 
 const Container = styled.div`
-  position: absolute;
+  position: fixed;
   text-align: left;
   background-image: linear-gradient(#FF68B8, #FFAA90);
   width: 100%;
-  min-height: 30vh;
+  height: calc(15vh + 11.25vw);
   bottom: -3vh;
   z-index: 60;
 `
@@ -62,8 +62,8 @@ const Title = styled.div`
   border-bottom: 1px solid white;
   color: white;
   font-size: calc(1vh + 0.75vw);
-  padding-top: 10px;
-  padding-bottom: 5px;
+  padding-top: calc(0.4vh + 0.1vw);
+  padding-bottom: calc(0.4vh + 0.1vw);
   width: 20vw;
   margin-left: 5%;
   margin-right: 5%;
