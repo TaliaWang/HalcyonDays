@@ -131,10 +131,6 @@ const P = styled.p`
   margin-left: ${props=>props.marginLeft};
   font-family: openSansRegular;
   display: flex;
-
-  @media (max-width: 600px) {
-      font-size: 100%;
-  }
 `
 
 const TasksContainer = styled.div`

@@ -26,14 +26,20 @@ const Container = styled.div`
 `
 
 const Input = styled.input`
+  background-color: transparent;
+  color: white;
   height: 20px;
   position: relative;
-  border: none;
+  border: 1px solid white;
   outline: none;
-  border-radius: 3px;
+  border-radius: 5px;
   padding: 3%;
   width: 40%;
   float: ${props=> props.float};
+
+  ::placeholder{
+    color: white;
+  }
 `
 
 
@@ -364,8 +370,8 @@ class TimeBarSettings extends Component{
             <div>
               <TimeForm onSubmit={this.submitSleepTime.bind(this)}>
                   <P_Form>Sleep Time</P_Form>
-                  <Input id='sleepHour' value={this.state.sleepHour} onChange={this.handleSleepChange.bind(this)} type='number' type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour' required/>
-                  <Input id='sleepMin' value={this.state.sleepMin} onChange={this.handleSleepChange.bind(this)} type='number' type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
+                  <Input id='sleepHour' value={this.state.sleepHour} onChange={this.handleSleepChange.bind(this)} type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour' required/>
+                  <Input id='sleepMin' value={this.state.sleepMin} onChange={this.handleSleepChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
                   <P>:</P>
                   <button type='submit' style={{display: 'none'}}/>
               </TimeForm>
