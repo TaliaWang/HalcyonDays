@@ -262,7 +262,7 @@ class TasksMenu extends Component{
               )}
             </TasksContainer>
             :
-            <div style={{textAlign: 'center', marginTop: '5%'}}>
+            <div style={{textAlign: 'center', marginTop: 'calc(3vh + 2.25vw)'}}>
               <BeatLoader color='white' size='10'/>
             </div>
           }

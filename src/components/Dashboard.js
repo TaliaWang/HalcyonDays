@@ -301,7 +301,9 @@ class Dashboard extends Component{
       notesLoaded: false,
       tasksLoaded: false,
       showTickerAndBuffer: true,
-      showCountdowns: false
+      countdowns: [],
+      countdownsLoaded: false,
+      showCountdowns: false,
     }
   }
 
@@ -713,6 +715,9 @@ class Dashboard extends Component{
 
                 // listen for changes in notes
                 this.getNotes();
+
+                // listen for changes in countdowns
+                this.getCountdowns();
             });
         });
       });
@@ -802,6 +807,49 @@ class Dashboard extends Component{
       timePassedWidth: adjustedTimePassedWidth,
       hoursLeft: hoursLeft,
       minsLeft: minsLeft
+    });
+  }
+
+  getCountdowns(){
+    var db = firebase.firestore();
+    this.setState({
+      countdownsLoaded: false
+    }, ()=>{
+      const countdownsRef = db.collection('users').doc(this.props.user.uid).collection('countdowns');
+      countdownsRef.orderBy('timestamp', 'asc').onSnapshot(querySnapshot=>{
+        var tempCountdowns = [];
+        querySnapshot.forEach(doc=>{
+          tempCountdowns.push(doc.data());
+        });
+        // add another field to describe minutes left until the event
+        var curDate = new Date();
+        tempCountdowns.forEach(countdown=>{
+          countdown.minsLeft = (countdown.timestamp.toDate() - curDate) / (60000);
+        });
+        this.setState({
+          countdowns: tempCountdowns,
+          countdownsLoaded: true
+        });
+      });
+    });
+  }
+
+  getNotes(){
+    var db = firebase.firestore();
+    this.setState({
+      notesLoaded: false
+    }, ()=>{
+      const notesRef = db.collection('users').doc(this.props.user.uid).collection('notes');
+      notesRef.orderBy('timestamp', 'asc').onSnapshot(querySnapshot=>{
+        var tempNotes = [];
+        querySnapshot.forEach(doc=>{
+          tempNotes.push(doc.data());
+        });
+        this.setState({
+          notes: tempNotes,
+          notesLoaded: true
+        });
+      });
     });
   }
 
@@ -988,25 +1036,6 @@ class Dashboard extends Component{
       });
     });
   }
-
-  getNotes(){
-    var db = firebase.firestore();
-    this.setState({
-      notesLoaded: false
-    }, ()=>{
-      const notesRef = db.collection('users').doc(this.props.user.uid).collection('notes');
-      notesRef.orderBy('timestamp', 'asc').onSnapshot(querySnapshot=>{
-        var tempNotes = [];
-        querySnapshot.forEach(doc=>{
-          tempNotes.push(doc.data());
-        });
-        this.setState({
-          notes: tempNotes,
-          notesLoaded: true
-        });
-      });
-    });
-}
 
   toggleShowNewNote(){
     this.setState(prevState => ({
@@ -1263,6 +1292,9 @@ class Dashboard extends Component{
               </div>
               <div style={{opacity: this.state.showCountdowns?1:0, pointerEvents: this.state.showCountdowns?'auto':'none', transition: 'opacity 0.3s'}}>
                 <Countdowns
+                  user={this.props.user}
+                  countdowns={this.state.countdowns}
+                  countdownsLoaded={this.state.countdownsLoaded}
                   hideCountdowns={this.hideCountdowns.bind(this)}
                 ></Countdowns>
               </div>
