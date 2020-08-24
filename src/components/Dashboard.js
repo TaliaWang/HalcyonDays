@@ -684,18 +684,21 @@ class Dashboard extends Component{
           }, ()=>{
             this.calculateTimePassedWidth();
             this.setTodayTomorrowDates();
+            this.getCountdowns();
 
             // update current time and time passed every minute
             setInterval(result=>{
               this.calculateTimePassedWidth();
             }, 60000);
 
-            // check whether today/tomorrow should up dated every 15 seconds
+            // check whether today/tomorrow should up dated every second
             // note: checking every minute might not be frequent enough,
             // since case to reset today/tomorrow occurs when current time == wakeup time
+            // also update countdowns to reflect accurate time left
             setInterval(result=>{
               this.calculateCurrentDateTime();
               this.updateTodayTomorrowDates();
+              this.updateCountdownTimes();
             }, 1000);
           });
         }).then(result=>{
@@ -1125,6 +1128,18 @@ class Dashboard extends Component{
     var newLocked = !this.state.tasksMenuLocked;
     this.setState({
       tasksMenuLocked: newLocked
+    });
+  }
+
+  updateCountdownTimes(){
+    var curDate = new Date();
+    var tempCountdowns = this.state.countdowns;
+    tempCountdowns.forEach(countdown=>{
+      countdown.minsLeft = (countdown.timestamp.toDate() - curDate) / (60000);
+    });
+    this.setState({
+      countdowns: tempCountdowns,
+      countdownsLoaded: true
     });
   }
 
