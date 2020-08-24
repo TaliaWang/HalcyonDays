@@ -186,7 +186,7 @@ class TaskComments extends Component{
     var minsInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_mins')[0];
     var commentsInput = e.target.parentElement.parentElement.getElementsByClassName('taskComments_comments')[0];
 
-    if (taskInput.innerText == this.props.selectedTask.name
+    if (taskInput.innerText.trim() == this.props.selectedTask.name
       && hoursInput.innerText == this.props.selectedTask.hours
       && minsInput.innerText == this.props.selectedTask.mins
       && commentsInput.innerText == this.props.selectedTask.comments){
@@ -277,9 +277,9 @@ class TaskComments extends Component{
       else{
         // add a new task
         var date = new Date();
-        tasksRef.doc(taskInput.textContent)
+        tasksRef.doc(taskInput.textContent.trim())
         .set({
-          name: taskInput.textContent,
+          name: taskInput.textContent.trim(),
           hours: tempHours,
           mins: tempMins,
           finished: false,
@@ -294,10 +294,10 @@ class TaskComments extends Component{
     else if (taskInput.textContent == ""){
       alert("Please enter a task name to save this task.");
     }
-    else if (taskInput.innerText == this.props.selectedTask.name){
+    else if (taskInput.innerText.trim() == this.props.selectedTask.name){
       // we can just update the fields of this task in the database
       var db = firebase.firestore();
-      tasksRef.doc(taskInput.textContent)
+      tasksRef.doc(taskInput.textContent.trim())
       .update({
         hours: tempHours,
         mins: tempMins,
@@ -306,7 +306,7 @@ class TaskComments extends Component{
         this.props.changeSelectedTaskFromTaskComments(taskInput);
       });
     }
-    else if (taskInput.innerText != this.props.selectedTask.name){
+    else if (taskInput.innerText.trim() != this.props.selectedTask.name){
       // we have to delete this task and create a new one
       var oldDate;
       var oldFinished;
@@ -321,8 +321,8 @@ class TaskComments extends Component{
         // delete old task
         tasksRef.doc(this.props.selectedTask.name).delete();
         // create a new task with the edited information and old timestamp
-        tasksRef.doc(taskInput.textContent).set({
-          name: taskInput.textContent,
+        tasksRef.doc(taskInput.textContent.trim()).set({
+          name: taskInput.textContent.trim(),
           hours: tempHours,
           mins: tempMins,
           finished: oldFinished,

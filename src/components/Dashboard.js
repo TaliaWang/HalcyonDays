@@ -29,13 +29,13 @@ const CountdownsBtn = styled.button`
   left: 20%;
   bottom: 3vh;
   color: #95ABFB;
-  font-size: 100%;
-  padding: 5px 7px 5px 7px;
+  font-size: calc(0.8vh + 0.6vw);
+  padding: calc(0.6vh + 0.45vw);
   z-index: 45;
 
   @media (max-width: 800px) {
     width: 40%;
-    bottom: 10vh;
+    bottom: calc(15vh + 11.25vw);
     left: 30%;
   }
 `
@@ -103,6 +103,12 @@ const H3 = styled.h3`
   }
 `
 
+const IconImg = styled.img`
+  transform: translate(0, 10%);
+  height: calc(1vh + 0.8vw);
+  width: calc(1vh + 0.8vw);
+`
+
 const LeftRightBtn = styled.button`
   border: none;
   outline: none;
@@ -130,14 +136,14 @@ const LeftRightBtnImg = styled.img`
 const NotesMenuBtn = styled.button`
   background-color: ${props=>props.backgroundColor};
   color: #95ABFB;
-  font-size: 100%;
+  font-size: calc(0.8vh + 0.6vw);
+  padding: calc(0.6vh + 0.45vw);
   border: none;
   border-radius: 3px;
   float: left;
   top: calc(3.2vh + 2.4vw);
   left: 1vh;
   z-index: 50;
-  padding: 5px 7px 5px 7px;
   position: fixed;
 `
 
@@ -165,9 +171,9 @@ const StatsBtn = styled.button`
   right: 0;
   bottom: 0;
   color: #95ABFB;
-  font-size: 100%;
-  padding: 5px 7px 5px 7px;
-  z-index: 45;
+  font-size: calc(0.8vh + 0.6vw);
+  padding: calc(0.6vh + 0.45vw);
+  z-index: 20;
 
   @media (max-width: 800px) {
     width: 100%;
@@ -200,13 +206,13 @@ const TasksMenuBtn = styled.button`
   color: #95ABFB;
   border: none;
   border-radius: 3px;
-  font-size: 100%;
+  font-size: calc(0.8vh + 0.6vw);
+  padding: calc(0.6vh + 0.45vw);
   margin: 0;
   top: calc(3.2vh + 2.4vw);
   right: 1vh;
   float: right;
   z-index: 50;
-  padding: 5px 7px 5px 7px;
   position: fixed;
 `
 
@@ -402,7 +408,7 @@ class Dashboard extends Component{
   }
 
   changeSelectedNoteFromNoteComments(noteInput){
-    var noteName = noteInput.textContent;
+    var noteName = noteInput.textContent.trim();
     var tempSelectedNote;
     var db = firebase.firestore();
     var noteRef =  db.collection("users").doc(this.props.user.uid)
@@ -423,7 +429,7 @@ class Dashboard extends Component{
   }
 
   changeSelectedTaskFromTaskComments(taskInput){
-    var taskName = taskInput.textContent;
+    var taskName = taskInput.textContent.trim();
     var tempSelectedTask;
     var db = firebase.firestore();
     var taskRef =  db.collection("users").doc(this.props.user.uid)
@@ -1170,7 +1176,7 @@ class Dashboard extends Component{
             className="icon"
             backgroundColor={'white'}
             onClick={this.showNotesMenu.bind(this)}>
-            <img style={{transform: 'translate(0, 10%)'}} height='20px' width='20px' src={notesMenuImg}/>
+            <IconImg src={notesMenuImg}/>
             &nbsp;My Notes
           </NotesMenuBtn>
         </div>
@@ -1204,7 +1210,7 @@ class Dashboard extends Component{
             className="icon"
             backgroundColor={'white'}
             onClick={this.showTasks.bind(this)}>
-            <img style={{transform: 'translate(0, 10%)'}} height='20px' width='22px' src={tasksMenuImg}/>
+            <IconImg src={tasksMenuImg}/>
             &nbsp;My Tasks
           </TasksMenuBtn>
         </div>
@@ -1286,7 +1292,7 @@ class Dashboard extends Component{
             <CountdownsContainer>
               <div style={{opacity: this.state.showCountdowns?0:1, transition: 'opacity 0.3s'}}>
                 <CountdownsBtn className='icon' onClick={this.showCountdowns.bind(this)}>
-                  <img height='20px' width='20px' src={countdownsImg} style={{transform: 'translate(0, 10%)'}}/>
+                  <IconImg src={countdownsImg}/>
                   &nbsp;My Countdowns
                 </CountdownsBtn>
               </div>
@@ -1303,7 +1309,7 @@ class Dashboard extends Component{
             <StatsContainer>
               <div style={{opacity: this.state.showStatistics?0:1, transition: 'opacity 0.3s'}}>
                 <StatsBtn onClick={this.showStatistics.bind(this)} className='icon'>
-                  <img src={statisticsImg}/>
+                  <IconImg src={statisticsImg}/>
                   &nbsp;My Stats
                 </StatsBtn>
               </div>

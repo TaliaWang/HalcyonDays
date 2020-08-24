@@ -177,7 +177,7 @@ class NoteComments extends Component{
     var noteInput = e.target.parentElement.parentElement.getElementsByClassName('noteComments_note')[0];
     var commentsInput = e.target.parentElement.parentElement.getElementsByClassName('noteComments_comments')[0];
 
-    if (noteInput.innerText == this.props.selectedNote.name
+    if (noteInput.innerText.trim() == this.props.selectedNote.name
       && commentsInput.innerText == this.props.selectedNote.comments){
         this.setState({
           editsMade: false
@@ -222,9 +222,9 @@ class NoteComments extends Component{
       else{
         // add a new note
         var date = new Date();
-        notesRef.doc(noteInput.textContent)
+        notesRef.doc(noteInput.textContent.trim())
         .set({
-          name: noteInput.textContent,
+          name: noteInput.textContent.trim(),
           comments: commentsInput.innerText,
           timestamp: firebase.firestore.Timestamp.fromDate(date)
         }).then(()=>{
@@ -236,18 +236,18 @@ class NoteComments extends Component{
     else if (noteInput.textContent == ""){
       alert("Please enter a note name to save this note.");
     }
-    else if (noteInput.innerText == this.props.selectedNote.name){
+    else if (noteInput.innerText.trim() == this.props.selectedNote.name){
       // we can just update the fields of this note in the database
       var db = firebase.firestore();
       notesRef.doc(noteInput.textContent)
       .update({
-        name: noteInput.textContent,
+        name: noteInput.textContent.trim(),
         comments: commentsInput.innerText
       }).then(()=>{
         this.props.changeSelectedNoteFromNoteComments(noteInput);
       });
     }
-    else if (noteInput.innerText != this.props.selectedNote.name){
+    else if (noteInput.textContent.trim() != this.props.selectedNote.name){
       // we have to delete this task and create a new one
       var oldDate;
       var oldFinished;
@@ -262,8 +262,8 @@ class NoteComments extends Component{
         // delete old task
         notesRef.doc(this.props.selectedNote.name).delete();
         // create a new task with the edited information and old timestamp
-        notesRef.doc(noteInput.textContent).set({
-          name: noteInput.textContent,
+        notesRef.doc(noteInput.textContent.trim()).set({
+          name: noteInput.textContent.trim(),
           comments: commentsInput.innerText,
           timestamp: firebase.firestore.Timestamp.fromDate(oldDate)
         }).then(()=>{

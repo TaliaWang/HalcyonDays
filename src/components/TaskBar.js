@@ -21,6 +21,7 @@ const Button = styled.button`
 const P = styled.p`
     margin-top: 10px;
     pointer-events: none;
+    display: ${props=>props.width == 0 ? 'none' : 'auto'};
 `
 
 const TimeContainer = styled.div`
@@ -99,7 +100,7 @@ const TimePassed = styled.div`
 `
 
 const Task = styled.button`
-  border-left: 1px solid white;
+  border-left: ${props=>props.width == 0 ? 'none' : '1px solid white'};
   border-top: none;
   border-bottom: none;
   border-right: none;
@@ -110,6 +111,7 @@ const Task = styled.button`
   text-align: center;
   z-index: 11;
   width: ${props => props.width}%;
+  padding: 0;
 
   &:hover{
     background-color: ${props=>props.finished? '#ff94cb' : '#fcb8a3'};
@@ -347,7 +349,7 @@ class TaskBar extends Component{
               task.finished? null : <Task id={`${index}taskChunk_${task.name}`} key={`${index}taskChunk_${task}`} onClick={this.props.changeSelectedTaskFromTaskBar} width={this.getTaskWidth(task)} finished={task.finished}/>
             )}
             {this.state.tasks.slice(0).reverse().map((task, index) =>
-              task.finished? <Task id={`${index}taskChunk_${task.name}`} key={`${index}taskChunk_${task}`} onClick={this.props.changeSelectedTaskFromTaskBar} width={this.getTaskWidth(task)} finished={task.finished}><P>✓</P></Task> : null
+              task.finished? <Task id={`${index}taskChunk_${task.name}`} key={`${index}taskChunk_${task}`} onClick={this.props.changeSelectedTaskFromTaskBar} width={this.getTaskWidth(task)} finished={task.finished}><P width={this.getTaskWidth(task)}>✓</P></Task> : null
             )}
           </div>
         </TasksContainer>

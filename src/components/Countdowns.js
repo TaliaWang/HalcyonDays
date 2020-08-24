@@ -57,10 +57,11 @@ const Container = styled.div`
   height: calc(15vh + 11.25vw);
   overflow-y: hidden;
   bottom: 0;
-  z-index: 50;
+  z-index: 100;
 
   @media (max-width: 800px) {
     width: 40%;
+    bottom: calc(15vh + 11.25vw);
   }
 `
 
