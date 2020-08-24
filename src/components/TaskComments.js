@@ -80,7 +80,7 @@ const Container = styled.div`
 
 const EditingSavedBtn = styled.button`
   position: absolute;
-  border: 1px solid black;
+  border: none;
   border: none;
   background-color: transparent;
   bottom: 0;

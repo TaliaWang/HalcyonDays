@@ -3,13 +3,19 @@ import React, { Component } from 'react';
 import firebase from '../firebase';
 import 'firebase/firestore'
 import styled from 'styled-components';
-import graphicSquare from "../images/graphicSquare.jpg"
+import graphicSquare from "../images/graphicSquare.jpg";
+import saveImg from "../images/saveImg.svg";
 
-const ClockModeBtn = styled.button`
+const ClockModeP = styled.p`
   background-color: transparent;
   color: white;
   border: none;
-  transform: translate(0, 180%);
+  transform: translate(0, -200%);
+  font-size: 80%;
+  cursor: pointer;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
 `
 
 const Container = styled.div`
@@ -58,10 +64,28 @@ const P_Form = styled.p`
   font-size: 100%;
 `
 
+const SaveBtn = styled.button`
+  border: none;
+  background-color: transparent;
+  position: absolute;
+  padding: 0;
+  margin-left: 5%;
+  transform: translate(0, -150%);
+  height: 20px;
+  width: 20px;
+`
+
+const SaveImg = styled.img`
+  height: 20px;
+  width: 20px;
+  padding: 0;
+`
+
 const TimeForm = styled.form`
   text-align: center;
   float: left;
   width: 85%;
+  margin-top: -1%;
 `
 
 class TimeBarSettings extends Component{
@@ -77,29 +101,6 @@ class TimeBarSettings extends Component{
       wakeupHour: "",
       wakeupMin: "",
       wakeupClockMode: this.props.wakeupClockMode,
-    }
-  }
-
-  componentDidUpdate(prevProps){
-    if (this.state.popupOption != this.props.popupOption){
-      this.setState({
-        popupOption: this.props.popupOption,
-      })
-    }
-    if (this.state.relaxationClockMode != this.props.relaxationClockMode){
-      this.setState({
-        relaxationClockMode: this.props.relaxationClockMode
-      });
-    }
-    if (this.state.sleepClockMode != this.props.sleepClockMode){
-      this.setState({
-        sleepClockMode: this.props.sleepClockMode
-      });
-    }
-    if (this.state.wakeupClockMode != this.props.wakeupClockMode){
-      this.setState({
-        wakeupClockMode: this.props.wakeupClockMode
-      });
     }
   }
 
@@ -156,6 +157,7 @@ class TimeBarSettings extends Component{
     .update({
       sleepHour: newHour,
       sleepMin: newMin,
+      sleepClockMode: this.state.sleepClockMode
     }).then(result=>{
       this.setState({
         sleepHour: "",
@@ -178,7 +180,7 @@ class TimeBarSettings extends Component{
       // total reference sleep minutes w.r.t 12 AM
       var totalSleepMinsRef = sleepHourRef*60 + parseInt(this.props.sleepMin);
 
-      var relaxationHourRef = this.state.relaxationHour;
+      var relaxationHourRef = parseInt(this.state.relaxationHour);
       if (this.state.relaxationClockMode == 'PM' && this.state.relaxationHour != 12){
         relaxationHourRef = relaxationHourRef + 12;
       }
@@ -239,6 +241,7 @@ class TimeBarSettings extends Component{
           .update({
             relaxationHour: newHour,
             relaxationMin: newMin,
+            relaxationClockMode: this.state.relaxationClockMode
           }).then(result=>{
             this.setState({
               relaxationHour: "",
@@ -271,6 +274,7 @@ class TimeBarSettings extends Component{
       .update({
         wakeupHour: newHour,
         wakeupMin: newMin,
+        wakeupClockMode: this.state.wakeupClockMode
       }).then(result=>{
         this.setState({
           wakeupHour: "",
@@ -283,36 +287,26 @@ class TimeBarSettings extends Component{
   }
 
   toggleWakeupClockMode(){
-    var db = firebase.firestore();
-    if (this.props.wakeupClockMode == "AM"){
-      db.collection("users").doc(this.props.user.uid)
-      .update({
+    if (this.state.wakeupClockMode == "AM"){
+      this.setState({
         wakeupClockMode: "PM"
-      }).then(result=>{
-          this.props.calculateTimePassedWidth();
       });
     }
-    else if (this.props.wakeupClockMode == "PM"){
-      db.collection("users").doc(this.props.user.uid)
-      .update({
+    else if (this.state.wakeupClockMode == "PM"){
+      this.setState({
         wakeupClockMode: "AM"
-      }).then(result=>{
-          this.props.calculateTimePassedWidth();
       });
     }
   }
 
   toggleRelaxationClockMode(){
-    var db = firebase.firestore();
-    if (this.props.relaxationClockMode == "AM"){
-      db.collection("users").doc(this.props.user.uid)
-      .update({
+    if (this.state.relaxationClockMode == "AM"){
+      this.setState({
         relaxationClockMode: "PM"
       });
     }
-    else if (this.props.relaxationClockMode == "PM"){
-      db.collection("users").doc(this.props.user.uid)
-      .update({
+    else if (this.state.relaxationClockMode == "PM"){
+      this.setState({
         relaxationClockMode: "AM"
       });
     }
@@ -320,16 +314,14 @@ class TimeBarSettings extends Component{
 
   toggleSleepClockMode(){
     var db = firebase.firestore();
-    if (this.props.sleepClockMode == "AM"){
-      db.collection("users").doc(this.props.user.uid)
-      .update({
-        sleepClockMode: "PM"
+    if (this.state.sleepClockMode == "AM"){
+      this.setState({
+        sleepClockMode: 'PM'
       });
     }
-    else if (this.props.sleepClockMode == "PM"){
-      db.collection("users").doc(this.props.user.uid)
-      .update({
-        sleepClockMode: "AM"
+    else if (this.state.sleepClockMode == "PM"){
+      this.setState({
+        sleepClockMode: 'AM'
       });
     }
   }
@@ -345,13 +337,12 @@ class TimeBarSettings extends Component{
                   <Input id='wakeupHour' value={this.state.wakeupHour} onChange={this.handleWakeupChange.bind(this)} type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour' required/>
                   <Input id='wakeupMin' value={this.state.wakeupMin} onChange={this.handleWakeupChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
                   <P>:</P>
-                  <button type='submit' style={{display: 'none'}}/>
+                <div style={{float: 'right', transform: 'translate(130%, 0)'}}>
+                  <ClockModeP onClick={this.toggleWakeupClockMode.bind(this)}>{this.state.wakeupClockMode}</ClockModeP>
+                  <SaveBtn type='submit'><SaveImg src={saveImg}/></SaveBtn>
+                </div>
               </TimeForm>
-              <div style={{float: 'right', padding: '0.5%'}}>
-                <ClockModeBtn onClick={this.toggleWakeupClockMode.bind(this)}>{this.state.wakeupClockMode}</ClockModeBtn>
-              </div>
             </div>
-            <br/><br/><br/><br/>
 
             <div>
               <TimeForm onSubmit={this.submitRelaxationTime.bind(this)}>
@@ -359,13 +350,12 @@ class TimeBarSettings extends Component{
                 <Input id='relaxationHour' value={this.state.relaxationHour} onChange={this.handleRelaxationChange.bind(this)} type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour'/>
                 <Input id='relaxationMin' value={this.state.relaxationMin} onChange={this.handleRelaxationChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute'/>
                 <P>:</P>
-                <button type='submit' style={{display: 'none'}}/>
+                <div style={{float: 'right', transform: 'translate(130%, 0)'}}>
+                  <ClockModeP onClick={this.toggleRelaxationClockMode.bind(this)}>{this.state.relaxationClockMode}</ClockModeP>
+                  <SaveBtn type='submit'><SaveImg src={saveImg}/></SaveBtn>
+                </div>
               </TimeForm>
-              <div style={{float: 'right', padding: '0.5%'}}>
-                <ClockModeBtn onClick={this.toggleRelaxationClockMode.bind(this)}>{this.state.relaxationClockMode}</ClockModeBtn>
-              </div>
             </div>
-            <br/><br/><br/><br/>
 
             <div>
               <TimeForm onSubmit={this.submitSleepTime.bind(this)}>
@@ -373,11 +363,11 @@ class TimeBarSettings extends Component{
                   <Input id='sleepHour' value={this.state.sleepHour} onChange={this.handleSleepChange.bind(this)} type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour' required/>
                   <Input id='sleepMin' value={this.state.sleepMin} onChange={this.handleSleepChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
                   <P>:</P>
-                  <button type='submit' style={{display: 'none'}}/>
+                <div style={{float: 'right', transform: 'translate(130%, 0)'}}>
+                  <ClockModeP onClick={this.toggleSleepClockMode.bind(this)}>{this.state.sleepClockMode}</ClockModeP>
+                  <SaveBtn type='submit'><SaveImg src={saveImg}/></SaveBtn>
+                </div>
               </TimeForm>
-              <div style={{float: 'right', padding: '0.5%'}}>
-                <ClockModeBtn onClick={this.toggleSleepClockMode.bind(this)}>{this.state.sleepClockMode}</ClockModeBtn>
-              </div>
             </div>
 
         </Container>
