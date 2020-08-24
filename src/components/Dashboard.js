@@ -7,6 +7,7 @@ import Footer from "./Footer.js"
 import Header from "./Header.js"
 import NotesMenu from "./NotesMenu.js"
 import NoteComments from "./NoteComments.js"
+import PopupMessages from "./PopupMessages.js"
 import Statistics from "./Statistics.js"
 import TaskBar from "./TaskBar.js"
 import TaskComments from "./TaskComments.js"
@@ -83,7 +84,8 @@ const DateCarousel = styled.div`
 `
 
 const H1 = styled.h1`
-  margin-top: calc(6vh + 4.5vw);
+  margin-top: calc(4vh + 3vw);
+  margin-bottom: 0;
   font-weight: normal;
   font-size: calc(4vh + 3vw);
 `
@@ -1263,6 +1265,7 @@ class Dashboard extends Component{
           {/*<H3>Dashboard</H3>
           {this.props.user ? <P>{this.props.user.email}</P> : null}*/}
           <H1>{this.state.currentDateTime.hour}:{this.state.currentDateTime.min} {this.state.currentDateTime.am_pm}</H1>
+          <PopupMessages></PopupMessages>
           <DateCarousel>
             <div style={{float: 'left', display: 'flex', transform: 'translate(-20%, 0)', padding: '0', marginRight: '0'}}>
               <LeftRightBtn id='backward' onClick={this.changeTodayTmrw.bind(this)}>
