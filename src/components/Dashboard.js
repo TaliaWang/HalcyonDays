@@ -1440,7 +1440,7 @@ class Dashboard extends Component{
 
         {/* main center components */}
         <div style={{textAlign: 'center'}}>
-          <div style={{opacity: this.state.popupMessage == "" ? 0 : 1, transition: 'opacity 0.3s'}}>
+          <div style={{opacity: this.state.popupMessage == "" ? 0 : 1}}>
              <PopupMessages
               popupMessage={this.state.popupMessage}
               popupMessageImg={this.state.popupMessageImg}
