@@ -75,10 +75,12 @@ class MoreOptions extends Component{
             "aboutUsOption" :
               <div style={{textAlign: 'center', paddingLeft: '5%', paddingRight: '5%', marginTop: '40px'}}>
                 <h4 style={{textAlign: 'center'}}>Sophie Tong</h4>
-                <p style={{textAlign: 'justify', marginTop: '-10px'}}>The designer for HalcyonDays, and an Architecture student at the University of Toronto. Find me at:</p>
-                <hr/>
-                <h4 style={{textAlign: 'center'}}>Talia Wang</h4>
-                <p style={{textAlign: 'justify', marginTop: '-10px'}}>The developer for HalcyonDays, and a Software Engineering student at the University of Waterloo. Find me at:</p>
+                <p style={{textAlign: 'justify', marginTop: '-20px'}}>The designer for HalcyonDays, and an Architecture student at the University of Toronto. Find me at:</p>
+                <a target="_blank" href='https://www.linkedin.com/in/sophie-tong-7328241b4'><img src={linkedinImg} width='60px' height='60px' style={{transform: 'translate(-20%, -50%)'}}/></a>
+                <a target="_blank" href='https://www.instagram.com/che_____n'><img src={instagramImg} width='30px' height='30px' style={{transform: 'translate(-20%, -145%)'}}/></a>
+                <hr style={{marginTop: '-40px'}}/>
+                <h4 style={{textAlign: 'center', marginTop: '0px'}}>Talia Wang</h4>
+                <p style={{textAlign: 'justify', marginTop: '-20px'}}>The developer for HalcyonDays, and a Software Engineering student at the University of Waterloo. Find me at:</p>
                 <a target="_blank" href='https://github.com/TaliaWang'><img src={githubImg} style={{transform: 'translate(0, -120%)'}}/></a>
                 <a target="_blank" href='https://www.linkedin.com/in/talia-wang'><img src={linkedinImg} width='60px' height='60px' style={{transform: 'translate(0, -40%)'}}/></a>
                 <a target="_blank" href='https://www.instagram.com/taliawang5881'><img src={instagramImg} width='30px' height='30px' style={{transform: 'translate(0, -125%)'}}/></a>
