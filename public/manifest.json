@@ -3,7 +3,7 @@
   "version": "1.0",
   "manifest_version": 2,
   "web_accessible_resources": [
-   "favicon.ico",
+   "logo32.png",
    "logo192.png",
    "logo512.png"
  ],
