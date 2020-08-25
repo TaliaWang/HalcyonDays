@@ -84,7 +84,7 @@ const DateCarousel = styled.div`
 `
 
 const H1 = styled.h1`
-  margin-top: calc(4vh + 3vw);
+  margin-top: calc(9vh + 6.75vw);
   margin-bottom: 0;
   font-weight: normal;
   font-size: calc(4vh + 3vw);
@@ -836,141 +836,132 @@ class Dashboard extends Component{
       });
     }
     else if (this.state.tasksLoaded){
-      // get status of tasks
-      var allTasksFinished = true;
-      this.state.tasks.forEach(task=>{
-        if (!task.finished){
-          allTasksFinished = false;
-        }
-      });
 
-      // calculate all time references w.r.t 12 AM
-
-      var curDate = new Date();
-      var curMinsRef = curDate.getHours()*60 + curDate.getMinutes();
-
-      var wakeupMinsRef =
-        (this.state.wakeupClockMode == 'PM' && this.state.wakeupHour < 12
-          ? this.state.wakeupHour + 12
-          : (this.state.wakeupClockMode == 'AM' && this.state.wakeupHour == 12
-            ? 0
-            : this.state.wakeupHour
-            )
-        )*60 + parseInt(this.state.wakeupMin);
-
-      var sleepMinsRef =
-        (this.state.sleepClockMode == 'PM' && this.state.sleepHour < 12
-          ? this.state.sleepHour + 12
-          : (this.state.sleepClockMode == 'AM' && this.state.sleepHour == 12
-            ? 0
-            : this.state.sleepHour
-            )
-        )*60 + parseInt(this.state.sleepMin);
-
-      var relaxationMinsRef =
-        (this.state.relaxationClockMode == 'PM' && this.state.relaxationHour < 12
-          ? this.state.relaxationHour + 12
-          : (this.state.relaxationClockMode == 'AM' && this.state.relaxationHour == 12
-            ? 0
-            : this.state.relaxationHour
-            )
-        )*60 + parseInt(this.state.relaxationMin);
-
-      // determine if current time is in sleep block
-      if (wakeupMinsRef > sleepMinsRef){  // no wrapping around 12 AM
-        if (curMinsRef > sleepMinsRef && curMinsRef < wakeupMinsRef){
-          // current time is in sleep section
-          // switch messages here depending on whether all tasks are finished
-          if (allTasksFinished){
-            this.setState({
-              popupMessage: "Nice! You've finished all your tasks for the day, so don't forget to get enough sleep.",
-              popupMessageImg: 'accomplishedImg'
-            });
+      if (this.state.tasks.length == 0){
+        this.setState({
+          popupMessage: "Hey there! Looks like you've got no tasks for today.",
+          popupMessageImg: 'accomplishedImg'
+        });
+      }
+      else{
+        // get status of tasks
+        var allTasksFinished = true;
+        this.state.tasks.forEach(task=>{
+          if (!task.finished){
+            allTasksFinished = false;
           }
-          else{
-            this.setState({
-              popupMessage: "Heads up! You still have some work left, but it's not healthy to stay up too late. You'll be more productive tomorrow if you get some sleep now!",
-              popupMessageImg: 'warningImg'
-            });
+        });
+
+        // calculate all time references w.r.t 12 AM
+
+        var curDate = new Date();
+        var curMinsRef = curDate.getHours()*60 + curDate.getMinutes();
+
+        var wakeupMinsRef =
+          (this.state.wakeupClockMode == 'PM' && this.state.wakeupHour < 12
+            ? this.state.wakeupHour + 12
+            : (this.state.wakeupClockMode == 'AM' && this.state.wakeupHour == 12
+              ? 0
+              : this.state.wakeupHour
+              )
+          )*60 + parseInt(this.state.wakeupMin);
+
+        var sleepMinsRef =
+          (this.state.sleepClockMode == 'PM' && this.state.sleepHour < 12
+            ? this.state.sleepHour + 12
+            : (this.state.sleepClockMode == 'AM' && this.state.sleepHour == 12
+              ? 0
+              : this.state.sleepHour
+              )
+          )*60 + parseInt(this.state.sleepMin);
+
+        var relaxationMinsRef =
+          (this.state.relaxationClockMode == 'PM' && this.state.relaxationHour < 12
+            ? this.state.relaxationHour + 12
+            : (this.state.relaxationClockMode == 'AM' && this.state.relaxationHour == 12
+              ? 0
+              : this.state.relaxationHour
+              )
+          )*60 + parseInt(this.state.relaxationMin);
+
+        // determine if current time is in sleep block
+        if (wakeupMinsRef > sleepMinsRef){  // no wrapping around 12 AM
+          if (curMinsRef > sleepMinsRef && curMinsRef < wakeupMinsRef){
+            // current time is in sleep section
+            // switch messages here depending on whether all tasks are finished
+            if (allTasksFinished){
+              this.setState({
+                popupMessage: "Nice! You've finished all your tasks for the day, so don't forget to get enough sleep.",
+                popupMessageImg: 'accomplishedImg'
+              });
+            }
+            else{
+              this.setState({
+                popupMessage: "Heads up! You still have some work left, but it's not healthy to stay up too late. You'll be more productive tomorrow if you get some sleep now!",
+                popupMessageImg: 'warningImg'
+              });
+            }
+            return;
           }
-          return;
         }
-      }
-      else if (wakeupMinsRef < sleepMinsRef){ // wrapped around 12 AM
-        if (curMinsRef > sleepMinsRef || curMinsRef < wakeupMinsRef){
-          // current time is in sleep section
-          // switch messages here depending on whether all tasks are finished
-          if (allTasksFinished){
-            this.setState({
-              popupMessage: "Nice! You've finished all your tasks for the day, so don't forget to get enough sleep.",
-              popupMessageImg: 'accomplishedImg'
-            });
+        else if (wakeupMinsRef < sleepMinsRef){ // wrapped around 12 AM
+          if (curMinsRef > sleepMinsRef || curMinsRef < wakeupMinsRef){
+            // current time is in sleep section
+            // switch messages here depending on whether all tasks are finished
+            if (allTasksFinished){
+              this.setState({
+                popupMessage: "Nice! You've finished all your tasks for the day, so don't forget to get enough sleep.",
+                popupMessageImg: 'accomplishedImg'
+              });
+            }
+            else{
+              this.setState({
+                popupMessage: "Heads up! You still have some work left, but it's not healthy to stay up too late. You'll be more productive tomorrow if you get some sleep now!",
+                popupMessageImg: 'warningImg'
+              });
+            }
+            return;
           }
-          else{
-            this.setState({
-              popupMessage: "Heads up! You still have some work left, but it's not healthy to stay up too late. You'll be more productive tomorrow if you get some sleep now!",
-              popupMessageImg: 'warningImg'
-            });
+        }
+        // or determine if current time is in rest block
+        if (sleepMinsRef > relaxationMinsRef){ // no wrap around 12 AM
+          if (curMinsRef > relaxationMinsRef && curMinsRef < sleepMinsRef){
+             // current time is in relaxation block
+             if (allTasksFinished){
+               this.setState({
+                 popupMessage: "Excellent! You've finished all your tasks for the day. Take a break before you sleep, you deserve it!",
+                 popupMessageImg: 'accomplishedImg'
+               });
+             }
+             else{
+               this.setState({
+                 popupMessage: "You have a bit more work to complete for today. Try to focus and get it done, then take some time to relax!",
+                 popupMessageImg: 'warningImg'
+               });
+             }
+             return;
           }
-          return;
         }
-      }
-      // or determine if current time is in rest block
-      if (sleepMinsRef > relaxationMinsRef){ // no wrap around 12 AM
-        if (curMinsRef > relaxationMinsRef && curMinsRef < sleepMinsRef){
-           // current time is in relaxation block
-           if (allTasksFinished){
-             this.setState({
-               popupMessage: "Excellent! You've finished all your tasks for the day. Take a break before you sleep, you deserve it!",
-               popupMessageImg: 'accomplishedImg'
-             });
-           }
-           else{
-             this.setState({
-               popupMessage: "You have a bit more work to complete for today. Try to focus and get it done, then take some time to relax!",
-               popupMessageImg: 'warningImg'
-             });
-           }
-           return;
+        else if (sleepMinsRef < relaxationMinsRef){ // wrap around 12 AM
+          if (curMinsRef > relaxationMinsRef ||  curMinsRef < sleepMinsRef){
+             // current time is in relaxation block
+             if (allTasksFinished){
+               this.setState({
+                 popupMessage: "Excellent! You've finished all your tasks for the day. Take a break before you sleep, you deserve it!",
+                 popupMessageImg: 'accomplishedImg'
+               });
+             }
+             else{
+               this.setState({
+                 popupMessage: "You have a bit more work to complete for today. Try to focus and get it done, then take some time to relax!",
+                 popupMessageImg: 'warningImg'
+               });
+             }
+             return;
+          }
         }
-      }
-      else if (sleepMinsRef < relaxationMinsRef){ // wrap around 12 AM
-        if (curMinsRef > relaxationMinsRef ||  curMinsRef < sleepMinsRef){
-           // current time is in relaxation block
-           if (allTasksFinished){
-             this.setState({
-               popupMessage: "Excellent! You've finished all your tasks for the day. Take a break before you sleep, you deserve it!",
-               popupMessageImg: 'accomplishedImg'
-             });
-           }
-           else{
-             this.setState({
-               popupMessage: "You have a bit more work to complete for today. Try to focus and get it done, then take some time to relax!",
-               popupMessageImg: 'warningImg'
-             });
-           }
-           return;
-        }
-      }
-      // or determine if current time is in tasks block
-      if (curMinsRef < relaxationMinsRef){ // no 12 AM wrap
-        if (allTasksFinished){
-          this.setState({
-            popupMessage: "Awesome, you're done your tasks early! There's time to squeeze more work in to get ahead, or you can take a longer break.",
-            popupMessageImg: 'accomplishedImg'
-          });
-        }
-        else{
-          // user working through tasks
-          this.setState({
-            popupMessage: "You got this! Pace yourself and focus on your work—you'll get these tasks done in no time!",
-            popupMessageImg: 'warningImg'
-          });
-        }
-        return;
-      }
-      else if (curMinsRef > relaxationMinsRef){ // wrap around 12 AM
-        if (curMinsRef > sleepMinsRef || curMinsRef < relaxationMinsRef){
+        // or determine if current time is in tasks block
+        if (curMinsRef < relaxationMinsRef){ // no 12 AM wrap
           if (allTasksFinished){
             this.setState({
               popupMessage: "Awesome, you're done your tasks early! There's time to squeeze more work in to get ahead, or you can take a longer break.",
@@ -985,6 +976,24 @@ class Dashboard extends Component{
             });
           }
           return;
+        }
+        else if (curMinsRef > relaxationMinsRef){ // wrap around 12 AM
+          if (curMinsRef > sleepMinsRef || curMinsRef < relaxationMinsRef){
+            if (allTasksFinished){
+              this.setState({
+                popupMessage: "Awesome, you're done your tasks early! There's time to squeeze more work in to get ahead, or you can take a longer break.",
+                popupMessageImg: 'accomplishedImg'
+              });
+            }
+            else{
+              // user working through tasks
+              this.setState({
+                popupMessage: "You got this! Pace yourself and focus on your work—you'll get these tasks done in no time!",
+                popupMessageImg: 'warningImg'
+              });
+            }
+            return;
+          }
         }
       }
     }
@@ -1431,17 +1440,13 @@ class Dashboard extends Component{
 
         {/* main center components */}
         <div style={{textAlign: 'center'}}>
-          {/*<H3>Dashboard</H3>
-          {this.props.user ? <P>{this.props.user.email}</P> : null}*/}
-          <H1>{this.state.currentDateTime.hour}:{this.state.currentDateTime.min} {this.state.currentDateTime.am_pm}</H1>
-          {this.state.popupMessage == ""
-            ? null
-            :
+          <div style={{opacity: this.state.popupMessage == "" ? 0 : 1, transition: 'opacity 0.3s'}}>
              <PopupMessages
               popupMessage={this.state.popupMessage}
               popupMessageImg={this.state.popupMessageImg}
              ></PopupMessages>
-          }
+          </div>
+          <H1>{this.state.currentDateTime.hour}:{this.state.currentDateTime.min} {this.state.currentDateTime.am_pm}</H1>
           <DateCarousel>
             <div style={{float: 'left', display: 'flex', transform: 'translate(-20%, 0)', padding: '0', marginRight: '0'}}>
               <LeftRightBtn id='backward' onClick={this.changeTodayTmrw.bind(this)}>

@@ -9,27 +9,27 @@ import accomplishedImg from "../images/accomplishedImg.png";
 import warningImg from "../images/warningImg.png";
 
 const Container = styled.div`
-  position: relative;
+  position: absolute;
   color: #B7C6FB;
+  display: flex;
   font-size: calc(0.8vh + 0.6vw);
   text-align: left;
   padding: calc(0.4vh + 0.3vw);
   background-color: white;
   width: calc(16vh + 12vw);
-  height: calc(5vh + 3.75vw);
+  max-height: calc(6vh + 4.5vw);
   left: 50%;
   transform: translate(-50%, 0);
   box-shadow: -1px 2px 5px 0px #B7C6FB;
-  margin-top: calc(0.8vh + 0.6vw);
-  margin-bottom: calc(1.6vh + 1.2vw);
+  margin-top: calc(-6vh - 4.5vw);
+  margin-bottom: calc(0.4vh + 0.3vw);
 `
 
 const Img = styled.img`
   width: calc(3vh + 2.25vw);
   height: calc(3vh + 2.25vw);
+  padding: calc(0.4vh + 0.3vw);
   position: relative;
-  margin-top: 50%;
-  transform: translate(0, -50%);
 `
 
 const P = styled.p`
@@ -47,10 +47,7 @@ class PopupMessages extends Component{
   render(){
     return(
       <Container>
-        <div style={{float: 'left', width: 'calc(12vh + 9vw)'}}>
           {this.props.popupMessage}
-        </div>
-        <div style={{float: 'right'}}>
           <Img src={this.props.popupMessageImg == 'accomplishedImg'
             ? accomplishedImg
             : (this.props.popupMessageImg == 'warningImg'
@@ -58,7 +55,6 @@ class PopupMessages extends Component{
               : null
             )
           }/>
-        </div>
       </Container>
     );
   }
