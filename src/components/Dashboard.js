@@ -84,7 +84,7 @@ const DateCarousel = styled.div`
 `
 
 const H1 = styled.h1`
-  margin-top: calc(9vh + 6.75vw);
+  margin-top: calc(10vh + 7.5vw);
   margin-bottom: 0;
   font-weight: normal;
   font-size: calc(4vh + 3vw);
@@ -886,7 +886,7 @@ class Dashboard extends Component{
 
         // determine if current time is in sleep block
         if (wakeupMinsRef > sleepMinsRef){  // no wrapping around 12 AM
-          if (curMinsRef > sleepMinsRef && curMinsRef < wakeupMinsRef){
+          if (curMinsRef >= sleepMinsRef && curMinsRef < wakeupMinsRef){
             // current time is in sleep section
             // switch messages here depending on whether all tasks are finished
             if (allTasksFinished){
@@ -905,7 +905,7 @@ class Dashboard extends Component{
           }
         }
         else if (wakeupMinsRef < sleepMinsRef){ // wrapped around 12 AM
-          if (curMinsRef > sleepMinsRef || curMinsRef < wakeupMinsRef){
+          if (curMinsRef >= sleepMinsRef || curMinsRef < wakeupMinsRef){
             // current time is in sleep section
             // switch messages here depending on whether all tasks are finished
             if (allTasksFinished){
@@ -925,7 +925,7 @@ class Dashboard extends Component{
         }
         // or determine if current time is in rest block
         if (sleepMinsRef > relaxationMinsRef){ // no wrap around 12 AM
-          if (curMinsRef > relaxationMinsRef && curMinsRef < sleepMinsRef){
+          if (curMinsRef >= relaxationMinsRef && curMinsRef < sleepMinsRef){
              // current time is in relaxation block
              if (allTasksFinished){
                this.setState({
@@ -943,7 +943,7 @@ class Dashboard extends Component{
           }
         }
         else if (sleepMinsRef < relaxationMinsRef){ // wrap around 12 AM
-          if (curMinsRef > relaxationMinsRef ||  curMinsRef < sleepMinsRef){
+          if (curMinsRef >= relaxationMinsRef ||  curMinsRef < sleepMinsRef){
              // current time is in relaxation block
              if (allTasksFinished){
                this.setState({
@@ -978,7 +978,7 @@ class Dashboard extends Component{
           return;
         }
         else if (curMinsRef > relaxationMinsRef){ // wrap around 12 AM
-          if (curMinsRef > sleepMinsRef || curMinsRef < relaxationMinsRef){
+          if (curMinsRef >= wakeupMinsRef || curMinsRef < relaxationMinsRef){
             if (allTasksFinished){
               this.setState({
                 popupMessage: "Awesome, you're done your tasks early! There's time to squeeze more work in to get ahead, or you can take a longer break.",
