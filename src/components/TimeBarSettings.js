@@ -64,6 +64,13 @@ const P_Form = styled.p`
   font-size: 100%;
 `
 
+const RightContainer = styled.div`
+  float: right;
+  transform: translate(130%, 0);
+  margin: 0;
+  padding: 0;
+`
+
 const SaveBtn = styled.button`
   border: none;
   background-color: transparent;
@@ -337,10 +344,10 @@ class TimeBarSettings extends Component{
                   <Input id='wakeupHour' value={this.state.wakeupHour} onChange={this.handleWakeupChange.bind(this)} type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour' required/>
                   <Input id='wakeupMin' value={this.state.wakeupMin} onChange={this.handleWakeupChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
                   <P>:</P>
-                <div style={{float: 'right', transform: 'translate(130%, 0)'}}>
+                <RightContainer>
                   <ClockModeP onClick={this.toggleWakeupClockMode.bind(this)}>{this.state.wakeupClockMode}</ClockModeP>
                   <SaveBtn type='submit'><SaveImg src={saveImg}/></SaveBtn>
-                </div>
+                </RightContainer>
               </TimeForm>
             </div>
 
@@ -350,10 +357,10 @@ class TimeBarSettings extends Component{
                 <Input id='relaxationHour' value={this.state.relaxationHour} onChange={this.handleRelaxationChange.bind(this)} type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour'/>
                 <Input id='relaxationMin' value={this.state.relaxationMin} onChange={this.handleRelaxationChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute'/>
                 <P>:</P>
-                <div style={{float: 'right', transform: 'translate(130%, 0)'}}>
+                <RightContainer>
                   <ClockModeP onClick={this.toggleRelaxationClockMode.bind(this)}>{this.state.relaxationClockMode}</ClockModeP>
                   <SaveBtn type='submit'><SaveImg src={saveImg}/></SaveBtn>
-                </div>
+                </RightContainer>
               </TimeForm>
             </div>
 
@@ -363,10 +370,10 @@ class TimeBarSettings extends Component{
                   <Input id='sleepHour' value={this.state.sleepHour} onChange={this.handleSleepChange.bind(this)} type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour' required/>
                   <Input id='sleepMin' value={this.state.sleepMin} onChange={this.handleSleepChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
                   <P>:</P>
-                <div style={{float: 'right', transform: 'translate(130%, 0)'}}>
+                <RightContainer>
                   <ClockModeP onClick={this.toggleSleepClockMode.bind(this)}>{this.state.sleepClockMode}</ClockModeP>
                   <SaveBtn type='submit'><SaveImg src={saveImg}/></SaveBtn>
-                </div>
+                </RightContainer>
               </TimeForm>
             </div>
 
