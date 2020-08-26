@@ -10,7 +10,7 @@ const ClockModeP = styled.p`
   background-color: transparent;
   color: white;
   border: none;
-  transform: translate(0, -200%);
+  transform: translate(0, -190%);
   font-size: 80%;
   cursor: pointer;
   display: inline-block;
@@ -65,8 +65,9 @@ const P_Form = styled.p`
 `
 
 const RightContainer = styled.div`
-  float: right;
-  transform: translate(130%, 0);
+  display: flex;
+  position: absolute;
+  right: 5%;
   margin: 0;
   padding: 0;
 `
@@ -77,7 +78,7 @@ const SaveBtn = styled.button`
   position: absolute;
   padding: 0;
   margin-left: 5%;
-  transform: translate(0, -150%);
+  transform: translate(120%, -150%);
   height: 20px;
   width: 20px;
 `
@@ -92,7 +93,7 @@ const TimeForm = styled.form`
   text-align: center;
   float: left;
   width: 85%;
-  margin-top: -1%;
+  margin-bottom: 2%;
 `
 
 class TimeBarSettings extends Component{
@@ -366,10 +367,10 @@ class TimeBarSettings extends Component{
 
             <div>
               <TimeForm onSubmit={this.submitSleepTime.bind(this)}>
-                  <P_Form>Sleep Time</P_Form>
-                  <Input id='sleepHour' value={this.state.sleepHour} onChange={this.handleSleepChange.bind(this)} type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour' required/>
-                  <Input id='sleepMin' value={this.state.sleepMin} onChange={this.handleSleepChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
-                  <P>:</P>
+                <P_Form>Sleep Time</P_Form>
+                <Input id='sleepHour' value={this.state.sleepHour} onChange={this.handleSleepChange.bind(this)} type='number' pattern="\d+" min="1" max='12' step="1" float='left' placeholder='Hour' required/>
+                <Input id='sleepMin' value={this.state.sleepMin} onChange={this.handleSleepChange.bind(this)} type='number' pattern="\d+" min="0" max='59' step="1" float='right' placeholder='Minute' required/>
+                <P>:</P>
                 <RightContainer>
                   <ClockModeP onClick={this.toggleSleepClockMode.bind(this)}>{this.state.sleepClockMode}</ClockModeP>
                   <SaveBtn type='submit'><SaveImg src={saveImg}/></SaveBtn>
