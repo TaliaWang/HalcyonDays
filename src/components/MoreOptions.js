@@ -9,6 +9,7 @@ import helpImg from "../images/helpImg.svg";
 import githubImg from "../images/githubImg.png";
 import linkedinImg from "../images/linkedinImg.png";
 import instagramImg from "../images/instagramImg.png";
+import YouTube from 'react-youtube';
 
 const Container = styled.div`
   background-color: transparent;
@@ -54,6 +55,13 @@ class MoreOptions extends Component{
   }
 
   render(){
+    const youtubeOpts = {
+      height: '190',
+      width: '300',
+      playerVars: {
+        autoplay: 1,
+      },
+    };
     return(
       <Container>
         {
@@ -67,10 +75,10 @@ class MoreOptions extends Component{
                 <Button id='feedbackOption' onClick={this.props.switchHeaderOption}><img src={feedbackImg} width='20px' height='20px' style={{transform: 'translate(0, 10%)'}}/>&nbsp;&nbsp;Give us feedback</Button>
               </div>,
             "helpOption":
-              <div style={{marginTop: '40px'}}>
-                  <h4 style={{textAlign: 'center'}}>Time bar legend</h4>
-                  <p style={{textAlign: 'center', marginTop: '-10px'}}>Coming soon!</p>
-                  <BackBtn onClick={this.props.goBackInMoreOption}>➤</BackBtn>
+              <div style={{marginTop: '40px', textAlign: 'center'}}>
+                <h4>Video guide</h4>
+                <YouTube opts={youtubeOpts} videoId="HGhfPBj5RV0"></YouTube>
+                <BackBtn onClick={this.props.goBackInMoreOption}>➤</BackBtn>
               </div>,
             "aboutUsOption" :
               <div style={{textAlign: 'center', paddingLeft: '5%', paddingRight: '5%', marginTop: '40px'}}>
